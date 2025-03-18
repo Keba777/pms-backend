@@ -7,13 +7,30 @@ import {
     ForeignKey,
 } from "sequelize-typescript";
 import jwt from "jsonwebtoken";
-import Role from "./Role"
+import Role from "./Role";
+
+// Define an interface for User attributes
+interface IUser {
+    id?: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    role_id: string;
+    email: string;
+    password: string;
+    profile_picture?: string;
+    country_code: string;
+    country: string;
+    state: string;
+    city: string;
+    zip: string;
+}
 
 @Table({
     tableName: "users",
     timestamps: true,
 })
-class User extends Model<User> {
+class User extends Model<IUser> implements IUser {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
@@ -22,7 +39,6 @@ class User extends Model<User> {
     })
     id!: string;
 
-    // Basic user details
     @Column({
         type: DataType.STRING(50),
         allowNull: false,
@@ -61,14 +77,12 @@ class User extends Model<User> {
     })
     password!: string;
 
-    // Optional profile picture
     @Column({
         type: DataType.STRING(255),
         allowNull: true,
     })
     profile_picture?: string;
 
-    // Address-related fields
     @Column({
         type: DataType.STRING(10),
         allowNull: false,
@@ -99,7 +113,6 @@ class User extends Model<User> {
     })
     zip!: string;
 
-
     // Instance method to sign JWT and return
     getSignedJwtToken() {
         return jwt.sign(
@@ -113,3 +126,4 @@ class User extends Model<User> {
 }
 
 export default User;
+export { IUser };

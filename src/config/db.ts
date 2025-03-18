@@ -1,19 +1,27 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
 import path from "path";
+import User from "../models/User";
+import Role from "../models/Role";
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
 });
 
+console.log(process.env.NODE_ENV)
+import configs from "./config";
+const env = (process.env.NODE_ENV || "development") as keyof typeof configs;
+const configFile = configs[env];
 
 const sequelize: Sequelize = new Sequelize({
-    database: process.env.PG_DATABASE,
+    database: configFile.database,
     dialect: "postgres",
-    username: process.env.PG_USER,
-    password: process.env.PG_PASSWORD,
-    host: process.env.PG_HOST,
+    username: configFile.username,
+    password: configFile.password,
+    host: configFile.host,
 
-    models: [],
+    models: [
+        User, Role
+    ],
     logging: false,
 });
 
