@@ -1,9 +1,19 @@
-// Activity.model.ts
 import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from "sequelize-typescript";
 import Task from "./Task.model";
 
+export interface IActivity {
+    id: string;
+    activity_name: string;
+    task_id: string;
+    task?: Task;
+    unit: string;
+    progress: number;
+    status: string;
+    resource: string;
+}
+
 @Table({ tableName: "activities" })
-class Activity extends Model {
+class Activity extends Model<IActivity> implements IActivity {
     @PrimaryKey
     @Column({
         type: DataType.UUID,

@@ -1,10 +1,21 @@
-// Task.model.ts
 import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
 import Project from "./Project.model";
 import Activity from "./Activity.model";
 
+export interface ITask {
+    id: string;
+    task_name: string;
+    project_id: string;
+    project?: Project;
+    priority: 'Critical' | 'High' | 'Medium' | 'Low';
+    start_date: Date;
+    end_date: Date;
+    progress: number;
+    activities?: Activity[];
+}
+
 @Table({ tableName: "tasks" })
-class Task extends Model {
+class Task extends Model<ITask> implements ITask {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
@@ -23,7 +34,7 @@ class Task extends Model {
     project!: Project;
 
     @Column(DataType.ENUM('Critical', 'High', 'Medium', 'Low'))
-    priority!: string;
+    priority!: 'Critical' | 'High' | 'Medium' | 'Low';
 
     @Column(DataType.DATE)
     start_date!: Date;

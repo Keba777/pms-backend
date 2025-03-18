@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 import path from "path";
 import authRouter from "./routes/auth.route";
 import roleRouter from "./routes/role.route";
+import projectRouter from "./routes/project.route"
+import taskRouter from "./routes/task.route"
+import activityRouter from "./routes/activity.route"
 
 dotenv.config({
     path: path.join(__dirname, "../.env"),
@@ -17,6 +20,9 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/roles", roleRouter);
+app.use("/api/v1/projects", projectRouter)
+app.use("/api/v1/tasks", taskRouter)
+app.use("/api/v1/activities", activityRouter)
 
 app.get("/", (req, res) => {
     res.status(200).json({ message: "Hello World!" });

@@ -9,6 +9,9 @@ dotenv.config({
 
 console.log(process.env.NODE_ENV)
 import configs from "./config";
+import Project from "../models/Project.model";
+import Task from "../models/Task.model";
+import Activity from "../models/Activity.model";
 const env = (process.env.NODE_ENV || "development") as keyof typeof configs;
 const configFile = configs[env];
 
@@ -20,7 +23,7 @@ const sequelize: Sequelize = new Sequelize({
     host: configFile.host,
 
     models: [
-        User, Role
+        User, Role, Project, Task, Activity
     ],
     logging: false,
 });

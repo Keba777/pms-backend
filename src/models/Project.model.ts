@@ -1,9 +1,22 @@
-// Project.model.ts
 import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, HasMany } from "sequelize-typescript";
 import Task from "./Task.model";
 
+export interface IProject {
+    id: string;
+    title: string;
+    priority: 'Critical' | 'High' | 'Medium' | 'Low';
+    start_date: Date;
+    end_date: Date;
+    budget: number;
+    client: string;
+    site: string;
+    progress: number;
+    status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
+    tasks?: Task[];
+}
+
 @Table({ tableName: "projects" })
-class Project extends Model {
+class Project extends Model<IProject> implements IProject {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
@@ -15,7 +28,7 @@ class Project extends Model {
     title!: string;
 
     @Column(DataType.ENUM('Critical', 'High', 'Medium', 'Low'))
-    priority!: string;
+    priority!: 'Critical' | 'High' | 'Medium' | 'Low';
 
     @Column(DataType.DATE)
     start_date!: Date;
@@ -36,7 +49,7 @@ class Project extends Model {
     progress!: number;
 
     @Column(DataType.ENUM('Not Started', 'Started', 'InProgress', 'Canceled', 'Onhold', 'Completed'))
-    status!: string;
+    status!: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
 
     @HasMany(() => Task)
     tasks!: Task[];
