@@ -20,6 +20,8 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
+        onUpdate: 'CASCADE',  
+        onDelete: 'CASCADE', 
       },
       priority: {
         type: Sequelize.ENUM("Critical", "High", "Medium", "Low"),

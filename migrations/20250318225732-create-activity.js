@@ -20,6 +20,8 @@ module.exports = {
           key: "id",
         },
         allowNull: false,
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       unit: {
         type: Sequelize.STRING(50),

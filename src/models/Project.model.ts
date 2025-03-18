@@ -1,4 +1,4 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, HasMany } from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, HasMany } from "sequelize-typescript";
 import Task from "./Task.model";
 
 export interface IProject {

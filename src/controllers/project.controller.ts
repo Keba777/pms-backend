@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Project from "../models/Project.model";
+import Task from "../models/Task.model";  // Make sure to import Task model
 import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Create a new project
@@ -18,7 +19,14 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
 // @route   GET /api/v1/projects
 const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const projects = await Project.findAll();
+        const projects = await Project.findAll({
+            include: [
+                {
+                    model: Task,
+                    as: "tasks", 
+                },
+            ],
+        });
         res.status(200).json({ success: true, data: projects });
     } catch (error) {
         console.error(error);
@@ -30,10 +38,19 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
 // @route   GET /api/v1/projects/:id
 const getProjectById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const project = await Project.findByPk(req.params.id);
+        const project = await Project.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Task,
+                    as: "tasks", 
+                },
+            ],
+        });
+
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
         }
+
         res.status(200).json({ success: true, data: project });
     } catch (error) {
         console.error(error);

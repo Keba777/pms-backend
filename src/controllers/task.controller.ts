@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import Task from "../models/Task.model";
+import Activity from "../models/Activity.model";  // Import the Activity model
 import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Create a new task
@@ -18,7 +19,14 @@ const createTask = async (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /api/v1/tasks
 const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tasks = await Task.findAll();
+        const tasks = await Task.findAll({
+            include: [
+                {
+                    model: Activity,
+                    as: "activities",
+                },
+            ],
+        });
         res.status(200).json({ success: true, data: tasks });
     } catch (error) {
         console.error(error);
@@ -30,10 +38,19 @@ const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /api/v1/tasks/:id
 const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const task = await Task.findByPk(req.params.id);
+        const task = await Task.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Activity,
+                    as: "activities",
+                },
+            ],
+        });
+
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
         }
+
         res.status(200).json({ success: true, data: task });
     } catch (error) {
         console.error(error);
