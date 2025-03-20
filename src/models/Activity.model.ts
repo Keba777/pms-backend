@@ -6,10 +6,13 @@ export interface IActivity {
     activity_name: string;
     task_id: string;
     task?: Task;
+    priority: 'Critical' | 'High' | 'Medium' | 'Low';
     unit: string;
+    start_date: Date;
+    end_date: Date;
     progress: number;
-    status: string;
-    resource: string;
+    status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
+    approvalStatus: 'Approved' | 'Not Approved' | 'Pending';
 }
 
 @Table({ tableName: "activities" })
@@ -31,17 +34,41 @@ class Activity extends Model<IActivity> implements IActivity {
     @BelongsTo(() => Task)
     task!: Task;
 
+    @Column({
+        type: DataType.ENUM('Critical', 'High', 'Medium', 'Low'),
+        defaultValue: 'Medium'
+    })
+    priority!: 'Critical' | 'High' | 'Medium' | 'Low';
+
     @Column(DataType.STRING(50))
     unit!: string;
 
-    @Column(DataType.INTEGER)
+    @Column({
+        type: DataType.DATE,
+        defaultValue: DataType.NOW
+    })
+    start_date!: Date;
+
+    @Column(DataType.DATE)
+    end_date!: Date;
+
+    @Column({
+        type: DataType.INTEGER,
+        defaultValue: 0
+    })
     progress!: number;
 
-    @Column(DataType.STRING(20))
-    status!: string;
+    @Column({
+        type: DataType.ENUM('Not Started', 'Started', 'InProgress', 'Canceled', 'Onhold', 'Completed'),
+        defaultValue: 'Not Started'
+    })
+    status!: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
 
-    @Column(DataType.STRING(100))
-    resource!: string;
+    @Column({
+        type: DataType.ENUM('Approved', 'Not Approved', 'Pending'),
+        defaultValue: 'Pending'
+    })
+    approvalStatus!: 'Approved' | 'Not Approved' | 'Pending';
 }
 
 export default Activity;

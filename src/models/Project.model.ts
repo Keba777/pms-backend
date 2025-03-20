@@ -1,4 +1,6 @@
-import { Table, Column, Model, DataType, PrimaryKey, HasMany } from "sequelize-typescript";
+import {
+    Table, Column, Model, DataType, PrimaryKey, HasMany, BelongsToMany, Default
+} from "sequelize-typescript";
 import Task from "./Task.model";
 
 export interface IProject {
@@ -10,18 +12,19 @@ export interface IProject {
     budget: number;
     client: string;
     site: string;
-    progress: number;
+    progress?: number;
+    isFavourite?: boolean;
     status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
+    members?: string[];  // Optional array of member IDs
+    tagIds?: string[];  // Optional array of tag IDs
     tasks?: Task[];
 }
 
 @Table({ tableName: "projects" })
 class Project extends Model<IProject> implements IProject {
     @PrimaryKey
-    @Column({
-        type: DataType.UUID,
-        defaultValue: DataType.UUIDV4
-    })
+    @Default(DataType.UUIDV4)
+    @Column(DataType.UUID)
     id!: string;
 
     @Column(DataType.STRING(100))
@@ -45,11 +48,28 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.STRING(100))
     site!: string;
 
+    @Default(0)
     @Column(DataType.INTEGER)
     progress!: number;
 
+    @Default(false)
+    @Column(DataType.BOOLEAN)
+    isFavourite!: boolean;
+
     @Column(DataType.ENUM('Not Started', 'Started', 'InProgress', 'Canceled', 'Onhold', 'Completed'))
     status!: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
+
+    @Column({
+        type: DataType.ARRAY(DataType.UUID),
+        allowNull: true
+    })
+    members?: string[];
+
+    @Column({
+        type: DataType.ARRAY(DataType.UUID),
+        allowNull: true
+    })
+    tagIds?: string[];
 
     @HasMany(() => Task)
     tasks!: Task[];
