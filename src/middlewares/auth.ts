@@ -1,8 +1,8 @@
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/User";
 
-const protectRoute = async (req: Request, res: Response, next: any) => {
+const protectRoute = async (req: Request, res: Response, next: NextFunction) => {
     let token: string = "";
     if (
         req.headers.authorization &&

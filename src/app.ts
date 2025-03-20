@@ -1,4 +1,4 @@
-import express, { urlencoded } from "express";
+import express, { urlencoded, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
@@ -26,7 +26,7 @@ app.use("/api/v1/projects", projectRouter)
 app.use("/api/v1/tasks", taskRouter)
 app.use("/api/v1/activities", activityRouter)
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
 });
 
