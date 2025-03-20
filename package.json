@@ -12,7 +12,7 @@
     "migrate:undo:all": "sequelize-cli db:migrate:undo:all",
     "seed": "npx sequelize-cli db:seed:all",
     "start": "node dist/server.js",
-    "build:prod": "NODE_ENV=production npx tsc",
+    "build:prod": "npm install typescript && NODE_ENV=production npx tsc",
     "migrate:prod": "NODE_ENV=production sequelize-cli db:migrate",
     "start:prod": "npm run build:prod && npm run migrate:prod && NODE_ENV=production node dist/server.js",
     "start:prod:pm2": "npm run build:prod && npm run migrate:prod && pm2 start dist/server.js --name pms-backend && pm2 save"
