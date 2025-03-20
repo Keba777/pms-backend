@@ -4,6 +4,7 @@ import Task from "./Task.model";
 export interface IActivity {
     id: string;
     activity_name: string;
+    description?: string;
     task_id: string;
     task?: Task;
     priority: 'Critical' | 'High' | 'Medium' | 'Low';
@@ -26,6 +27,9 @@ class Activity extends Model<IActivity> implements IActivity {
 
     @Column(DataType.STRING(100))
     activity_name!: string;
+
+    @Column(DataType.TEXT)
+    description?: string;
 
     @ForeignKey(() => Task)
     @Column(DataType.UUID)

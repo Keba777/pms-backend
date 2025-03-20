@@ -1,20 +1,25 @@
-'use strict';
+"use strict";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('projects', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("projects", {
       id: {
         type: Sequelize.UUID,
+        primaryKey: true,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false,
-        primaryKey: true,
       },
       title: {
         type: Sequelize.STRING(100),
         allowNull: false,
       },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
       priority: {
-        type: Sequelize.ENUM('Critical', 'High', 'Medium', 'Low'),
+        type: Sequelize.ENUM("Critical", "High", "Medium", "Low"),
         allowNull: false,
       },
       start_date: {
@@ -39,11 +44,32 @@ module.exports = {
       },
       progress: {
         type: Sequelize.INTEGER,
+        defaultValue: 0,
+        allowNull: false,
+      },
+      isFavourite: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('Not Started', 'Started', 'InProgress', 'Canceled', 'Onhold', 'Completed'),
+        type: Sequelize.ENUM(
+          "Not Started",
+          "Started",
+          "InProgress",
+          "Canceled",
+          "Onhold",
+          "Completed"
+        ),
         allowNull: false,
+      },
+      members: {
+        type: Sequelize.ARRAY(Sequelize.UUID),
+        allowNull: true,
+      },
+      tagIds: {
+        type: Sequelize.ARRAY(Sequelize.UUID),
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -56,7 +82,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('projects');
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("projects");
   },
 };

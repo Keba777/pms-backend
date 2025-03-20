@@ -1,11 +1,12 @@
 import {
-    Table, Column, Model, DataType, PrimaryKey, HasMany, BelongsToMany, Default
+    Table, Column, Model, DataType, PrimaryKey, HasMany, Default
 } from "sequelize-typescript";
 import Task from "./Task.model";
 
 export interface IProject {
     id: string;
     title: string;
+    description?: string;
     priority: 'Critical' | 'High' | 'Medium' | 'Low';
     start_date: Date;
     end_date: Date;
@@ -20,7 +21,7 @@ export interface IProject {
     tasks?: Task[];
 }
 
-@Table({ tableName: "projects" })
+@Table({ tableName: "projects", timestamps: true })
 class Project extends Model<IProject> implements IProject {
     @PrimaryKey
     @Default(DataType.UUIDV4)
@@ -29,6 +30,9 @@ class Project extends Model<IProject> implements IProject {
 
     @Column(DataType.STRING(100))
     title!: string;
+
+    @Column(DataType.TEXT)
+    description?: string;
 
     @Column(DataType.ENUM('Critical', 'High', 'Medium', 'Low'))
     priority!: 'Critical' | 'High' | 'Medium' | 'Low';
@@ -61,13 +65,13 @@ class Project extends Model<IProject> implements IProject {
 
     @Column({
         type: DataType.ARRAY(DataType.UUID),
-        allowNull: true
+        allowNull: true,
     })
     members?: string[];
 
     @Column({
         type: DataType.ARRAY(DataType.UUID),
-        allowNull: true
+        allowNull: true,
     })
     tagIds?: string[];
 

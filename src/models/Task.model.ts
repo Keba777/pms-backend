@@ -6,6 +6,7 @@ import User from "./User";
 export interface ITask {
     id: string;
     task_name: string;
+    description?: string;
     project_id: string;
     project?: Project;
     priority: 'Critical' | 'High' | 'Medium' | 'Low';
@@ -18,7 +19,7 @@ export interface ITask {
     activities?: Activity[];
 }
 
-@Table({ tableName: "tasks" })
+@Table({ tableName: "tasks", timestamps: true })
 class Task extends Model<ITask> implements ITask {
     @PrimaryKey
     @Column({
@@ -29,6 +30,9 @@ class Task extends Model<ITask> implements ITask {
 
     @Column(DataType.STRING(100))
     task_name!: string;
+
+    @Column(DataType.TEXT)
+    description?: string;
 
     @ForeignKey(() => Project)
     @Column(DataType.UUID)
