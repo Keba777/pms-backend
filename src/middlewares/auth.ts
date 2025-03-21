@@ -2,7 +2,8 @@ import { Response, Request, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/User";
 
-const protectRoute = async (req: Request, res: Response, next: NextFunction) => {
+const protectRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
     let token: string = "";
     if (
         req.headers.authorization &&
@@ -18,9 +19,10 @@ const protectRoute = async (req: Request, res: Response, next: NextFunction) => 
 
     // Make sure token exists
     if (!token) {
-        return res
+        res
             .status(401)
             .json({ error: "Not authorized to access this route" });
+        return;
     }
 
     try {
@@ -31,13 +33,14 @@ const protectRoute = async (req: Request, res: Response, next: NextFunction) => 
         ) as JwtPayload;
         const user = await User.findByPk(decoded.id);
         if (!user) {
-            return res.status(401).json({ error: "Not authorized to access this route" });
+            res.status(401).json({ error: "Not authorized to access this route" });
+            return;
         }
         req.user = user;
         next();
     } catch (error) {
         console.error(error);
-        return res
+        res
             .status(401)
             .json({ error: "Not authorized to access this route" });
     }
