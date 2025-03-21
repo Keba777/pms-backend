@@ -8,6 +8,7 @@ import roleRouter from "./routes/role.route";
 import projectRouter from "./routes/project.route"
 import taskRouter from "./routes/task.route"
 import activityRouter from "./routes/activity.route"
+import tagRouter from "./routes/tag.router"
 import masterScheduleRoute from "./routes/masterSchedule.route"
 
 dotenv.config({
@@ -26,6 +27,7 @@ app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/projects", projectRouter)
 app.use("/api/v1/tasks", taskRouter)
 app.use("/api/v1/activities", activityRouter)
+app.use("/api/v1/tags", tagRouter)
 app.use("/api/v1/master-schedule", masterScheduleRoute)
 
 app.get("/", (req: Request, res: Response) => {
