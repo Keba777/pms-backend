@@ -19,11 +19,20 @@ dotenv.config({
 
 const app = express();
 
+const allowedOrigins = ["https://pms-frontend-opal.vercel.app", "http://localhost:3000"];
+
 app.use(cors({
-    origin: "*", // Allow all origins
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, origin); // Set the specific origin
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true, // Allow cookies, authorization headers, etc.
+    credentials: true, // Required for cookies/auth headers
 }));
+
 
 
 app.use(urlencoded({ extended: true }));
