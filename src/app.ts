@@ -19,7 +19,12 @@ dotenv.config({
 
 const app = express();
 
-app.use(cors())
+app.use(cors({
+    origin: "https://pms-frontend-opal.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true, // Allow cookies, authorization headers, etc.
+}));
+
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
