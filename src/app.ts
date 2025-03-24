@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", protectRoute, userRouter);
-app.use("/api/v1/roles", protectRoute, roleRouter);
+app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/projects", protectRoute, projectRouter)
 app.use("/api/v1/tasks", protectRoute, taskRouter)
 app.use("/api/v1/activities", protectRoute, activityRouter)
