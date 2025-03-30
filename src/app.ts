@@ -10,7 +10,11 @@ import projectRouter from "./routes/project.route"
 import taskRouter from "./routes/task.route"
 import activityRouter from "./routes/activity.route"
 import tagRouter from "./routes/tag.router"
-import masterScheduleRoute from "./routes/masterSchedule.route"
+import masterScheduleRouter from "./routes/masterSchedule.route"
+import equipmentRouter from "./routes/equipment.route"
+import warehouseRouter from "./routes/warehouse.route"
+import materialRouter from "./routes/material.route"
+import laborRouter from "./routes/labor.route"
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -46,7 +50,11 @@ app.use("/api/v1/projects", protectRoute, projectRouter)
 app.use("/api/v1/tasks", protectRoute, taskRouter)
 app.use("/api/v1/activities", protectRoute, activityRouter)
 app.use("/api/v1/tags", protectRoute, tagRouter)
-app.use("/api/v1/master-schedule", protectRoute, masterScheduleRoute)
+app.use("/api/v1/master-schedule", protectRoute, masterScheduleRouter)
+app.use("/api/v1/equipments", protectRoute, equipmentRouter)
+app.use("/api/v1/warehouses", protectRoute, warehouseRouter)
+app.use("/api/v1/materials", protectRoute, materialRouter)
+app.use("/api/v1/labors", protectRoute, laborRouter)
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
