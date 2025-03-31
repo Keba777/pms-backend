@@ -11,6 +11,7 @@ export interface IEquipment {
     year?: number;
     eqp_condition?: string;
     activity_id: string;
+    financial_status?: "Approved" | "Not Approved";
 }
 
 @Table({ tableName: "equipments", timestamps: true })
@@ -74,6 +75,12 @@ class Equipment extends Model<IEquipment> implements IEquipment {
 
     @BelongsTo(() => Activity)
     activity!: Activity;
+
+    @Column({
+        type: DataType.ENUM("Approved", "Not Approved"),
+        allowNull: true,
+    })
+    financial_status?: "Approved" | "Not Approved";
 }
 
 export default Equipment;

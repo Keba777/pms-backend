@@ -9,6 +9,7 @@ export interface IMaterial {
     rate_with_vat: number;
     unit: string;
     activity_id: string;
+    financial_status?: "Approved" | "Not Approved";
 }
 
 @Table({ tableName: "materials", timestamps: true })
@@ -60,6 +61,12 @@ class Material extends Model<IMaterial> implements IMaterial {
 
     @BelongsTo(() => Activity)
     activity!: Activity;
+
+    @Column({
+        type: DataType.ENUM("Approved", "Not Approved"),
+        allowNull: true,
+    })
+    financial_status?: "Approved" | "Not Approved";
 }
 
 export default Material;
