@@ -17,6 +17,7 @@ import Equipment from "../models/Equipment.model";
 import Material from "../models/Material.model";
 import Labor from "../models/Labor.model";
 import Warehouse from "../models/Warehouse.model";
+import Department from "../models/Department.model";
 const env = (process.env.NODE_ENV || "development") as keyof typeof configs;
 const configFile = configs[env];
 
@@ -28,7 +29,7 @@ const sequelize: Sequelize = new Sequelize({
     host: configFile.host,
 
     models: [
-        User, Role, Project, Task, Activity, Tag, Equipment, Material, Labor, Warehouse
+        User, Role, Project, Task, Activity, Tag, Equipment, Material, Labor, Warehouse, Department
     ],
     logging: false,
 });
