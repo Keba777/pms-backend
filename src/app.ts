@@ -56,7 +56,7 @@ app.use("/api/v1/equipments", protectRoute, equipmentRouter)
 app.use("/api/v1/warehouses", protectRoute, warehouseRouter)
 app.use("/api/v1/materials", protectRoute, materialRouter)
 app.use("/api/v1/labors", protectRoute, laborRouter)
-app.use("/api/vs/departments", protectRoute, departmentRouter);
+app.use("/api/v1/departments", protectRoute, departmentRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
