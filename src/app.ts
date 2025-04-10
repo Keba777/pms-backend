@@ -9,7 +9,7 @@ import roleRouter from "./routes/role.route";
 import projectRouter from "./routes/project.route"
 import taskRouter from "./routes/task.route"
 import activityRouter from "./routes/activity.route"
-import tagRouter from "./routes/tag.router"
+import tagRouter from "./routes/tag.route"
 import masterScheduleRouter from "./routes/masterSchedule.route"
 import equipmentRouter from "./routes/equipment.route"
 import warehouseRouter from "./routes/warehouse.route"
