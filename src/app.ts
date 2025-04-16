@@ -24,8 +24,7 @@ dotenv.config({
 
 const app = express();
 
-// const allowedOrigins = ["https://pms-frontend-opal.vercel.app", "http://localhost:3000", "https://rayconplc.com", "http://rayconplc.oasismgmt2.com", "https://rayconplc.oasismgmt2.com"];
-const allowedOrigins = ["*"]
+const allowedOrigins = ["https://pms-frontend-opal.vercel.app", "http://localhost:3000", "https://rayconplc.com", "http://rayconplc.oasismgmt2.com", "https://rayconplc.oasismgmt2.com"];
 
 app.use(cors({
     origin: (origin, callback) => {
