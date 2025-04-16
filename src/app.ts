@@ -24,23 +24,18 @@ dotenv.config({
 
 const app = express();
 
-// // const allowedOrigins = ["https://pms-frontend-opal.vercel.app", "http://localhost:3000", "https://rayconplc.com", "http://rayconplc.oasismgmt2.com", "https://rayconplc.oasismgmt2.com"];
-
-// app.use(cors({
-//     origin: (origin, callback) => {
-//         if (!origin || allowedOrigins.includes(origin)) {
-//             callback(null, origin); // Set the specific origin
-//         } else {
-//             callback(new Error("Not allowed by CORS"));
-//         }
-//     },
-//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//     credentials: true, // Required for cookies/auth headers
-// }));
+const allowedOrigins = ["https://pms-frontend-opal.vercel.app", "http://localhost:3000", "https://rayconplc.com", "http://rayconplc.oasismgmt2.com", "https://rayconplc.oasismgmt2.com"];
 
 app.use(cors({
-    origin: "*",
-    credentials: true
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, origin); // Set the specific origin
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true, // Required for cookies/auth headers
 }));
 
 app.use(urlencoded({ extended: true }));
