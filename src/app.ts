@@ -38,8 +38,10 @@ const app = express();
 //     credentials: true, // Required for cookies/auth headers
 // }));
 
-app.use(cors());
-
+app.use(cors({
+    origin: "*",
+    credentials: true
+}));
 
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
