@@ -1,86 +1,63 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from "sequelize-typescript";
+// models/Equipment.model.ts
+import {
+    Table, Column, Model, DataType, PrimaryKey,
+    ForeignKey, BelongsTo
+} from "sequelize-typescript";
 import Activity from "./Activity.model";
+import Request from "./Request.model";
 
 export interface IEquipment {
     id: string;
+    activityId: string;
+    requestId: string;
+
     item: string;
-    rate_with_vat: number;
-    reorder_quantity: number;
-    min_quantity: number;
-    manufacturer?: string;
-    year?: number;
-    eqp_condition?: string;
-    activity_id: string;
-    financial_status?: "Approved" | "Not Approved";
+    unit: string;
+    requestQuantity: number;
+    minQuantity: number;
+    estimatedHours: number;
+    rate: number;
+    totalAmount: number;
 }
 
 @Table({ tableName: "equipments", timestamps: true })
 class Equipment extends Model<IEquipment> implements IEquipment {
     @PrimaryKey
-    @Column({
-        type: DataType.UUID,
-        defaultValue: DataType.UUIDV4,
-    })
+    @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4 })
     id!: string;
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    item!: string;
-
-    @Column({
-        type: DataType.DECIMAL(10, 2),
-        allowNull: false,
-    })
-    rate_with_vat!: number;
-
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    reorder_quantity!: number;
-
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    min_quantity!: number;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: true,
-    })
-    manufacturer?: string;
-
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: true,
-    })
-    year?: number;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: true,
-    })
-    eqp_condition?: string;
-
-    // Foreign key association with Activity
     @ForeignKey(() => Activity)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
-    activity_id!: string;
-
+    @Column({ type: DataType.UUID, allowNull: false })
+    activityId!: string;
     @BelongsTo(() => Activity)
     activity!: Activity;
 
-    @Column({
-        type: DataType.ENUM("Approved", "Not Approved"),
-        allowNull: true,
-    })
-    financial_status?: "Approved" | "Not Approved";
+    @ForeignKey(() => Request)
+    @Column({ type: DataType.UUID, allowNull: false })
+    requestId!: string;
+    @BelongsTo(() => Request)
+    request!: Request;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    item!: string;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    unit!: string;
+
+    @Column({ type: DataType.INTEGER, allowNull: false })
+    requestQuantity!: number;
+
+    @Column({ type: DataType.INTEGER, allowNull: false })
+    minQuantity!: number;
+
+    @Column({ type: DataType.DECIMAL(8, 2), allowNull: false })
+    estimatedHours!: number;
+
+    @Column({ type: DataType.DECIMAL(10, 2), allowNull: false })
+    rate!: number;
+
+    @Column({ type: DataType.DECIMAL(12, 2), allowNull: false })
+    totalAmount!: number;
 }
 
 export default Equipment;

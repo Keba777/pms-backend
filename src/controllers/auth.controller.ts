@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/User";
-import Role from "../models/Role";
+import User from "../models/User.model";
+import Role from "../models/Role.model";
 import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import bcrypt from "bcryptjs";

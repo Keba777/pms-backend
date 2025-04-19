@@ -1,7 +1,7 @@
 import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany, Default } from "sequelize-typescript";
 import Project from "./Project.model";
 import Activity from "./Activity.model";
-import User from "./User";
+import User from "./User.model";
 
 export interface ITask {
     id: string;

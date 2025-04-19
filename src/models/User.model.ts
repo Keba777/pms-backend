@@ -7,7 +7,7 @@ import {
     ForeignKey,
 } from "sequelize-typescript";
 import jwt from "jsonwebtoken";
-import Role from "./Role";
+import Role from "./Role.model";
 
 // Define an interface for User attributes
 interface IUser {

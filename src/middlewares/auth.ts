@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import User from "../models/User";
+import User from "../models/User.model";
 
 const protectRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 

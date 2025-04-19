@@ -1,14 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import dotenv from "dotenv";
 import path from "path";
-import User from "../models/User";
-import Role from "../models/Role";
-dotenv.config({
-    path: path.join(__dirname, "../../.env"),
-});
-
-console.log(process.env.NODE_ENV)
 import configs from "./config";
+
+import User from "../models/User.model";
+import Role from "../models/Role.model";
 import Project from "../models/Project.model";
 import Task from "../models/Task.model";
 import Activity from "../models/Activity.model";
@@ -18,6 +14,13 @@ import Material from "../models/Material.model";
 import Labor from "../models/Labor.model";
 import Warehouse from "../models/Warehouse.model";
 import Department from "../models/Department.model";
+import Request from "../models/Request.model";
+import Approval from "../models/Approval.model";
+
+dotenv.config({
+    path: path.join(__dirname, "../../.env"),
+});
+
 const env = (process.env.NODE_ENV || "development") as keyof typeof configs;
 const configFile = configs[env];
 
@@ -29,7 +32,7 @@ const sequelize: Sequelize = new Sequelize({
     host: configFile.host,
 
     models: [
-        User, Role, Project, Task, Activity, Tag, Equipment, Material, Labor, Warehouse, Department
+        User, Role, Project, Task, Activity, Tag, Equipment, Material, Labor, Warehouse, Department, Request, Approval
     ],
     logging: false,
 });

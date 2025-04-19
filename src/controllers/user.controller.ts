@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/User";
+import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Get all users

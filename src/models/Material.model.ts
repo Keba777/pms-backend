@@ -1,72 +1,67 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from "sequelize-typescript";
+// models/Material.model.ts
+import {
+    Table, Column, Model, DataType, PrimaryKey,
+    ForeignKey, BelongsTo
+} from "sequelize-typescript";
 import Activity from "./Activity.model";
+import Request from "./Request.model";
+import Warehouse from "./Warehouse.model";
 
 export interface IMaterial {
     id: string;
-    quantity: number;
-    warehouse_id: string;
+    activityId: string;
+    requestId: string;
+    warehouseId?: string;
+
     item: string;
-    rate_with_vat: number;
     unit: string;
-    activity_id: string;
-    financial_status?: "Approved" | "Not Approved";
+    requestQuantity: number;
+    minQuantity: number;
+    rate: number;
+    totalAmount: number;
 }
 
 @Table({ tableName: "materials", timestamps: true })
 class Material extends Model<IMaterial> implements IMaterial {
     @PrimaryKey
-    @Column({
-        type: DataType.UUID,
-        defaultValue: DataType.UUIDV4,
-    })
+    @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4 })
     id!: string;
 
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    quantity!: number;
-
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
-    warehouse_id!: string;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    item!: string;
-
-    @Column({
-        type: DataType.DECIMAL(10, 2),
-        allowNull: false,
-    })
-    rate_with_vat!: number;
-
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    unit!: string;
-
-    // Foreign key association with Activity
     @ForeignKey(() => Activity)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
-    activity_id!: string;
-
+    @Column({ type: DataType.UUID, allowNull: false })
+    activityId!: string;
     @BelongsTo(() => Activity)
     activity!: Activity;
 
-    @Column({
-        type: DataType.ENUM("Approved", "Not Approved"),
-        allowNull: true,
-    })
-    financial_status?: "Approved" | "Not Approved";
+    @ForeignKey(() => Request)
+    @Column({ type: DataType.UUID, allowNull: false })
+    requestId!: string;
+    @BelongsTo(() => Request)
+    request!: Request;
+
+    @ForeignKey(() => Warehouse)
+    @Column({ type: DataType.UUID, allowNull: false })
+    warehouseId!: string;
+    @BelongsTo(() => Warehouse)
+    warehouse!: Warehouse;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    item!: string;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    unit!: string;
+
+    @Column({ type: DataType.INTEGER, allowNull: false })
+    requestQuantity!: number;
+
+    @Column({ type: DataType.INTEGER, allowNull: false })
+    minQuantity!: number;
+
+    @Column({ type: DataType.DECIMAL(10, 2), allowNull: false })
+    rate!: number;
+
+    @Column({ type: DataType.DECIMAL(12, 2), allowNull: false })
+    totalAmount!: number;
 }
 
 export default Material;
