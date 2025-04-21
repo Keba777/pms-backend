@@ -16,6 +16,8 @@ import warehouseRouter from "./routes/warehouse.route"
 import materialRouter from "./routes/material.route"
 import laborRouter from "./routes/labor.route"
 import departmentRouter from "./routes/department.route"
+import requestRouter from "./routes/request.route"
+import approvalRouter from "./routes/approval.route"
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -57,6 +59,8 @@ app.use("/api/v1/warehouses", protectRoute, warehouseRouter)
 app.use("/api/v1/materials", protectRoute, materialRouter)
 app.use("/api/v1/labors", protectRoute, laborRouter)
 app.use("/api/v1/departments", protectRoute, departmentRouter);
+app.use("/api/v1/requests", protectRoute, requestRouter);
+app.use("/api/v1/approvals", protectRoute, approvalRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
