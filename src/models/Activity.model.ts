@@ -18,9 +18,9 @@ export interface IActivity {
     progress: number;
     status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
     approvalStatus: 'Approved' | 'Not Approved' | 'Pending';
-    materials?: Material[];
-    equipment?: Equipment[];
-    labors?: Labor[];
+    // materials?: Material[];
+    // equipment?: Equipment[];
+    // labors?: Labor[];
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -109,14 +109,14 @@ class Activity extends Model<IActivity> implements IActivity {
     approvalStatus!: 'Approved' | 'Not Approved' | 'Pending';
 
     // Define associations to child models
-    @HasMany(() => Material)
-    materials?: Material[];
+    // @HasMany(() => Material)
+    // materials?: Material[];
 
-    @HasMany(() => Equipment)
-    equipment?: Equipment[];
+    // @HasMany(() => Equipment)
+    // equipment?: Equipment[];
 
-    @HasMany(() => Labor)
-    labors?: Labor[];
+    // @HasMany(() => Labor)
+    // labors?: Labor[];
 }
 
 export default Activity;

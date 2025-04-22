@@ -1,22 +1,28 @@
-// models/Request.model.ts
 import {
-    Table, Column, Model, DataType, PrimaryKey,
-    ForeignKey, BelongsTo, HasMany, CreatedAt
+    Table,
+    Column,
+    Model,
+    DataType,
+    PrimaryKey,
+    ForeignKey,
+    BelongsTo,
+    HasMany,
 } from "sequelize-typescript";
 import Department from "./Department.model";
 import User from "./User.model";
-import Labor from "./Labor.model";
-import Material from "./Material.model";
-import Equipment from "./Equipment.model";
 import Approval from "./Approval.model";
 
 export interface IRequest {
     id: string;
-    reqNumber: string;
-    date: Date;
     userId: string;
-    departmentId: string;
+    departmentId?: string;                // now optional
+    materialReqNumber?: string;           // optional
+    laborReqNumber?: string;              // optional
+    equipmentReqNumber?: string;          // optional
     status: "Pending" | "In Progress" | "Completed" | "Rejected";
+    laborIds?: string[];
+    materialIds?: string[];
+    equipmentIds?: string[];
 }
 
 @Table({ tableName: "requests", timestamps: true })
@@ -25,11 +31,14 @@ class Request extends Model<IRequest> implements IRequest {
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4 })
     id!: string;
 
-    @Column({ type: DataType.STRING, allowNull: false, unique: true })
-    reqNumber!: string;
+    @Column({ type: DataType.STRING, allowNull: true, unique: true })
+    materialReqNumber?: string;
 
-    @Column({ type: DataType.DATE, allowNull: false })
-    date!: Date;
+    @Column({ type: DataType.STRING, allowNull: true, unique: true })
+    laborReqNumber?: string;
+
+    @Column({ type: DataType.STRING, allowNull: true, unique: true })
+    equipmentReqNumber?: string;
 
     @ForeignKey(() => User)
     @Column({ type: DataType.UUID, allowNull: false })
@@ -38,10 +47,10 @@ class Request extends Model<IRequest> implements IRequest {
     user!: User;
 
     @ForeignKey(() => Department)
-    @Column({ type: DataType.UUID, allowNull: false })
-    departmentId!: string;
+    @Column({ type: DataType.UUID, allowNull: true })
+    departmentId?: string;
     @BelongsTo(() => Department)
-    department!: Department;
+    department?: Department;
 
     @Column({
         type: DataType.ENUM("Pending", "In Progress", "Completed", "Rejected"),
@@ -50,18 +59,17 @@ class Request extends Model<IRequest> implements IRequest {
     })
     status!: IRequest["status"];
 
-    @HasMany(() => Labor)
-    labors!: Labor[];
+    @Column({ type: DataType.ARRAY(DataType.UUID), allowNull: true })
+    laborIds?: string[];
 
-    @HasMany(() => Material)
-    materials!: Material[];
+    @Column({ type: DataType.ARRAY(DataType.UUID), allowNull: true })
+    materialIds?: string[];
 
-    @HasMany(() => Equipment)
-    equipment!: Equipment[];
+    @Column({ type: DataType.ARRAY(DataType.UUID), allowNull: true })
+    equipmentIds?: string[];
 
     @HasMany(() => Approval)
     approvals!: Approval[];
-
 }
 
 export default Request;
