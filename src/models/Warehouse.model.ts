@@ -3,7 +3,6 @@ import Equipment from "./Equipment.model";
 
 export interface IWarehouse {
     id: string;
-    equipment_id: string;
     type: string;
     owner: string;
     workingStatus: 'Operational' | 'Non-Operational';
@@ -21,16 +20,6 @@ class Warehouse extends Model<IWarehouse> implements IWarehouse {
         defaultValue: DataType.UUIDV4,
     })
     id!: string;
-
-    @ForeignKey(() => Equipment)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
-    equipment_id!: string;
-
-    @BelongsTo(() => Equipment)
-    equipment!: Equipment;
 
     @Column({
         type: DataType.STRING,

@@ -10,6 +10,8 @@ export interface IEquipment {
     id: string;
     item: string;
     unit: string;
+    manufacturer?: string; // now optional
+    year?: string; // now optional
     minQuantity?: number;       // now optional
     estimatedHours?: number;    // now optional
     rate?: number;              // now optional
@@ -27,6 +29,12 @@ class Equipment extends Model<IEquipment> implements IEquipment {
 
     @Column({ type: DataType.STRING, allowNull: false })
     unit!: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    manufacturer?: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    year?: string;
 
     @Column({ type: DataType.INTEGER, allowNull: true })
     minQuantity?: number;
