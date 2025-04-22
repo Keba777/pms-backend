@@ -15,10 +15,10 @@ import Approval from "./Approval.model";
 export interface IRequest {
     id: string;
     userId: string;
-    departmentId?: string;                // now optional
-    materialReqNumber?: string;           // optional
-    laborReqNumber?: string;              // optional
-    equipmentReqNumber?: string;          // optional
+    departmentId?: string;
+    materialCount?: number;
+    laborCount?: number;
+    equipmentCount?: number;
     status: "Pending" | "In Progress" | "Completed" | "Rejected";
     laborIds?: string[];
     materialIds?: string[];
@@ -31,14 +31,14 @@ class Request extends Model<IRequest> implements IRequest {
     @Column({ type: DataType.UUID, defaultValue: DataType.UUIDV4 })
     id!: string;
 
-    @Column({ type: DataType.STRING, allowNull: true, unique: true })
-    materialReqNumber?: string;
+    @Column({ type: DataType.INTEGER, allowNull: true, })
+    materialCount?: number;
 
-    @Column({ type: DataType.STRING, allowNull: true, unique: true })
-    laborReqNumber?: string;
+    @Column({ type: DataType.INTEGER, allowNull: true, })
+    laborCount?: number;
 
-    @Column({ type: DataType.STRING, allowNull: true, unique: true })
-    equipmentReqNumber?: string;
+    @Column({ type: DataType.INTEGER, allowNull: true, })
+    equipmentCount?: number;
 
     @ForeignKey(() => User)
     @Column({ type: DataType.UUID, allowNull: false })
