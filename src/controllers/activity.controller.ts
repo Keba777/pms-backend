@@ -1,8 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import Activity from "../models/Activity.model";
-import Material from "../models/Material.model";
-import Equipment from "../models/Equipment.model";
-import Labor from "../models/Labor.model";
 import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Create a new activity
@@ -21,13 +18,7 @@ const createActivity = async (req: Request, res: Response, next: NextFunction) =
 // @route   GET /api/v1/activities
 const getAllActivities = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const activities = await Activity.findAll({
-            include: [
-                { model: Material, as: "materials" },
-                { model: Equipment, as: "equipment" },
-                { model: Labor, as: "labors" }
-            ]
-        });
+        const activities = await Activity.findAll();
         res.status(200).json({ success: true, data: activities });
     } catch (error) {
         console.error(error);
@@ -39,13 +30,7 @@ const getAllActivities = async (req: Request, res: Response, next: NextFunction)
 // @route   GET /api/v1/activities/:id
 const getActivityById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const activity = await Activity.findByPk(req.params.id, {
-            include: [
-                { model: Material, as: "materials" },
-                { model: Equipment, as: "equipment" },
-                { model: Labor, as: "labors" }
-            ]
-        });
+        const activity = await Activity.findByPk(req.params.id);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
