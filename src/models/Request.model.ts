@@ -11,11 +11,13 @@ import {
 import Department from "./Department.model";
 import User from "./User.model";
 import Approval from "./Approval.model";
+import Activity from "./Activity.model";
 
 export interface IRequest {
     id: string;
     userId: string;
     departmentId?: string;
+    activityId?: string;
     materialCount?: number;
     laborCount?: number;
     equipmentCount?: number;
@@ -51,6 +53,12 @@ class Request extends Model<IRequest> implements IRequest {
     departmentId?: string;
     @BelongsTo(() => Department)
     department?: Department;
+
+    @ForeignKey(() => Activity)
+    @Column({ type: DataType.UUID, allowNull: true })
+    activityId?: string;
+    @BelongsTo(() => Activity)
+    activity?: Activity;
 
     @Column({
         type: DataType.ENUM("Pending", "In Progress", "Completed", "Rejected"),

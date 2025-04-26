@@ -1,24 +1,69 @@
 import { NextFunction, Request, Response } from "express";
 import Activity from "../models/Activity.model";
 import ErrorResponse from "../utils/error-response.utils";
+import RequestModel from "../models/Request.model";
+import User from "../models/User.model";
 
 // @desc    Create a new activity
 // @route   POST /api/v1/activities
 const createActivity = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const activity = await Activity.create(req.body);
-        res.status(201).json({ success: true, data: activity });
+        const { assignedUsers, ...activityData } = req.body;
+        const activity = await Activity.create(activityData);
+        if (assignedUsers?.length) {
+            // Validate users exist
+            const users = await User.findAll({
+                where: {
+                    id: assignedUsers,
+                },
+            });
+
+            if (users.length !== assignedUsers.length) {
+                return next(new ErrorResponse("Some users could not be found", 400));
+            }
+            await activity.$set("assignedUsers", users);
+        }
+        const createdActivity = await Activity.findByPk(activity.id, {
+            include: [
+                {
+                    model: RequestModel,
+                    as: "requests",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+        res.status(201).json({ success: true, data: createdActivity });
     } catch (error) {
         console.error(error);
         next(new ErrorResponse("Error creating activity", 500));
     }
 };
 
-// @desc    Get all activities with associated materials, equipment, and labors
+// @desc    Get all activities with associated requests and assigned users
 // @route   GET /api/v1/activities
 const getAllActivities = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const activities = await Activity.findAll();
+        const activities = await Activity.findAll({
+            include: [
+                {
+                    model: RequestModel,
+                    as: "requests",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+            order: [["createdAt", "ASC"]],
+        });
+
         res.status(200).json({ success: true, data: activities });
     } catch (error) {
         console.error(error);
@@ -30,7 +75,22 @@ const getAllActivities = async (req: Request, res: Response, next: NextFunction)
 // @route   GET /api/v1/activities/:id
 const getActivityById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const activity = await Activity.findByPk(req.params.id);
+        const activity = await Activity.findByPk(req.params.id, {
+            include: [
+                {
+                    model: RequestModel,
+                    as: "requests",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+
+        }
+        );
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
@@ -45,13 +105,45 @@ const getActivityById = async (req: Request, res: Response, next: NextFunction) 
 // @route   PUT /api/v1/activities/:id
 const updateActivity = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const { assignedUsers, ...activityData } = req.body;
+
         const activity = await Activity.findByPk(req.params.id);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
 
-        await activity.update(req.body);
-        res.status(200).json({ success: true, data: activity });
+        await activity.update(activityData);
+
+        if (Array.isArray(assignedUsers)) {
+            const users = await User.findAll({
+                where: {
+                    id: assignedUsers,
+                },
+            });
+
+            if (users.length !== assignedUsers.length) {
+                return next(new ErrorResponse("Some users could not be found", 400));
+            }
+
+            await activity.$set("assignedUsers", users);
+        }
+
+        const updatedActivity = await Activity.findByPk(activity.id, {
+            include: [
+                {
+                    model: RequestModel,
+                    as: "requests",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedActivity });
     } catch (error) {
         console.error(error);
         next(new ErrorResponse("Error updating activity", 500));

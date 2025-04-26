@@ -1,12 +1,26 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User.model";
+import Project from "../models/Project.model";
+import Task from "../models/Task.model";
+import Activity from "../models/Activity.model";
 import ErrorResponse from "../utils/error-response.utils";
+import RequestModel from "../models/Request.model";
 
 // @desc    Get all users
 // @route   GET /api/v1/users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const users = await User.findAll();
+        const users = await User.findAll({
+            attributes: { exclude: ["password"] },
+            include: [
+                { model: Project, through: { attributes: [] } },
+                { model: Task, through: { attributes: [] } },
+                { model: Activity, through: { attributes: [] } },
+                { model: RequestModel },
+            ],
+            order: [["createdAt", "ASC"]],
+        });
+
         res.status(200).json({ success: true, data: users });
     } catch (error) {
         console.error(error);
@@ -18,7 +32,16 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /api/v1/users/:id
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const user = await User.findByPk(req.params.id);
+        const user = await User.findByPk(req.params.id, {
+            attributes: { exclude: ["password"] },
+            include: [
+                { model: Project, through: { attributes: [] } },
+                { model: Task, through: { attributes: [] } },
+                { model: Activity, through: { attributes: [] } },
+                { model: RequestModel },
+            ],
+        });
+
         if (!user) {
             return next(new ErrorResponse("User not found", 404));
         }
@@ -40,7 +63,19 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
         }
 
         await user.update(req.body);
-        res.status(200).json({ success: true, data: user });
+
+        // Fetch the updated user without password
+        const updatedUser = await User.findByPk(req.params.id, {
+            attributes: { exclude: ["password"] },
+            include: [
+                { model: Project, through: { attributes: [] } },
+                { model: Task, through: { attributes: [] } },
+                { model: Activity, through: { attributes: [] } },
+                { model: RequestModel },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedUser });
     } catch (error) {
         console.error(error);
         next(new ErrorResponse("Error updating user", 500));

@@ -16,6 +16,9 @@ import Warehouse from "../models/Warehouse.model";
 import Department from "../models/Department.model";
 import Request from "../models/Request.model";
 import Approval from "../models/Approval.model";
+import ProjectMember from "../models/ProjectMember.model";
+import TaskMember from "../models/TaskMember.model";
+import ActivityMember from "../models/ActivityMember.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -32,7 +35,7 @@ const sequelize: Sequelize = new Sequelize({
     host: configFile.host,
 
     models: [
-        User, Role, Project, Task, Activity, Tag, Equipment, Material, Labor, Warehouse, Department, Request, Approval
+        User, Role, Project, Task, Activity, Tag, Equipment, Material, Labor, Warehouse, Department, Request, Approval, ProjectMember, TaskMember, ActivityMember
     ],
     logging: false,
 });

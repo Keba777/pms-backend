@@ -1,8 +1,8 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany } from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany, BelongsToMany } from "sequelize-typescript";
 import Task from "./Task.model";
-import Material from "./Material.model";
-import Equipment from "./Equipment.model";
-import Labor from "./Labor.model";
+import Request from "./Request.model";
+import User from "./User.model";
+import ActivityMember from "./ActivityMember.model";
 
 export interface IActivity {
     id: string;
@@ -18,9 +18,8 @@ export interface IActivity {
     progress: number;
     status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
     approvalStatus: 'Approved' | 'Not Approved' | 'Pending';
-    // materials?: Material[];
-    // equipment?: Equipment[];
-    // labors?: Labor[];
+    assignedUsers?: User[];
+    requests?: Request[];
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -108,15 +107,15 @@ class Activity extends Model<IActivity> implements IActivity {
     })
     approvalStatus!: 'Approved' | 'Not Approved' | 'Pending';
 
-    // Define associations to child models
-    // @HasMany(() => Material)
-    // materials?: Material[];
+    @BelongsToMany(() => User, {
+        through: () => ActivityMember,
+        foreignKey: "activity_id",
+        otherKey: "user_id",
+    })
+    assignedUsers!: User[];
 
-    // @HasMany(() => Equipment)
-    // equipment?: Equipment[];
-
-    // @HasMany(() => Labor)
-    // labors?: Labor[];
+    @HasMany(() => Request)
+    requests?: Request[];
 }
 
 export default Activity;

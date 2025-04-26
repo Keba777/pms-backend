@@ -1,13 +1,22 @@
 import {
-    Table, Column, Model, DataType, PrimaryKey, HasMany, Default
+    Table,
+    Column,
+    Model,
+    DataType,
+    PrimaryKey,
+    Default,
+    HasMany,
+    BelongsToMany,
 } from "sequelize-typescript";
 import Task from "./Task.model";
+import User from "./User.model";
+import ProjectMember from "./ProjectMember.model";
 
 export interface IProject {
     id: string;
     title: string;
     description?: string;
-    priority: 'Critical' | 'High' | 'Medium' | 'Low';
+    priority: "Critical" | "High" | "Medium" | "Low";
     start_date: Date;
     end_date: Date;
     budget: number;
@@ -15,9 +24,9 @@ export interface IProject {
     site: string;
     progress?: number;
     isFavourite?: boolean;
-    status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
-    members?: string[];  // Optional array of member IDs
-    tagIds?: string[];  // Optional array of tag IDs
+    status: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed";
+    members?: User[];
+    tagIds?: string[];
     tasks?: Task[];
 }
 
@@ -34,8 +43,8 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.TEXT)
     description?: string;
 
-    @Column(DataType.ENUM('Critical', 'High', 'Medium', 'Low'))
-    priority!: 'Critical' | 'High' | 'Medium' | 'Low';
+    @Column(DataType.ENUM("Critical", "High", "Medium", "Low"))
+    priority!: "Critical" | "High" | "Medium" | "Low";
 
     @Column(DataType.DATE)
     start_date!: Date;
@@ -60,14 +69,24 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.BOOLEAN)
     isFavourite!: boolean;
 
-    @Column(DataType.ENUM('Not Started', 'Started', 'InProgress', 'Canceled', 'Onhold', 'Completed'))
-    status!: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
+    @Column(
+        DataType.ENUM(
+            "Not Started",
+            "Started",
+            "InProgress",
+            "Canceled",
+            "Onhold",
+            "Completed"
+        )
+    )
+    status!: IProject["status"];
 
-    @Column({
-        type: DataType.ARRAY(DataType.UUID),
-        allowNull: true,
-    })
-    members?: string[];
+    @BelongsToMany(() => User, {
+        through: () => ProjectMember, 
+        foreignKey: "project_id",
+        otherKey: "user_id"
+      })
+      members?: User[];
 
     @Column({
         type: DataType.ARRAY(DataType.UUID),

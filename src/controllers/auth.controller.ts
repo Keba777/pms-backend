@@ -20,7 +20,16 @@ declare module "express-serve-static-core" {
 // @route   POST /api/v1/auth/register
 const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, first_name, last_name, phone, role_name, password, country_code, country, state, city, zip } = req.body;
+    const {
+      email,
+      first_name,
+      last_name,
+      phone,
+      role_name,
+      password,
+      department_id,
+      status,
+    } = req.body;
 
     // Check if role exists
     const role = await Role.findOne({ where: { name: role_name } });
@@ -33,13 +42,13 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Upload profile picture if provided
-    let profile_picture;
+    let profile_picture: string | undefined;
     if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "/pms/images",
         use_filename: true,
       });
-      profile_picture = result?.secure_url;
+      profile_picture = result.secure_url;
     }
 
     // Create user
@@ -50,12 +59,9 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       phone,
       role_id: role.id,
       password: hashedPassword,
-      country_code,
-      country,
-      state,
-      city,
-      zip,
       profile_picture,
+      department_id: department_id || null,
+      status: status || "Active",
     });
 
     sendingTokenResponse(user, 201, res);
@@ -94,7 +100,9 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /api/v1/auth/me
 const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findByPk(req.user?.id);
+    const user = await User.findByPk(req.user?.id, {
+      include: ["projects", "tasks", "activities"],
+    });
     if (!user) {
       return next(new ErrorResponse("User doesn't exist", 400));
     }
@@ -136,11 +144,8 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
         phone: user.phone,
         role_id: user.role_id,
         profile_picture: user.profile_picture,
-        country_code: user.country_code,
-        country: user.country,
-        state: user.state,
-        city: user.city,
-        zip: user.zip,
+        department_id: user.department_id,
+        status: user.status,
         token,
       },
     });

@@ -5,12 +5,21 @@ import {
     DataType,
     PrimaryKey,
     ForeignKey,
+    BelongsToMany,
+    HasMany,
 } from "sequelize-typescript";
 import jwt from "jsonwebtoken";
 import Role from "./Role.model";
+import Department from "./Department.model";
+import Project from "./Project.model";
+import Task from "./Task.model";
+import Activity from "./Activity.model";
+import Request from "./Request.model";
+import ProjectMember from "./ProjectMember.model";
+import TaskMember from "./TaskMember.model";
+import ActivityMember from "./ActivityMember.model";
 
-// Define an interface for User attributes
-interface IUser {
+export interface IUser {
     id?: string;
     first_name: string;
     last_name: string;
@@ -19,11 +28,12 @@ interface IUser {
     email: string;
     password: string;
     profile_picture?: string;
-    country_code: string;
-    country: string;
-    state: string;
-    city: string;
-    zip: string;
+    department_id?: string;
+    status?: "Active" | "InActive";
+    projects?: Project[];
+    tasks?: Task[];
+    activities?: Activity[];
+    requests?: Request[];
 }
 
 @Table({
@@ -39,91 +49,79 @@ class User extends Model<IUser> implements IUser {
     })
     id!: string;
 
-    @Column({
-        type: DataType.STRING(50),
-        allowNull: false,
-    })
+    @Column({ type: DataType.STRING(50), allowNull: false })
     first_name!: string;
 
-    @Column({
-        type: DataType.STRING(50),
-        allowNull: false,
-    })
+    @Column({ type: DataType.STRING(50), allowNull: false })
     last_name!: string;
 
-    @Column({
-        type: DataType.STRING(20),
-        allowNull: false,
-    })
+    @Column({ type: DataType.STRING(20), allowNull: false })
     phone!: string;
 
     @ForeignKey(() => Role)
-    @Column({
-        type: DataType.UUID,
-        allowNull: false,
-    })
+    @Column({ type: DataType.UUID, allowNull: false })
     role_id!: string;
 
-    @Column({
-        type: DataType.STRING(100),
-        unique: true,
-        allowNull: false,
-    })
+    @Column({ type: DataType.STRING(100), unique: true, allowNull: false })
     email!: string;
 
-    @Column({
-        type: DataType.STRING(255),
-        allowNull: false,
-    })
+    @Column({ type: DataType.STRING(255), allowNull: false })
     password!: string;
 
-    @Column({
-        type: DataType.STRING(255),
-        allowNull: true,
-    })
+    @Column({ type: DataType.STRING(255), allowNull: true })
     profile_picture?: string;
 
+    @ForeignKey(() => Department)
     @Column({
-        type: DataType.STRING(10),
-        allowNull: false,
+        type: DataType.UUID,
+        allowNull: true,
+        defaultValue: null,
     })
-    country_code!: string;
+    department_id?: string;
 
     @Column({
-        type: DataType.STRING(100),
-        allowNull: false,
+        type: DataType.ENUM("Active", "InActive"),
+        allowNull: true,
+        defaultValue: "Active",
     })
-    country!: string;
+    status?: "Active" | "InActive";
 
-    @Column({
-        type: DataType.STRING(100),
-        allowNull: false,
+    @BelongsToMany(() => Project, {
+        through: () => ProjectMember, 
+        foreignKey: "user_id",
+        otherKey: "project_id"
+      })
+      projects?: Project[];
+
+    @BelongsToMany(() => Task, {
+        through: () => TaskMember,
+        foreignKey: "user_id",
+        otherKey: "task_id",
     })
-    state!: string;
+    tasks?: Task[];
 
-    @Column({
-        type: DataType.STRING(100),
-        allowNull: false,
+    @BelongsToMany(() => Activity, {
+        through: () => ActivityMember,
+        foreignKey: "user_id",
+        otherKey: "activity_id",
     })
-    city!: string;
+    activities?: Activity[];
 
-    @Column({
-        type: DataType.STRING(20),
-        allowNull: false,
-    })
-    zip!: string;
+    @HasMany(() => Request, { as: "requests" })
+    requests?: Request[];
 
-    // Instance method to sign JWT and return
+
     getSignedJwtToken() {
         return jwt.sign(
             { id: this.id },
             process.env.JWT_SECRET || "this is the secret",
             {
-                expiresIn: process.env.JWT_EXPIRE ? parseInt(process.env.JWT_EXPIRE) : "30d",
+                expiresIn: process.env.JWT_EXPIRE
+                    ? parseInt(process.env.JWT_EXPIRE)
+                    : "1d",
             }
         );
     }
 }
 
 export default User;
-export { IUser };

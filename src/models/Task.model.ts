@@ -1,7 +1,8 @@
-import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, HasMany, Default } from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo, BelongsToMany, HasMany, Default } from "sequelize-typescript";
 import Project from "./Project.model";
 import Activity from "./Activity.model";
 import User from "./User.model";
+import TaskMember from "./TaskMember.model";
 
 export interface ITask {
     id: string;
@@ -15,7 +16,7 @@ export interface ITask {
     progress?: number;
     status: 'Not Started' | 'Started' | 'InProgress' | 'Canceled' | 'Onhold' | 'Completed';
     approvalStatus: 'Approved' | 'Not Approved' | 'Pending';
-    assignedTo: string | null; // reference to the user table, can be null
+    assignedUsers?: User[];
     activities?: Activity[];
 }
 
@@ -66,12 +67,12 @@ class Task extends Model<ITask> implements ITask {
     })
     approvalStatus!: 'Approved' | 'Not Approved' | 'Pending';
 
-    @ForeignKey(() => User)
-    @Column(DataType.UUID)
-    assignedTo!: string | null;
-
-    @BelongsTo(() => User, 'assignedTo')
-    assignedUser!: User;
+    @BelongsToMany(() => User, {
+        through: () => TaskMember,
+        foreignKey: "task_id",
+        otherKey: "user_id",
+    })
+    assignedUsers!: User[];
 
     @HasMany(() => Activity)
     activities!: Activity[];

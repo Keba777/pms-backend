@@ -1,21 +1,50 @@
 import { NextFunction, Request, Response } from "express";
 import Task from "../models/Task.model";
-import Activity from "../models/Activity.model";  // Import the Activity model
+import Activity from "../models/Activity.model";
+import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Create a new task
 // @route   POST /api/v1/tasks
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const task = await Task.create(req.body);
-        res.status(201).json({ success: true, data: task });
+        const { assignedUsers, ...taskData } = req.body;
+        const task = await Task.create(taskData);
+        if (assignedUsers?.length) {
+            // Validate users exist
+            const users = await User.findAll({
+                where: {
+                    id: assignedUsers,
+                },
+            });
+
+            if (users.length !== assignedUsers.length) {
+                return next(new ErrorResponse("Some users could not be found", 400));
+            }
+            await task.$set("assignedUsers", users);
+        }
+        const createdTask = await Task.findByPk(task.id, {
+            include: [
+                {
+                    model: Activity,
+                    as: "activities",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+        res.status(201).json({ success: true, data: createdTask });
     } catch (error) {
         console.error(error);
         next(new ErrorResponse("Error creating task", 500));
     }
 };
 
-// @desc    Get all tasks
+// @desc    Get all tasks (with activities and assigned users), sorted by creation date
 // @route   GET /api/v1/tasks
 const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -25,8 +54,16 @@ const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
                     model: Activity,
                     as: "activities",
                 },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
             ],
+            order: [["createdAt", "ASC"]],
         });
+
         res.status(200).json({ success: true, data: tasks });
     } catch (error) {
         console.error(error);
@@ -34,7 +71,7 @@ const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-// @desc    Get a task by ID
+// @desc    Get a task by ID (with activities and assigned users)
 // @route   GET /api/v1/tasks/:id
 const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -43,6 +80,12 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
                 {
                     model: Activity,
                     as: "activities",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
                 },
             ],
         });
@@ -62,18 +105,52 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
 // @route   PUT /api/v1/tasks/:id
 const updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        const { assignedUsers, ...taskData } = req.body;
+
         const task = await Task.findByPk(req.params.id);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
         }
 
-        await task.update(req.body);
-        res.status(200).json({ success: true, data: task });
+        await task.update(taskData);
+
+        if (Array.isArray(assignedUsers)) {
+            // Validate users exist
+            const users = await User.findAll({
+                where: {
+                    id: assignedUsers,
+                },
+            });
+
+            if (users.length !== assignedUsers.length) {
+                return next(new ErrorResponse("Some users could not be found", 400));
+            }
+
+            await task.$set("assignedUsers", users);
+        }
+
+        const updatedTask = await Task.findByPk(task.id, {
+            include: [
+                {
+                    model: Activity,
+                    as: "activities",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedTask });
     } catch (error) {
         console.error(error);
         next(new ErrorResponse("Error updating task", 500));
     }
 };
+
 
 // @desc    Delete a task
 // @route   DELETE /api/v1/tasks/:id
