@@ -1,8 +1,22 @@
-import { Model, Table, Column, PrimaryKey, Default, DataType } from "sequelize-typescript";
+import {
+  Model,
+  Table,
+  Column,
+  PrimaryKey,
+  Default,
+  DataType,
+} from "sequelize-typescript";
 
-interface IRole {
+export type PermissionActions = "create" | "update" | "delete" | "manage";
+
+export interface IPermissions {
+  [resource: string]: Partial<Record<PermissionActions, boolean>> | null;
+}
+
+export interface IRole {
   id?: string;
   name: string;
+  permissions?: IPermissions | null;
 }
 
 @Table({
@@ -20,6 +34,13 @@ class Role extends Model<IRole> implements IRole {
     allowNull: false,
   })
   name!: string;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+    defaultValue: null,
+  })
+  permissions?: IPermissions | null;
 }
 
 export default Role;
