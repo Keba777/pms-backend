@@ -77,8 +77,12 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { email, password } = req.body;
 
+    const user = await User.findOne({
+      where: { email },
+      include: [{ model: Role, as: "role" }],
+    });
+
     // Check if user exists
-    const user = await User.findOne({ where: { email } });
     if (!user) {
       return next(new ErrorResponse("Invalid credentials", 401));
     }
@@ -143,6 +147,7 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
         last_name: user.last_name,
         phone: user.phone,
         role_id: user.role_id,
+        role: user.role,
         profile_picture: user.profile_picture,
         department_id: user.department_id,
         status: user.status,

@@ -5,6 +5,7 @@ import Task from "../models/Task.model";
 import Activity from "../models/Activity.model";
 import ErrorResponse from "../utils/error-response.utils";
 import RequestModel from "../models/Request.model";
+import Role from "../models/Role.model";
 
 // @desc    Get all users
 // @route   GET /api/v1/users
@@ -13,6 +14,10 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
         const users = await User.findAll({
             attributes: { exclude: ["password"] },
             include: [
+                {
+                    model: Role,
+                    attributes: ["id", "name", "permissions"],
+                },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
@@ -35,6 +40,10 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
         const user = await User.findByPk(req.params.id, {
             attributes: { exclude: ["password"] },
             include: [
+                {
+                    model: Role,
+                    attributes: ["id", "name", "permissions"],
+                },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
@@ -68,6 +77,10 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
         const updatedUser = await User.findByPk(req.params.id, {
             attributes: { exclude: ["password"] },
             include: [
+                {
+                    model: Role,
+                    attributes: ["id", "name", "permissions"],
+                },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },

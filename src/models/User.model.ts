@@ -7,6 +7,7 @@ import {
     ForeignKey,
     BelongsToMany,
     HasMany,
+    BelongsTo,
 } from "sequelize-typescript";
 import jwt from "jsonwebtoken";
 import Role from "./Role.model";
@@ -62,6 +63,9 @@ class User extends Model<IUser> implements IUser {
     @Column({ type: DataType.UUID, allowNull: false })
     role_id!: string;
 
+    @BelongsTo(() => Role, "role_id")
+    role!: Role;
+
     @Column({ type: DataType.STRING(100), unique: true, allowNull: false })
     email!: string;
 
@@ -87,11 +91,11 @@ class User extends Model<IUser> implements IUser {
     status?: "Active" | "InActive";
 
     @BelongsToMany(() => Project, {
-        through: () => ProjectMember, 
+        through: () => ProjectMember,
         foreignKey: "user_id",
         otherKey: "project_id"
-      })
-      projects?: Project[];
+    })
+    projects?: Project[];
 
     @BelongsToMany(() => Task, {
         through: () => TaskMember,
