@@ -83,6 +83,9 @@ class User extends Model<IUser> implements IUser {
     })
     department_id?: string;
 
+    @BelongsTo(() => Department, "department_id")
+    department?: Department;
+
     @Column({
         type: DataType.ENUM("Active", "InActive"),
         allowNull: true,

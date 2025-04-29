@@ -6,6 +6,7 @@ import Activity from "../models/Activity.model";
 import ErrorResponse from "../utils/error-response.utils";
 import RequestModel from "../models/Request.model";
 import Role from "../models/Role.model";
+import Department from "../models/Department.model";
 
 // @desc    Get all users
 // @route   GET /api/v1/users
@@ -18,6 +19,7 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
                     model: Role,
                     attributes: ["id", "name", "permissions"],
                 },
+                { model: Department, through: { attributes: [] } },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
@@ -44,6 +46,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
                     model: Role,
                     attributes: ["id", "name", "permissions"],
                 },
+                { model: Department, through: { attributes: [] } },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
@@ -81,6 +84,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
                     model: Role,
                     attributes: ["id", "name", "permissions"],
                 },
+                { model: Department, through: { attributes: [] } },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
