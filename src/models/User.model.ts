@@ -8,6 +8,8 @@ import {
     BelongsToMany,
     HasMany,
     BelongsTo,
+    BeforeUpdate,
+    BeforeCreate,
 } from "sequelize-typescript";
 import jwt from "jsonwebtoken";
 import Role from "./Role.model";
@@ -19,6 +21,7 @@ import Request from "./Request.model";
 import ProjectMember from "./ProjectMember.model";
 import TaskMember from "./TaskMember.model";
 import ActivityMember from "./ActivityMember.model";
+import bcrypt from "bcryptjs";
 
 export interface IUser {
     id?: string;
@@ -116,6 +119,16 @@ class User extends Model<IUser> implements IUser {
 
     @HasMany(() => Request, { as: "requests" })
     requests?: Request[];
+
+    // Hash password before creating or updating when changed
+    @BeforeCreate
+    @BeforeUpdate
+    static async hashPassword(instance: User) {
+        if (instance.changed("password")) {
+            const salt = await bcrypt.genSalt(10);
+            instance.password = await bcrypt.hash(instance.password, salt);
+        }
+    }
 
 
     getSignedJwtToken() {

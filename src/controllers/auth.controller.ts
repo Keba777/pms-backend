@@ -84,13 +84,13 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 
     // Check if user exists
     if (!user) {
-      return next(new ErrorResponse("Invalid credentials", 401));
+      return next(new ErrorResponse("Invalid credentials email", 401));
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return next(new ErrorResponse("Invalid credentials", 401));
+      return next(new ErrorResponse("Invalid credentials password", 401));
     }
 
     sendingTokenResponse(user, 200, res);
