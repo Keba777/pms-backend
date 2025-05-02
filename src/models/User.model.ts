@@ -33,6 +33,7 @@ export interface IUser {
     password: string;
     profile_picture?: string;
     department_id?: string;
+    site?: string;
     status?: "Active" | "InActive";
     projects?: Project[];
     tasks?: Task[];
@@ -88,6 +89,9 @@ class User extends Model<IUser> implements IUser {
 
     @BelongsTo(() => Department, "department_id")
     department?: Department;
+
+    @Column({ type: DataType.STRING(50), allowNull: true })
+    site?: string;
 
     @Column({
         type: DataType.ENUM("Active", "InActive"),
