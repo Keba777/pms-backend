@@ -33,8 +33,8 @@ const allowedOrigins = [
     "https://rayconplc.com",
     "http://rayconplc.oasismgmt2.com",
     "https://rayconplc.oasismgmt2.com",
-    "http://tsemex.oasismgmt2.com/login",
-    "https://tsemex.oasismgmt2.com/login"
+    "http://tsemex.oasismgmt2.com",
+    "https://tsemex.oasismgmt2.com"
 ];
 
 app.use(cors({
