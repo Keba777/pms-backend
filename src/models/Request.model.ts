@@ -7,16 +7,19 @@ import {
     ForeignKey,
     BelongsTo,
     HasMany,
+    Default,
 } from "sequelize-typescript";
 import Department from "./Department.model";
 import User from "./User.model";
 import Approval from "./Approval.model";
 import Activity from "./Activity.model";
+import Site from "./Site.model";
 
 export interface IRequest {
     id: string;
     userId: string;
     departmentId?: string;
+    siteId?: string;
     activityId?: string;
     materialCount?: number;
     laborCount?: number;
@@ -53,6 +56,17 @@ class Request extends Model<IRequest> implements IRequest {
     departmentId?: string;
     @BelongsTo(() => Department)
     department?: Department;
+
+    @ForeignKey(() => Site)
+    @Default("3269c7c0-a303-438e-bee4-71f5bdec22b2")
+    @Column({
+        type: DataType.UUID,
+        allowNull: true,
+        defaultValue: "3269c7c0-a303-438e-bee4-71f5bdec22b2"
+    })
+    siteId?: string;
+    @BelongsTo(() => Site)
+    site?: Site;
 
     @ForeignKey(() => Activity)
     @Column({ type: DataType.UUID, allowNull: true })
