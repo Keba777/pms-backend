@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Site from "../models/Site.model";
 import Project from "../models/Project.model";
 import ErrorResponse from "../utils/error-response.utils";
+import Warehouse from "../models/Warehouse.model";
 
 // @desc    Create a new site
 // @route   POST /api/v1/sites
@@ -25,6 +26,10 @@ const getAllSites = async (req: Request, res: Response, next: NextFunction) => {
                     model: Project,
                     as: "projects",
                 },
+                {
+                    model: Warehouse,
+                    as: "warehouses"
+                }
             ],
             order: [["createdAt", "ASC"]],
         });
@@ -46,6 +51,10 @@ const getSiteById = async (req: Request, res: Response, next: NextFunction) => {
                     model: Project,
                     as: "projects",
                 },
+                {
+                    model: Warehouse,
+                    as: "warehouses"
+                }
             ],
         });
 

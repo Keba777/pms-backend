@@ -1,9 +1,10 @@
 import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from "sequelize-typescript";
-import Equipment from "./Equipment.model";
+import Site from "./Site.model";
 
 export interface IWarehouse {
     id: string;
     type: string;
+    siteId?: string;
     owner: string;
     workingStatus: 'Operational' | 'Non-Operational';
     currentWorkingSite: string;
@@ -26,6 +27,12 @@ class Warehouse extends Model<IWarehouse> implements IWarehouse {
         allowNull: false,
     })
     type!: string;
+
+    @ForeignKey(() => Site)
+    @Column({ type: DataType.UUID, allowNull: false })
+    siteId!: string;
+    @BelongsTo(() => Site)
+    site!: Site;
 
     @Column({
         type: DataType.STRING,

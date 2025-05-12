@@ -8,6 +8,7 @@ import {
     HasMany,
 } from "sequelize-typescript";
 import Project from "./Project.model";
+import Warehouse from "./Warehouse.model";
 
 export interface ISite {
     id: string;
@@ -27,6 +28,9 @@ class Site extends Model<ISite> implements ISite {
 
     @HasMany(() => Project, { foreignKey: 'site_id' })
     projects?: Project[];
+
+    @HasMany(() => Warehouse)
+    warehouses!: Warehouse[];
 }
 
 export default Site;
