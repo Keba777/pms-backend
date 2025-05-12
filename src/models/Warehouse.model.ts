@@ -7,7 +7,6 @@ export interface IWarehouse {
     siteId?: string;
     owner: string;
     workingStatus: 'Operational' | 'Non-Operational';
-    currentWorkingSite: string;
     approvedBy?: string;
     remark?: string;
     status: 'Active' | 'Inactive' | 'Under Maintenance';
@@ -46,11 +45,6 @@ class Warehouse extends Model<IWarehouse> implements IWarehouse {
     })
     workingStatus!: 'Operational' | 'Non-Operational';
 
-    @Column({
-        type: DataType.STRING,
-        allowNull: false,
-    })
-    currentWorkingSite!: string;
 
     @Column({
         type: DataType.STRING,
