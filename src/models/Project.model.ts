@@ -22,6 +22,7 @@ export interface IProject {
     budget: number;
     client: string;
     site: string;
+    site_id?: string;
     progress?: number;
     isFavourite?: boolean;
     status: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed";
@@ -61,6 +62,12 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.STRING(100))
     site!: string;
 
+    @Column({
+        type: DataType.UUID,
+        allowNull: true,
+    })
+    site_id?: string;
+
     @Default(0)
     @Column(DataType.INTEGER)
     progress!: number;
@@ -82,11 +89,11 @@ class Project extends Model<IProject> implements IProject {
     status!: IProject["status"];
 
     @BelongsToMany(() => User, {
-        through: () => ProjectMember, 
+        through: () => ProjectMember,
         foreignKey: "project_id",
         otherKey: "user_id"
-      })
-      members?: User[];
+    })
+    members?: User[];
 
     @Column({
         type: DataType.ARRAY(DataType.UUID),
