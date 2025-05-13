@@ -10,6 +10,7 @@ import {
 import Project from "./Project.model";
 import Warehouse from "./Warehouse.model";
 import Equipment from "./Equipment.model";
+import Labor from "./Labor.model";
 
 export interface ISite {
     id: string;
@@ -35,6 +36,9 @@ class Site extends Model<ISite> implements ISite {
 
     @HasMany(() => Warehouse)
     equipments!: Equipment[];
+
+    @HasMany(() => Warehouse)
+    labors!: Labor[];
 }
 
 export default Site;
