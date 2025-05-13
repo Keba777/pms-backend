@@ -9,6 +9,7 @@ import {
 } from "sequelize-typescript";
 import Project from "./Project.model";
 import Warehouse from "./Warehouse.model";
+import Equipment from "./Equipment.model";
 
 export interface ISite {
     id: string;
@@ -31,6 +32,9 @@ class Site extends Model<ISite> implements ISite {
 
     @HasMany(() => Warehouse)
     warehouses!: Warehouse[];
+
+    @HasMany(() => Warehouse)
+    equipments!: Equipment[];
 }
 
 export default Site;

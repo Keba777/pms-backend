@@ -3,6 +3,7 @@ import Site from "../models/Site.model";
 import Project from "../models/Project.model";
 import ErrorResponse from "../utils/error-response.utils";
 import Warehouse from "../models/Warehouse.model";
+import Equipment from "../models/Equipment.model";
 
 // @desc    Create a new site
 // @route   POST /api/v1/sites
@@ -29,6 +30,10 @@ const getAllSites = async (req: Request, res: Response, next: NextFunction) => {
                 {
                     model: Warehouse,
                     as: "warehouses"
+                },
+                {
+                    model: Equipment,
+                    as: "equipments"
                 }
             ],
             order: [["createdAt", "ASC"]],
@@ -54,6 +59,10 @@ const getSiteById = async (req: Request, res: Response, next: NextFunction) => {
                 {
                     model: Warehouse,
                     as: "warehouses"
+                },
+                {
+                    model: Equipment,
+                    as: "equipments"
                 }
             ],
         });
@@ -87,6 +96,14 @@ const updateSite = async (req: Request, res: Response, next: NextFunction) => {
                     model: Project,
                     as: "projects",
                 },
+                {
+                    model: Warehouse,
+                    as: "warehouses"
+                },
+                {
+                    model: Equipment,
+                    as: "equipments"
+                }
             ],
         });
 

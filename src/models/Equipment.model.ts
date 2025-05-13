@@ -4,11 +4,16 @@ import {
     Model,
     DataType,
     PrimaryKey,
+    ForeignKey,
+    BelongsTo,
 } from "sequelize-typescript";
+import Site from "./Site.model";
 
 export interface IEquipment {
     id: string;
     item: string;
+    siteId: string;
+    site?: Site
     type?: string
     unit: string;
     manufacturer?: string;
@@ -16,6 +21,8 @@ export interface IEquipment {
     year?: string;
     quantity?: number
     minQuantity?: number;
+    reorderQuantity?: number;
+    outOfStore?: number;
     estimatedHours?: number;
     rate?: number;
     totalAmount?: number;
@@ -33,6 +40,12 @@ class Equipment extends Model<IEquipment> implements IEquipment {
 
     @Column({ type: DataType.STRING, allowNull: false })
     item!: string;
+
+    @ForeignKey(() => Site)
+    @Column({ type: DataType.UUID, allowNull: false })
+    siteId!: string;
+    @BelongsTo(() => Site)
+    site!: Site;
 
     @Column({ type: DataType.STRING, allowNull: false })
     unit!: string;
@@ -54,6 +67,12 @@ class Equipment extends Model<IEquipment> implements IEquipment {
 
     @Column({ type: DataType.INTEGER, allowNull: true })
     minQuantity?: number;
+
+    @Column({ type: DataType.INTEGER, allowNull: true })
+    reorderQuantity?: number;
+
+    @Column({ type: DataType.INTEGER, allowNull: true })
+    outOfStore?: number;
 
     @Column({ type: DataType.DECIMAL(8, 2), allowNull: true })
     estimatedHours?: number;
