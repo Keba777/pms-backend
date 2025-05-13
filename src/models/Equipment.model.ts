@@ -9,13 +9,20 @@ import {
 export interface IEquipment {
     id: string;
     item: string;
+    type?: string
     unit: string;
-    manufacturer?: string; // now optional
-    year?: string; // now optional
-    minQuantity?: number;       // now optional
-    estimatedHours?: number;    // now optional
-    rate?: number;              // now optional
-    totalAmount?: number;       // now optional
+    manufacturer?: string;
+    model?: string
+    year?: string;
+    quantity?: number
+    minQuantity?: number;
+    estimatedHours?: number;
+    rate?: number;
+    totalAmount?: number;
+    overTime?: number;
+    condition?: string
+    owner?: "Raycon" | "Rental"
+    status?: "Allocated" | "Unallocated" | "OnMaintainance" | "InActive"
 }
 
 @Table({ tableName: "equipments", timestamps: true })
@@ -30,11 +37,20 @@ class Equipment extends Model<IEquipment> implements IEquipment {
     @Column({ type: DataType.STRING, allowNull: false })
     unit!: string;
 
+    @Column({ type: DataType.STRING, allowNull: false })
+    type?: string;
+
     @Column({ type: DataType.STRING, allowNull: true })
     manufacturer?: string;
 
     @Column({ type: DataType.STRING, allowNull: true })
+    model?: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
     year?: string;
+
+    @Column({ type: DataType.INTEGER, allowNull: true })
+    quantity?: number;
 
     @Column({ type: DataType.INTEGER, allowNull: true })
     minQuantity?: number;
@@ -47,6 +63,26 @@ class Equipment extends Model<IEquipment> implements IEquipment {
 
     @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
     totalAmount?: number;
+
+    @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
+    overTime?: number;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    condition?: string;
+
+    @Column({
+        type: DataType.ENUM('Raycon', 'Rental'),
+        allowNull: true,
+        defaultValue: 'Raycon',
+    })
+    owner?: 'Raycon' | 'Rental';
+
+    @Column({
+        type: DataType.ENUM('Allocated', 'Unallocated', 'OnMaintainance', 'InActive'),
+        allowNull: true,
+        defaultValue: "Unallocated",
+    })
+    status?: "Allocated" | "Unallocated" | "OnMaintainance" | "InActive"
 }
 
 export default Equipment;
