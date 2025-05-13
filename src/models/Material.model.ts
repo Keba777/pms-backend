@@ -13,6 +13,7 @@ export interface IMaterial {
     id: string;
     warehouseId?: string;
     item: string;
+    type?: string;
     unit: string;
     quantity?: number;
     minQuantity?: number;
@@ -38,6 +39,9 @@ class Material extends Model<IMaterial> implements IMaterial {
 
     @Column({ type: DataType.STRING, allowNull: false })
     item!: string;
+
+    @Column({ type: DataType.STRING, allowNull: false })
+    type?: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
     unit!: string;
