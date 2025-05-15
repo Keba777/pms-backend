@@ -34,10 +34,10 @@ class Site extends Model<ISite> implements ISite {
     @HasMany(() => Warehouse)
     warehouses!: Warehouse[];
 
-    @HasMany(() => Warehouse)
+    @HasMany(() => Equipment)
     equipments!: Equipment[];
 
-    @HasMany(() => Warehouse)
+    @HasMany(() => Labor)
     labors!: Labor[];
 }
 
