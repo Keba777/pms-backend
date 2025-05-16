@@ -35,7 +35,8 @@ const allowedOrigins = [
     "http://rayconplc.oasismgmt2.com",
     "https://rayconplc.oasismgmt2.com",
     "http://tsemex.oasismgmt2.com",
-    "https://tsemex.oasismgmt2.com"
+    "https://tsemex.oasismgmt2.com",
+    "https://pms-frontend-nu-opal.vercel.app"
 ];
 
 app.use(cors({
