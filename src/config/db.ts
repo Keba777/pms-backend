@@ -21,6 +21,7 @@ import TaskMember from "../models/TaskMember.model";
 import ActivityMember from "../models/ActivityMember.model";
 import Notification from "../models/Notification.model";
 import Site from "../models/Site.model";
+import { EquipmentTimesheet, LaborTimesheet, MaterialBalanceSheet } from "../models/Timesheet.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -54,7 +55,10 @@ const sequelize: Sequelize = new Sequelize({
         TaskMember,
         ActivityMember,
         Notification,
-        Site
+        Site,
+        LaborTimesheet,
+        EquipmentTimesheet,
+        MaterialBalanceSheet
     ],
 
     logging: false,

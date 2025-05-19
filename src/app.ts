@@ -20,6 +20,7 @@ import requestRouter from "./routes/request.route"
 import approvalRouter from "./routes/approval.route"
 import notificationRouter from "./routes/notification.route";
 import siteRouter from "./routes/site.route";
+import timesheetRouter from "./routes/timesheet.route"
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -74,6 +75,7 @@ app.use("/api/v1/requests", protectRoute, requestRouter);
 app.use("/api/v1/approvals", protectRoute, approvalRouter);
 app.use("/api/v1/notifications", protectRoute, notificationRouter);
 app.use("/api/v1/sites", protectRoute, siteRouter);
+app.use("/api/v1/timesheets", protectRoute, timesheetRouter)
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
