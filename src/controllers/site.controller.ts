@@ -5,6 +5,7 @@ import ErrorResponse from "../utils/error-response.utils";
 import Warehouse from "../models/Warehouse.model";
 import Equipment from "../models/Equipment.model";
 import Labor from "../models/Labor.model";
+import User from "../models/User.model";
 
 // @desc    Create a new site
 // @route   POST /api/v1/sites
@@ -24,6 +25,10 @@ const getAllSites = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const sites = await Site.findAll({
             include: [
+                {
+                    model: User,
+                    as: "users"
+                },
                 {
                     model: Project,
                     as: "projects",
@@ -57,6 +62,10 @@ const getSiteById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const site = await Site.findByPk(req.params.id, {
             include: [
+                {
+                    model: User,
+                    as: "users"
+                },
                 {
                     model: Project,
                     as: "projects",
@@ -101,6 +110,10 @@ const updateSite = async (req: Request, res: Response, next: NextFunction) => {
 
         const updatedSite = await Site.findByPk(site.id, {
             include: [
+                {
+                    model: User,
+                    as: "users"
+                },
                 {
                     model: Project,
                     as: "projects",

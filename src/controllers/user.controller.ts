@@ -101,6 +101,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
                 { model: RequestModel },
+                
             ],
         });
 

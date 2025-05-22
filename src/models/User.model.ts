@@ -22,6 +22,7 @@ import ProjectMember from "./ProjectMember.model";
 import TaskMember from "./TaskMember.model";
 import ActivityMember from "./ActivityMember.model";
 import bcrypt from "bcryptjs";
+import Site from "./Site.model";
 
 export interface IUser {
     id?: string;
@@ -33,7 +34,9 @@ export interface IUser {
     password: string;
     profile_picture?: string;
     department_id?: string;
-    site?: string;
+    siteId: string;
+    site?: Site
+    responsiblities?: string[]
     status?: "Active" | "InActive";
     projects?: Project[];
     tasks?: Task[];
@@ -90,8 +93,14 @@ class User extends Model<IUser> implements IUser {
     @BelongsTo(() => Department, "department_id")
     department?: Department;
 
-    @Column({ type: DataType.STRING(50), allowNull: true })
-    site?: string;
+    @ForeignKey(() => Site)
+    @Column({ type: DataType.UUID, allowNull: false })
+    siteId!: string;
+    @BelongsTo(() => Site)
+    site!: Site;
+
+    @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: false })
+    responsiblities?: string[];
 
     @Column({
         type: DataType.ENUM("Active", "InActive"),
