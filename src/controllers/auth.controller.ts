@@ -28,6 +28,8 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       role_name,
       password,
       department_id,
+      siteId,
+      responsiblities,
       status,
     } = req.body;
 
@@ -61,6 +63,8 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       password: hashedPassword,
       profile_picture,
       department_id: department_id || null,
+      siteId: siteId,
+      responsiblities: responsiblities || null,
       status: status || "Active",
     });
 
@@ -150,6 +154,8 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
         role: user.role,
         profile_picture: user.profile_picture,
         department_id: user.department_id,
+        siteId: user.siteId,
+        responsiblities: user.responsiblities,
         status: user.status,
         token,
       },
