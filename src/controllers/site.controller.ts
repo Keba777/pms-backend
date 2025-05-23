@@ -27,7 +27,7 @@ const getAllSites = async (req: Request, res: Response, next: NextFunction) => {
             include: [
                 {
                     model: User,
-                    as: "users"
+                    as: "users" 
                 },
                 {
                     model: Project,

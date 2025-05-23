@@ -11,6 +11,7 @@ import Project from "./Project.model";
 import Warehouse from "./Warehouse.model";
 import Equipment from "./Equipment.model";
 import Labor from "./Labor.model";
+import User from "./User.model";
 
 export interface ISite {
     id: string;
@@ -27,6 +28,9 @@ class Site extends Model<ISite> implements ISite {
 
     @Column(DataType.STRING(100))
     name!: string;
+
+    @HasMany(() => User, { foreignKey: 'siteId' })
+    users?: User[];
 
     @HasMany(() => Project, { foreignKey: 'site_id' })
     projects?: Project[];
