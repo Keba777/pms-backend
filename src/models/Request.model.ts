@@ -25,6 +25,7 @@ export interface IRequest {
     laborCount?: number;
     equipmentCount?: number;
     status: "Pending" | "In Progress" | "Completed" | "Rejected";
+    priority?: "Urgent" | "Medium" | "Low" 
     laborIds?: string[];
     materialIds?: string[];
     equipmentIds?: string[];

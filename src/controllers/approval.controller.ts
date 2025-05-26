@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import ApprovalModel from "../models/Approval.model";
 import ErrorResponse from "../utils/error-response.utils";
+import Department from "../models/Department.model";
+import User from "../models/User.model";
 
 // @desc    Create a new approval
 // @route   POST /api/v1/approvals
@@ -18,7 +20,36 @@ const createApproval = async (req: Request, res: Response, next: NextFunction) =
 // @route   GET /api/v1/approvals
 const getAllApprovals = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const approvals = await ApprovalModel.findAll();
+        const approvals = await ApprovalModel.findAll({
+            include: [
+                {
+                    model: Department,
+                    as: "department",
+                    attributes: ["id", "name"],
+                },
+                {
+                    model: User,
+                    as: "approvedByUser",
+                    attributes: ["id", "first_name", "last_name", "email"],
+                },
+                {
+                    model: User,
+                    as: "checkedByUser",
+                    attributes: ["id", "first_name", "last_name", "email"],
+                },
+                {
+                    model: Department,
+                    as: "prevDepartment",
+                    attributes: ["id", "name"],
+                },
+                {
+                    model: Department,
+                    as: "nextDepartment",
+                    attributes: ["id", "name"],
+                },
+            ],
+            order: [["createdAt", "ASC"]],
+        });
         res.status(200).json({ success: true, data: approvals });
     } catch (error) {
         console.error(error);
@@ -30,7 +61,36 @@ const getAllApprovals = async (req: Request, res: Response, next: NextFunction) 
 // @route   GET /api/v1/approvals/:id
 const getApprovalById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const approval = await ApprovalModel.findByPk(req.params.id);
+        const approval = await ApprovalModel.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Department,
+                    as: "department",
+                    attributes: ["id", "name"],
+                },
+                {
+                    model: User,
+                    as: "approvedByUser",
+                    attributes: ["id", "first_name", "last_name", "email"],
+                },
+                {
+                    model: User,
+                    as: "checkedByUser",
+                    attributes: ["id", "first_name", "last_name", "email"],
+                },
+                {
+                    model: Department,
+                    as: "prevDepartment",
+                    attributes: ["id", "name"],
+                },
+                {
+                    model: Department,
+                    as: "nextDepartment",
+                    attributes: ["id", "name"],
+                },
+            ],
+            order: [["createdAt", "ASC"]],
+        });
 
         if (!approval) {
             return next(new ErrorResponse("Approval not found", 404));
