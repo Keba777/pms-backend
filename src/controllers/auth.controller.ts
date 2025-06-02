@@ -31,6 +31,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       siteId,
       responsiblities,
       status,
+      access
     } = req.body;
 
     // Check if role exists
@@ -65,6 +66,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       department_id: department_id || null,
       siteId: siteId,
       responsiblities: responsiblities || null,
+      access: access || "Low Access",
       status: status || "Active",
     });
 
@@ -156,6 +158,7 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
         department_id: user.department_id,
         siteId: user.siteId,
         responsiblities: user.responsiblities,
+        access: user.access,
         status: user.status,
         token,
       },

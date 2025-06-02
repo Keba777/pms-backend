@@ -42,6 +42,7 @@ export interface IUser {
     tasks?: Task[];
     activities?: Activity[];
     requests?: Request[];
+    access?: "Low Access" | "Full Access" | "Average Access";
 }
 
 @Table({
@@ -132,6 +133,13 @@ class User extends Model<IUser> implements IUser {
 
     @HasMany(() => Request, { as: "requests" })
     requests?: Request[];
+
+    @Column({
+        type: DataType.ENUM("Average", "Full Access", "Average Access"),
+        allowNull: true,
+        defaultValue: "Average",
+    })
+    access?: "Low Access" | "Full Access" | "Average Access";
 
     // Hash password before creating or updating when changed
     @BeforeCreate
