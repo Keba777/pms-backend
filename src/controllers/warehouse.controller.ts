@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Warehouse from "../models/Warehouse.model";
 import ErrorResponse from "../utils/error-response.utils";
+import Site from "../models/Site.model";
 
 // @desc    Create a new warehouse
 // @route   POST /api/v1/warehouses
@@ -18,7 +19,15 @@ export const createWarehouse = async (req: Request, res: Response, next: NextFun
 // @route   GET /api/v1/warehouses
 export const getAllWarehouses = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const warehouses = await Warehouse.findAll();
+        const warehouses = await Warehouse.findAll({
+            include: [
+                {
+                    model: Site,
+                    as: "site",
+                    attributes: ["id", "name"],
+                },
+            ]
+        });
         res.status(200).json({ success: true, data: warehouses });
     } catch (error) {
         console.error(error);
@@ -30,7 +39,15 @@ export const getAllWarehouses = async (req: Request, res: Response, next: NextFu
 // @route   GET /api/v1/warehouses/:id
 export const getWarehouseById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const warehouse = await Warehouse.findByPk(req.params.id);
+        const warehouse = await Warehouse.findByPk(req.params.id, {
+            include: [
+                {
+                    model: Site,
+                    as: "site",
+                    attributes: ["id", "name"],
+                },
+            ]
+        });
         if (!warehouse) {
             return next(new ErrorResponse("Warehouse not found", 404));
         }
