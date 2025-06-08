@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import RequestModel from "../models/Request.model";
 import Site from "../models/Site.model";
 import ErrorResponse from "../utils/error-response.utils";
+import User from "../models/User.model";
+import Department from "../models/Department.model";
+import Activity from "../models/Activity.model";
 
 // @desc    Create a new request
 // @route   POST /api/v1/requests
@@ -21,10 +24,10 @@ const getAllRequests = async (req: Request, res: Response, next: NextFunction) =
   try {
     const requests = await RequestModel.findAll({
       include: [
-        {
-          model: Site,
-          as: "site",
-        },
+        { model: Site, as: "site" },
+        { model: User, as: "user", },
+        { model: Department, as: "department" },
+        { model: Activity, as: "activity" }
       ],
       order: [["createdAt", "ASC"]],
     });
@@ -41,10 +44,10 @@ const getRequestById = async (req: Request, res: Response, next: NextFunction) =
   try {
     const request = await RequestModel.findByPk(req.params.id, {
       include: [
-        {
-          model: Site,
-          as: "site",
-        },
+        { model: Site, as: "site" },
+        { model: User, as: "user", },
+        { model: Department, as: "department" },
+        { model: Activity, as: "activity" }
       ],
     });
 
@@ -72,7 +75,12 @@ const updateRequest = async (req: Request, res: Response, next: NextFunction) =>
 
     // reload with site included
     const updated = await RequestModel.findByPk(request.id, {
-      include: [{ model: Site, as: "site" }],
+      include: [
+        { model: Site, as: "site" },
+        { model: User, as: "user", },
+        { model: Department, as: "department" },
+        { model: Activity, as: "activity" }
+      ],
     });
 
     res.status(200).json({ success: true, data: updated });
@@ -105,7 +113,12 @@ const getRequestsByUserId = async (req: Request, res: Response, next: NextFuncti
   try {
     const requests = await RequestModel.findAll({
       where: { userId: req.params.userId },
-      include: [{ model: Site, as: "site" }],
+      include: [
+        { model: Site, as: "site" },
+        { model: User, as: "user", },
+        { model: Department, as: "department" },
+        { model: Activity, as: "activity" }
+      ],
       order: [["createdAt", "ASC"]],
     });
 
