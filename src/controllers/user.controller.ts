@@ -8,6 +8,8 @@ import RequestModel from "../models/Request.model";
 import Role from "../models/Role.model";
 import Department from "../models/Department.model";
 import Site from "../models/Site.model";
+import cloudinary from "../config/cloudinary";
+import fs from "fs";
 
 // @desc    Get all users
 // @route   GET /api/v1/users
@@ -86,6 +88,12 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Update a user
 // @route   PUT /api/v1/users/:id
+declare module "express-serve-static-core" {
+    interface Request {
+        file?: Express.Multer.File;
+    }
+}
+
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = await User.findByPk(req.params.id);
@@ -93,31 +101,31 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
             return next(new ErrorResponse("User not found", 404));
         }
 
-        await user.update(req.body);
+        const updates: Record<string, any> = { ...req.body };
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: "/pms/images",
+                use_filename: true,
+            });
 
-        // Fetch the updated user without password
+            fs.unlink(req.file.path, (err: any) => {
+                if (err) console.warn("Failed to delete temp file:", err);
+            });
+
+            updates.profile_picture = result.secure_url;
+        }
+
+        await user.update(updates);
         const updatedUser = await User.findByPk(req.params.id, {
             attributes: { exclude: ["password"] },
             include: [
-                {
-                    model: Role,
-                    attributes: ["id", "name", "permissions"],
-                },
-                {
-                    model: Department,
-                    as: "department",
-                    attributes: ["id", "name"],
-                },
-                {
-                    model: Site,
-                    as: "site",
-                    attributes: ["id", "name"],
-                },
+                { model: Role, attributes: ["id", "name", "permissions"] },
+                { model: Department, as: "department", attributes: ["id", "name"] },
+                { model: Site, as: "site", attributes: ["id", "name"] },
                 { model: Project, through: { attributes: [] } },
                 { model: Task, through: { attributes: [] } },
                 { model: Activity, through: { attributes: [] } },
                 { model: RequestModel },
-
             ],
         });
 

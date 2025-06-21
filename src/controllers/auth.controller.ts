@@ -4,6 +4,7 @@ import Role from "../models/Role.model";
 import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import bcrypt from "bcryptjs";
+import fs from "fs";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -51,6 +52,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
         folder: "/pms/images",
         use_filename: true,
       });
+      fs.unlink(req.file.path, () => {});
       profile_picture = result.secure_url;
     }
 
