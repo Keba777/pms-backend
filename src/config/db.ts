@@ -24,6 +24,7 @@ import Site from "../models/Site.model";
 import { EquipmentTimesheet, LaborTimesheet, MaterialBalanceSheet } from "../models/Timesheet.model";
 import Issue from "../models/Issue.model";
 import StoreRequisition from "../models/StoreRequisition.model";
+import ChatMessage from "../models/ChatMessage.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -62,7 +63,8 @@ const sequelize: Sequelize = new Sequelize({
         EquipmentTimesheet,
         MaterialBalanceSheet,
         Issue,
-        StoreRequisition
+        StoreRequisition,
+        ChatMessage
     ],
 
     logging: false,

@@ -10,6 +10,7 @@ import Department from "../models/Department.model";
 import Site from "../models/Site.model";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
+import { Op } from 'sequelize';
 
 // @desc    Get all users
 // @route   GET /api/v1/users
@@ -153,4 +154,13 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { getAllUsers, getUserById, updateUser, deleteUser };
+const fetchUsersExcluding = async (excludeId: string) => {
+    return User.findAll({
+        where: {
+            id: { [Op.ne]: excludeId }
+        },
+        attributes: ['id', 'name', 'email']
+    });
+};
+
+export { getAllUsers, getUserById, updateUser, deleteUser, fetchUsersExcluding };
