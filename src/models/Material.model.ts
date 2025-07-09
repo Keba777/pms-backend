@@ -21,7 +21,7 @@ export interface IMaterial {
     outOfStore?: number;
     rate?: number;
     shelfNo?: string;
-    status?: "Active" | "Inactive";
+    status?: "Allocated" | "Unallocated";
     totalPrice?: number;
 }
 
@@ -65,11 +65,11 @@ class Material extends Model<IMaterial> implements IMaterial {
     shelfNo?: string;
 
     @Column({
-        type: DataType.ENUM('Active', 'Inactive'),
+        type: DataType.ENUM('Allocated', 'Unallocated'),
         allowNull: true,
-        defaultValue: 'Active',
+        defaultValue: 'Unallocated',
     })
-    status?: 'Active' | 'Inactive';
+    status?: 'Allocated' | 'Unallocated';
 
     @Column({
         type: DataType.VIRTUAL(DataType.DECIMAL(12, 2)),
