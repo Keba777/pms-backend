@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Labor from "../models/Labor.model";
 import ErrorResponse from "../utils/error-response.utils";
+import LaborInformation from "../models/LaborInformation.model";
 
 // @desc    Create a new labor
 // @route   POST /api/v1/labors
@@ -18,7 +19,12 @@ export const createLabor = async (req: Request, res: Response, next: NextFunctio
 // @route   GET /api/v1/labors
 export const getAllLabors = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const labors = await Labor.findAll();
+        const labors = await Labor.findAll({
+            include: [
+                { model: LaborInformation, as: "laborInformations" }
+            ],
+            order: [["createdAt", "ASC"]],
+        });
         res.status(200).json({ success: true, data: labors });
     } catch (error) {
         console.error(error);
@@ -30,7 +36,12 @@ export const getAllLabors = async (req: Request, res: Response, next: NextFuncti
 // @route   GET /api/v1/labors/:id
 export const getLaborById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const labor = await Labor.findByPk(req.params.id);
+        const labor = await Labor.findByPk(req.params.id, {
+            include: [
+                { model: LaborInformation, as: "laborInformations" }
+            ],
+            order: [["createdAt", "ASC"]],
+        });
         if (!labor) {
             return next(new ErrorResponse("Labor not found", 404));
         }

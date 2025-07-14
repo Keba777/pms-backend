@@ -6,8 +6,10 @@ import {
     PrimaryKey,
     ForeignKey,
     BelongsTo,
+    HasMany,
 } from 'sequelize-typescript';
 import Site from './Site.model';
+import LaborInformation from './LaborInformation.model';
 
 export interface ILabor {
     id: string;
@@ -23,6 +25,7 @@ export interface ILabor {
     totalAmount?: number;
     skill_level?: string;
     responsiblePerson?: string
+    laborInformations?: LaborInformation[];
     allocationStatus?: "Allocated" | "Unallocated" | "OnLeave"
     status?: "Active" | "InActive"
 }
@@ -65,6 +68,9 @@ class Labor extends Model<ILabor> implements ILabor {
 
     @Column({ type: DataType.STRING, allowNull: true })
     responsiblePerson?: string;
+
+    @HasMany(() => LaborInformation)
+    laborInformations!: LaborInformation[];
 
     @Column({
         type: DataType.ENUM('Allocated', 'Unallocated', 'OnLeave'),

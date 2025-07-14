@@ -23,6 +23,7 @@ import siteRouter from "./routes/site.route";
 import timesheetRouter from "./routes/timesheet.route"
 import issueRouter from "./routes/issue.route";
 import storeRequisitionRouter from "./routes/storeRequisition.route";
+import laborInformationRouter from "./routes/laborInformation.route";
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -81,6 +82,7 @@ app.use("/api/v1/sites", protectRoute, siteRouter);
 app.use("/api/v1/timesheets", protectRoute, timesheetRouter)
 app.use("/api/v1/issues", protectRoute, issueRouter);
 app.use("/api/v1/store-requisitions", protectRoute, storeRequisitionRouter);
+app.use("/api/v1/labor-informations", protectRoute, laborInformationRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
