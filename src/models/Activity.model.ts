@@ -4,6 +4,27 @@ import Request from "./Request.model";
 import User from "./User.model";
 import ActivityMember from "./ActivityMember.model";
 
+// Define interfaces for list items
+export interface WorkForceItem {
+    man_power: string;
+    qty: number;
+    rate: number;
+    est_hrs: number;
+}
+
+export interface MachineryItem {
+    equipment: string;
+    qty: number;
+    rate: number;
+    est_hrs: number;
+}
+
+export interface MaterialItem {
+    material: string;
+    qty: number;
+    rate: number;
+}
+
 export interface IActivity {
     id: string;
     activity_name: string;
@@ -20,6 +41,18 @@ export interface IActivity {
     approvalStatus: 'Approved' | 'Not Approved' | 'Pending';
     assignedUsers?: User[];
     requests?: Request[];
+    image?: string;
+    labor_index_factor?: number;
+    labor_utilization_factor?: number;
+    labor_working_hours_per_day?: number;
+    machinery_index_factor?: number;
+    machinery_utilization_factor?: number;
+    machinery_working_hours_per_day?: number;
+    work_force?: WorkForceItem[];
+    machinery_list?: MachineryItem[];
+    materials_list?: MaterialItem[];
+    checked_by_name?: string;
+    checked_by_date?: Date;
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -116,6 +149,71 @@ class Activity extends Model<IActivity> implements IActivity {
 
     @HasMany(() => Request)
     requests?: Request[];
+
+
+    @Column({
+        type: DataType.STRING(255),
+        allowNull: true,
+    })
+    image?: string;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    labor_index_factor?: number;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    labor_utilization_factor?: number;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    labor_working_hours_per_day?: number;
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    machinery_index_factor?: number;
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    machinery_utilization_factor?: number;
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    machinery_working_hours_per_day?: number;
+    @Column({
+        type: DataType.JSONB,
+        allowNull: true,
+    })
+    work_force?: WorkForceItem[];
+    @Column({
+        type: DataType.JSONB,
+        allowNull: true,
+    })
+    machinery_list?: MachineryItem[];
+    @Column({
+        type: DataType.JSONB,
+        allowNull: true,
+    })
+    materials_list?: MaterialItem[];
+    @Column({
+        type: DataType.STRING(100),
+        allowNull: true,
+    })
+    checked_by_name?: string;
+    @Column({
+        type: DataType.DATE,
+        allowNull: true,
+    })
+    checked_by_date?: Date;
 }
 
 export default Activity;
