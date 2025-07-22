@@ -109,32 +109,35 @@ class Equipment extends Model<IEquipment> implements IEquipment {
     })
     status?: "Allocated" | "Unallocated" | "OnMaintainance" | "InActive";
 
-    @Column({ type: DataType.DECIMAL(8, 2), allowNull: true })
-    utilization_factor?: number; // Utilization Factor
+    @Column({ type: DataType.DECIMAL(8, 2), allowNull: true, field: 'utilization_factor' })
+    utilization_factor?: number;
 
     @Column({
         type: DataType.DECIMAL(8, 2),
         allowNull: true,
+        field: 'total_time',
         get() {
-            const explicitTotalTime = this.getDataValue('totalTime');
-            if (explicitTotalTime !== undefined && explicitTotalTime !== null) {
-                return explicitTotalTime;
+            const explicitTotalTime = this.getDataValue('total_time');
+            if (explicitTotalTime !== null && explicitTotalTime !== undefined) {
+                return Number(explicitTotalTime.toFixed(2));
             }
-            // If totalTime is not set, calculate it based on estimatedHours
             const estimatedHours = this.getDataValue('estimatedHours');
-            return estimatedHours ? parseFloat(estimatedHours.toFixed(2)) : null;
+            if (typeof estimatedHours === 'number' && !isNaN(estimatedHours)) {
+                return Number(estimatedHours.toFixed(2));
+            }
+            return null;
         }
     })
-    totalTime?: number; // Total Time, defaults to estimatedHours if not provided
+    totalTime?: number;
 
-    @Column({ type: DataType.DATE, allowNull: true })
-    startingDate?: Date; // Starting Date
+    @Column({ type: DataType.DATE, allowNull: true, field: 'starting_date' })
+    startingDate?: Date;
 
-    @Column({ type: DataType.DATE, allowNull: true })
-    dueDate?: Date; // Due Date
+    @Column({ type: DataType.DATE, allowNull: true, field: 'due_date' })
+    dueDate?: Date;
 
-    @Column({ type: DataType.DATE, allowNull: true })
-    shiftingDate?: Date; // Shifting Date
+    @Column({ type: DataType.DATE, allowNull: true, field: 'shifting_date' })
+    shiftingDate?: Date;
 }
 
 export default Equipment;
