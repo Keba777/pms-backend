@@ -28,11 +28,11 @@ export interface ILabor {
     laborInformations?: LaborInformation[];
     allocationStatus?: "Allocated" | "Unallocated" | "OnLeave";
     status?: "Active" | "InActive";
-    utilization_factor?: number; // Updated field: Utilization Factor
-    totalTime?: number; // New field: Total Time
-    startingDate?: Date; // New field: Starting Date
-    dueDate?: Date; // New field: Due Date
-    shiftingDate?: Date; // New field: Shifting Date
+    utilization_factor?: number;
+    totalTime?: number;
+    startingDate?: Date;
+    dueDate?: Date;
+    shiftingDate?: Date;
 }
 
 @Table({ tableName: 'labors', timestamps: true })
@@ -72,10 +72,10 @@ class Labor extends Model<ILabor> implements ILabor {
     @Column({ type: DataType.DECIMAL(12, 2), allowNull: true })
     totalAmount?: number;
 
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.STRING, allowNull: true, field: 'skill_level' })
     skill_level?: string;
 
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.STRING, allowNull: true, field: 'responsible_person' })
     responsiblePerson?: string;
 
     @HasMany(() => LaborInformation)
@@ -95,32 +95,35 @@ class Labor extends Model<ILabor> implements ILabor {
     })
     status?: "Active" | "InActive";
 
-    @Column({ type: DataType.DECIMAL(8, 2), allowNull: true })
-    utilization_factor?: number; // Updated field: Utilization Factor
+    @Column({ type: DataType.DECIMAL(8, 2), allowNull: true, field: 'utilization_factor' })
+    utilization_factor?: number;
 
     @Column({
         type: DataType.DECIMAL(8, 2),
         allowNull: true,
+        field: 'total_time',
         get() {
-            const explicitTotalTime = this.getDataValue('totalTime');
-            if (explicitTotalTime !== undefined && explicitTotalTime !== null) {
-                return explicitTotalTime;
+            const explicitTotalTime = this.getDataValue('total_time');
+            if (explicitTotalTime !== null && explicitTotalTime !== undefined) {
+                return Number(explicitTotalTime.toFixed(2));
             }
-            // If totalTime is not set, calculate it based on estimatedHours
             const estimatedHours = this.getDataValue('estimatedHours');
-            return estimatedHours ? parseFloat(estimatedHours.toFixed(2)) : null;
+            if (typeof estimatedHours === 'number' && !isNaN(estimatedHours)) {
+                return Number(estimatedHours.toFixed(2));
+            }
+            return null;
         }
     })
-    totalTime?: number; // Total Time, defaults to estimatedHours if not provided
+    totalTime?: number;
 
-    @Column({ type: DataType.DATE, allowNull: true })
-    startingDate?: Date; // Starting Date
+    @Column({ type: DataType.DATE, allowNull: true, field: 'starting_date' })
+    startingDate?: Date;
 
-    @Column({ type: DataType.DATE, allowNull: true })
-    dueDate?: Date; // Due Date
+    @Column({ type: DataType.DATE, allowNull: true, field: 'due_date' })
+    dueDate?: Date;
 
-    @Column({ type: DataType.DATE, allowNull: true })
-    shiftingDate?: Date; // Shifting Date
+    @Column({ type: DataType.DATE, allowNull: true, field: 'shifting_date' })
+    shiftingDate?: Date;
 }
 
 export default Labor;
