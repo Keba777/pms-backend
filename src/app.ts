@@ -25,6 +25,8 @@ import issueRouter from "./routes/issue.route";
 import storeRequisitionRouter from "./routes/storeRequisition.route";
 import laborInformationRouter from "./routes/laborInformation.route";
 import kpiRouter from "./routes/kpi.route";
+import dispatchRouter from "./routes/dispatch.route";
+import requestDeliveryRouter from "./routes/requestDelivery.route";
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -85,6 +87,8 @@ app.use("/api/v1/issues", protectRoute, issueRouter);
 app.use("/api/v1/store-requisitions", protectRoute, storeRequisitionRouter);
 app.use("/api/v1/labor-informations", protectRoute, laborInformationRouter);
 app.use("/api/v1/kpis", protectRoute, kpiRouter);
+app.use("/api/v1/dispatches", protectRoute, dispatchRouter);
+app.use("/api/v1/request-deliveries", protectRoute, requestDeliveryRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });

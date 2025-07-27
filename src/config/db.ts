@@ -27,6 +27,8 @@ import StoreRequisition from "../models/StoreRequisition.model";
 import ChatMessage from "../models/ChatMessage.model";
 import LaborInformation from "../models/LaborInformation.model";
 import KPI from "../models/KPI.model";
+import Dispatch from "../models/Dispatch.model";
+import RequestDelivery from "../models/RequestDelivery.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -68,7 +70,9 @@ const sequelize: Sequelize = new Sequelize({
         StoreRequisition,
         ChatMessage,
         LaborInformation,
-        KPI
+        KPI,
+        Dispatch,
+        RequestDelivery
     ],
 
     logging: false,
