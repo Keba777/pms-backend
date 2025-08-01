@@ -44,7 +44,9 @@ const allowedOrigins = [
     "http://tsemex.oasismgmt2.com",
     "https://tsemex.oasismgmt2.com",
     "https://pms-frontend-nu-opal.vercel.app",
-    "https://tsemex-pms.vercel.app"
+    "https://tsemex-pms.vercel.app",
+    "http://raycon.rayconplc.com",
+    "https://raycon.rayconplc.com",
 ];
 
 app.use(cors({
