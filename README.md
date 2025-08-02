@@ -36,8 +36,7 @@ Edit
 
 - **Node.js** + **Express**
 - **TypeScript**
-- **Sequelize** (PostgreSQL or MySQL)
-- **WebSocket** (real-time features)
+- **Sequelize** (PostgreSQL)
 - **Cloudinary** (file/image uploads)
 - **Docker** & **Docker Compose**
 
