@@ -29,6 +29,7 @@ import LaborInformation from "../models/LaborInformation.model";
 import KPI from "../models/KPI.model";
 import Dispatch from "../models/Dispatch.model";
 import RequestDelivery from "../models/RequestDelivery.model";
+import WorkflowLog from "../models/WorkflowLog.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -72,7 +73,8 @@ const sequelize: Sequelize = new Sequelize({
         LaborInformation,
         KPI,
         Dispatch,
-        RequestDelivery
+        RequestDelivery,
+        WorkflowLog
     ],
 
     logging: false,
