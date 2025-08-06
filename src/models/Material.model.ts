@@ -6,6 +6,7 @@ import {
     PrimaryKey,
     ForeignKey,
     BelongsTo,
+    BeforeSave,
 } from 'sequelize-typescript';
 import Warehouse from './Warehouse.model';
 
@@ -21,7 +22,7 @@ export interface IMaterial {
     outOfStore?: number;
     rate?: number;
     shelfNo?: string;
-    status?: "Allocated" | "Unallocated";
+    status?: 'Available' | 'Unavailable';
     totalPrice?: number;
 }
 
@@ -34,6 +35,7 @@ class Material extends Model<IMaterial> implements IMaterial {
     @ForeignKey(() => Warehouse)
     @Column({ type: DataType.UUID, allowNull: false })
     warehouseId!: string;
+
     @BelongsTo(() => Warehouse)
     warehouse!: Warehouse;
 
@@ -65,11 +67,11 @@ class Material extends Model<IMaterial> implements IMaterial {
     shelfNo?: string;
 
     @Column({
-        type: DataType.ENUM('Allocated', 'Unallocated'),
+        type: DataType.ENUM('Available', 'Unavailable'),
         allowNull: true,
-        defaultValue: 'Unallocated',
+        defaultValue: 'Unavailable',
     })
-    status?: 'Allocated' | 'Unallocated';
+    status?: 'Available' | 'Unavailable';
 
     @Column({
         type: DataType.VIRTUAL(DataType.DECIMAL(12, 2)),
@@ -80,6 +82,12 @@ class Material extends Model<IMaterial> implements IMaterial {
         },
     })
     totalPrice?: number;
+
+    @BeforeSave
+    static updateStatus(material: Material) {
+        const quantity = material.quantity ?? 0;
+        material.status = quantity > 0 ? 'Available' : 'Unavailable';
+    }
 }
 
 export default Material;
