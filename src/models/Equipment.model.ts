@@ -6,6 +6,7 @@ import {
     PrimaryKey,
     ForeignKey,
     BelongsTo,
+    BeforeSave,
 } from "sequelize-typescript";
 import Site from "./Site.model";
 
@@ -29,7 +30,7 @@ export interface IEquipment {
     overTime?: number;
     condition?: string;
     owner?: "Raycon" | "Rental";
-    status?: "Allocated" | "Unallocated" | "OnMaintainance" | "InActive";
+    status: "Available" | "Unavailable"
     utilization_factor?: number; // New field: Utilization Factor
     totalTime?: number; // New field: Total Time
     startingDate?: Date; // New field: Starting Date
@@ -103,11 +104,10 @@ class Equipment extends Model<IEquipment> implements IEquipment {
     owner?: 'Raycon' | 'Rental';
 
     @Column({
-        type: DataType.ENUM('Allocated', 'Unallocated', 'OnMaintainance', 'InActive'),
-        allowNull: true,
-        defaultValue: "Unallocated",
+        type: DataType.ENUM('Available', 'Unavailable'),
+        defaultValue: 'Unavailable',
     })
-    status?: "Allocated" | "Unallocated" | "OnMaintainance" | "InActive";
+    status!: 'Available' | 'Unavailable';
 
     @Column({ type: DataType.DECIMAL(8, 2), allowNull: true, field: 'utilization_factor' })
     utilization_factor?: number;
@@ -138,6 +138,12 @@ class Equipment extends Model<IEquipment> implements IEquipment {
 
     @Column({ type: DataType.DATE, allowNull: true, field: 'shifting_date' })
     shiftingDate?: Date;
+
+    @BeforeSave
+    static updateStatus(equipment: Equipment) {
+        const quantity = equipment.quantity ?? 0;
+        equipment.status = quantity > 0 ? 'Available' : 'Unavailable';
+    }
 }
 
 export default Equipment;
