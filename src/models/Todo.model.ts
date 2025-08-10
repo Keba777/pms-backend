@@ -75,7 +75,7 @@ class Todo extends Model<ITodo> implements ITodo {
     target!: Date;
 
     @ForeignKey(() => KPI)
-    @Column({ type: DataType.UUID, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: true })
     kpiId?: string;
 
     @BelongsTo(() => KPI, { foreignKey: "kpiId" })
