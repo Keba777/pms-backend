@@ -30,6 +30,9 @@ import KPI from "../models/KPI.model";
 import Dispatch from "../models/Dispatch.model";
 import RequestDelivery from "../models/RequestDelivery.model";
 import WorkflowLog from "../models/WorkflowLog.model";
+import Todo from "../models/Todo.model";
+import TodoMember from "../models/TodoMember.model";
+import TodoProgress from "../models/TodoProgress.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -74,7 +77,10 @@ const sequelize: Sequelize = new Sequelize({
         KPI,
         Dispatch,
         RequestDelivery,
-        WorkflowLog
+        WorkflowLog,
+        Todo,
+        TodoMember,
+        TodoProgress
     ],
 
     logging: false,

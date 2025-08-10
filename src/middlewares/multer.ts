@@ -18,3 +18,7 @@ export const filterImage = multer({
     cb(null, true);
   },
 });
+
+export const uploadFiles = multer({
+  storage,
+});
