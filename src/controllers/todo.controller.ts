@@ -4,6 +4,7 @@ import User from "../models/User.model";
 import TodoProgress from "../models/TodoProgress.model";
 import TodoMember from "../models/TodoMember.model";
 import ErrorResponse from "../utils/error-response.utils";
+import Department from "../models/Department.model";
 
 // @desc    Create a new Todo
 // @route   POST /api/v1/todos
@@ -47,6 +48,8 @@ export const getAllTodos = async (_req: Request, res: Response, next: NextFuncti
             include: [
                 { model: User, as: "assignedUsers", through: { attributes: [] }, attributes: { exclude: ["password"] } },
                 { model: TodoProgress, as: "progressUpdates" },
+                { model: User, as: "assignedBy",attributes: { exclude: ["password"] }},
+                { model: Department, as: "department" }
             ],
             order: [["createdAt", "ASC"]],
         });
@@ -66,6 +69,8 @@ export const getTodoById = async (req: Request, res: Response, next: NextFunctio
             include: [
                 { model: User, as: "assignedUsers", through: { attributes: [] }, attributes: { exclude: ["password"] } },
                 { model: TodoProgress, as: "progressUpdates" },
+                { model: User, as: "assignedBy",attributes: { exclude: ["password"] }},
+                { model: Department, as: "department" }
             ],
         });
 
@@ -100,6 +105,8 @@ export const updateTodo = async (req: Request, res: Response, next: NextFunction
             include: [
                 { model: User, as: "assignedUsers", through: { attributes: [] }, attributes: { exclude: ["password"] } },
                 { model: TodoProgress, as: "progressUpdates" },
+                { model: User, as: "assignedBy",attributes: { exclude: ["password"] }},
+                { model: Department, as: "department" }
             ],
         });
 
