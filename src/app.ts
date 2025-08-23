@@ -49,8 +49,8 @@ const allowedOrigins = [
     "https://tsemex-pms.vercel.app",
     "http://raycon.rayconplc.com",
     "https://raycon.rayconplc.com",
-    "http://nilepms.com/login",
-    "https://nilepms.com/login"
+    "http://nilepms.com",
+    "https://nilepms.com"
 ];
 
 app.use(cors({
