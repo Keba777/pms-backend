@@ -53,7 +53,7 @@ module.exports = {
       equipmentId: {
         type: Sequelize.UUID,
         allowNull: false,
-        references: { model: "equipment", key: "id" },
+        references: { model: "equipments", key: "id" },
         onDelete: "CASCADE",
       },
       date: { type: Sequelize.DATEONLY, allowNull: false },

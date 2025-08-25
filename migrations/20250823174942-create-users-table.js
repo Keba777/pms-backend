@@ -47,7 +47,7 @@ module.exports = {
       },
       access: {
         type: Sequelize.ENUM("Low Access", "Full Access", "Average Access"),
-        defaultValue: "Average",
+        defaultValue: "Average Access",
       },
       createdAt: {
         type: Sequelize.DATE,
