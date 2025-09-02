@@ -33,6 +33,7 @@ import WorkflowLog from "../models/WorkflowLog.model";
 import Todo from "../models/Todo.model";
 import TodoMember from "../models/TodoMember.model";
 import TodoProgress from "../models/TodoProgress.model";
+import File from "../models/File.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -80,7 +81,8 @@ const sequelize: Sequelize = new Sequelize({
         WorkflowLog,
         Todo,
         TodoMember,
-        TodoProgress
+        TodoProgress,
+        File
     ],
 
     logging: false,

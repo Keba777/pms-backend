@@ -29,6 +29,7 @@ import dispatchRouter from "./routes/dispatch.route";
 import requestDeliveryRouter from "./routes/requestDelivery.route";
 import workflowLogRouter from "./routes/workflowLog.route";
 import todoRouter from "./routes/todo.route"
+import fileRoute from "./routes/file.route";
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -97,6 +98,7 @@ app.use("/api/v1/dispatches", protectRoute, dispatchRouter);
 app.use("/api/v1/request-deliveries", protectRoute, requestDeliveryRouter);
 app.use("/api/v1/workflow-logs", protectRoute, workflowLogRouter);
 app.use("/api/v1/todos", protectRoute, todoRouter);
+app.use("/api/v1/files", protectRoute, fileRoute);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
