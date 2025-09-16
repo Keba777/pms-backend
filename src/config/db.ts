@@ -34,6 +34,10 @@ import Todo from "../models/Todo.model";
 import TodoMember from "../models/TodoMember.model";
 import TodoProgress from "../models/TodoProgress.model";
 import File from "../models/File.model";
+import Invoice from "../models/Invoice.model";
+import Payment from "../models/Payment.model";
+import Budget from "../models/Budget.model";
+import Payroll from "../models/Payroll.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -82,7 +86,11 @@ const sequelize: Sequelize = new Sequelize({
         Todo,
         TodoMember,
         TodoProgress,
-        File
+        File,
+        Invoice,
+        Payment,
+        Budget,
+        Payroll
     ],
 
     logging: false,
