@@ -39,6 +39,21 @@ export interface MaterialItem {
     rate: number;
 }
 
+export interface Actuals {
+    quantity: number | null;
+    unit: string | null;
+    start_date: Date | null;
+    end_date: Date | null;
+    status: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed" | null;
+    labor_cost: number | null;
+    material_cost: number | null;
+    equipment_cost: number | null;
+    total_cost: number | null;
+    work_force: WorkForceItem[] | null;
+    machinery_list: MachineryItem[] | null;
+    materials_list: MaterialItem[] | null;
+}
+
 export interface IActivity {
     id: string;
     activity_name: string;
@@ -62,11 +77,16 @@ export interface IActivity {
     machinery_index_factor?: number;
     machinery_utilization_factor?: number;
     machinery_working_hours_per_day?: number;
+    labor_cost?: number;
+    material_cost?: number;
+    equipment_cost?: number;
+    total_cost?: number;
     work_force?: WorkForceItem[];
     machinery_list?: MachineryItem[];
     materials_list?: MaterialItem[];
     checked_by_name?: string;
     checked_by_date?: Date;
+    actuals?: Actuals | null;
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -207,6 +227,32 @@ class Activity extends Model<IActivity> implements IActivity {
     machinery_working_hours_per_day?: number;
 
     @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    labor_cost?: number;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    material_cost?: number;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: true,
+    })
+    equipment_cost?: number;
+
+    @Column({
+        type: DataType.VIRTUAL,
+        get() {
+            return (this.getDataValue('labor_cost') || 0) + (this.getDataValue('material_cost') || 0) + (this.getDataValue('equipment_cost') || 0);
+        },
+    })
+    total_cost?: number;
+
+    @Column({
         type: DataType.JSONB,
         allowNull: true,
     })
@@ -235,6 +281,12 @@ class Activity extends Model<IActivity> implements IActivity {
         allowNull: true,
     })
     checked_by_date?: Date;
+
+    @Column({
+        type: DataType.JSONB,
+        allowNull: true,
+    })
+    actuals?: Actuals | null;
 
     // Hook for creating an activity
     @AfterCreate

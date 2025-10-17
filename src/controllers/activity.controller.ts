@@ -167,4 +167,42 @@ const deleteActivity = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
-export { createActivity, getAllActivities, getActivityById, updateActivity, deleteActivity };
+// @desc    Update activity actuals
+// @route   PATCH /api/v1/activities/:id/actuals
+const updateActivityActuals = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const activity = await Activity.findByPk(req.params.id);
+        if (!activity) {
+            return next(new ErrorResponse("Activity not found", 404));
+        }
+
+        const { actuals } = req.body;
+        if (!actuals) {
+            return next(new ErrorResponse("No actuals data provided", 400));
+        }
+
+        await activity.update({ actuals });
+
+        const updatedActivity = await Activity.findByPk(activity.id, {
+            include: [
+                {
+                    model: RequestModel,
+                    as: "requests",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedActivity });
+    } catch (error) {
+        console.error(error);
+        next(new ErrorResponse("Error updating activity actuals", 500));
+    }
+};
+
+export { createActivity, getAllActivities, getActivityById, updateActivity, deleteActivity, updateActivityActuals };
