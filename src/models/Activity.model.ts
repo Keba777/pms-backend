@@ -44,6 +44,7 @@ export interface Actuals {
     unit: string | null;
     start_date: Date | null;
     end_date: Date | null;
+    progress: number | null;
     status: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed" | null;
     labor_cost: number | null;
     material_cost: number | null;
