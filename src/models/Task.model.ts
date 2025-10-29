@@ -19,6 +19,22 @@ import User from "./User.model";
 import TaskMember from "./TaskMember.model";
 import WorkflowLog from "./WorkflowLog.model";
 
+type TaskStatus =
+    | "Not Started"
+    | "Started"
+    | "InProgress"
+    | "Canceled"
+    | "Onhold"
+    | "Completed";
+
+export interface TaskActuals {
+    start_date?: string | Date | null;
+    end_date?: string | Date | null;
+    progress?: number | null;
+    status?: TaskStatus | null;
+    budget?: number | string | null;
+}
+
 export interface ITask {
     id: string;
     task_name: string;
@@ -29,10 +45,14 @@ export interface ITask {
     start_date: Date;
     end_date: Date;
     progress?: number;
-    status: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed";
+    status: TaskStatus;
     approvalStatus: "Approved" | "Not Approved" | "Pending";
     assignedUsers?: User[];
     activities?: Activity[];
+
+    // New fields
+    budget?: number | string; // top-level budget (DECIMAL)
+    actuals?: TaskActuals | null; // small task-specific actuals object
 }
 
 @Table({ tableName: "tasks", timestamps: true })
@@ -69,10 +89,17 @@ class Task extends Model<ITask> implements ITask {
     progress!: number;
 
     @Column({
-        type: DataType.ENUM("Not Started", "Started", "InProgress", "Canceled", "Onhold", "Completed"),
+        type: DataType.ENUM(
+            "Not Started",
+            "Started",
+            "InProgress",
+            "Canceled",
+            "Onhold",
+            "Completed"
+        ),
         defaultValue: "Not Started",
     })
-    status!: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed";
+    status!: TaskStatus;
 
     @Column({
         type: DataType.ENUM("Approved", "Not Approved", "Pending"),
@@ -89,6 +116,24 @@ class Task extends Model<ITask> implements ITask {
 
     @HasMany(() => Activity)
     activities!: Activity[];
+
+    /**
+     * Top-level budget on task (requested).
+     * Stored as DECIMAL(12,2) with default 0.00.
+     * Note: some DB adapters return DECIMAL as string — coerce in your service layer if needed.
+     */
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    budget?: number | string;
+
+    /**
+     * Task-specific actuals (small object, NOT the Activity actuals).
+     * Only contains: start_date, end_date, progress, status, budget.
+     * Stored as JSONB (Postgres). Default is empty object.
+     */
+    @Default({})
+    @Column(DataType.JSONB)
+    actuals?: TaskActuals | null;
 
     // Hook for creating a task
     @AfterCreate
@@ -137,18 +182,23 @@ async function createWorkflowLogHook(
 ) {
     const userId = options.userId;
     if (!userId) {
-        console.warn(`No userId provided for WorkflowLog creation in ${entityType} ${action}`);
+        console.warn(
+            `No userId provided for WorkflowLog creation in ${entityType} ${action}`
+        );
         return;
     }
 
-    await WorkflowLog.create({
-        entityType,
-        entityId: instance.getDataValue("id"),
-        action,
-        status: instance.getDataValue("status") || undefined,
-        userId,
-        details,
-    }, { transaction: options.transaction });
+    await WorkflowLog.create(
+        {
+            entityType,
+            entityId: instance.getDataValue("id"),
+            action,
+            status: instance.getDataValue("status") || undefined,
+            userId,
+            details,
+        },
+        { transaction: options.transaction }
+    );
 }
 
 export default Task;

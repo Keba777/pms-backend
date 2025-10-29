@@ -41,6 +41,19 @@ module.exports = {
         type: Sequelize.ENUM("Approved", "Not Approved", "Pending"),
         defaultValue: "Not Approved",
       },
+
+      budget: {
+        type: Sequelize.DECIMAL(12, 2),
+        allowNull: false,
+        defaultValue: "0.00",
+      },
+
+      actuals: {
+        type: Sequelize.JSONB,
+        allowNull: true,
+        defaultValue: {},
+      },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

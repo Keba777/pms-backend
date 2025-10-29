@@ -169,4 +169,53 @@ const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-export { createTask, getAllTasks, getTaskById, updateTask, deleteTask };
+// @desc    Update task actuals
+// @route   PATCH /api/v1/tasks/:id/actuals
+// Expected body: { actuals: { start_date, end_date, progress, status, budget } }
+const updateTaskActuals = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const task = await Task.findByPk(req.params.id);
+        if (!task) {
+            return next(new ErrorResponse("Task not found", 404));
+        }
+
+        const { actuals } = req.body;
+        if (!actuals) {
+            return next(new ErrorResponse("No actuals data provided", 400));
+        }
+
+        // Optional: shallow validation for allowed fields only
+        const allowedFields = ["start_date", "end_date", "progress", "status", "budget"];
+        const sanitized: any = {};
+        for (const key of allowedFields) {
+            if (Object.prototype.hasOwnProperty.call(actuals, key)) {
+                sanitized[key] = actuals[key];
+            }
+        }
+
+        // Update task.actuals (replace entire actuals object)
+        await task.update({ actuals: sanitized });
+
+        const updatedTask = await Task.findByPk(task.id, {
+            include: [
+                {
+                    model: Activity,
+                    as: "activities",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedTask });
+    } catch (error) {
+        console.error(error);
+        next(new ErrorResponse("Error updating task actuals", 500));
+    }
+};
+
+export { createTask, getAllTasks, getTaskById, updateTask, deleteTask, updateTaskActuals };
