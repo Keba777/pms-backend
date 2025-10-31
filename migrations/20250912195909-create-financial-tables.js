@@ -7,7 +7,7 @@ module.exports = {
     await queryInterface.createTable("invoices", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal("uuid_generate_v4()"),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       project_id: {
@@ -53,7 +53,7 @@ module.exports = {
     await queryInterface.createTable("payments", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal("uuid_generate_v4()"),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       invoice_id: {
@@ -91,7 +91,7 @@ module.exports = {
     await queryInterface.createTable("payrolls", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal("uuid_generate_v4()"),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       project_id: {
@@ -137,7 +137,7 @@ module.exports = {
     await queryInterface.createTable("budgets", {
       id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.literal("uuid_generate_v4()"),
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       project_id: {
