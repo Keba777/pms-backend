@@ -16,6 +16,22 @@ import User from "./User.model";
 import ProjectMember from "./ProjectMember.model";
 import WorkflowLog from "./WorkflowLog.model";
 
+type ProjectStatus =
+    | "Not Started"
+    | "Started"
+    | "InProgress"
+    | "Canceled"
+    | "Onhold"
+    | "Completed";
+
+export interface ProjectActuals {
+    start_date?: string | Date | null;
+    end_date?: string | Date | null;
+    progress?: number | null;
+    status?: ProjectStatus | null;
+    budget?: number | string | null;
+}
+
 export interface IProject {
     id: string;
     title: string;
@@ -29,10 +45,11 @@ export interface IProject {
     site_id?: string;
     progress?: number;
     isFavourite?: boolean;
-    status: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed";
+    status: ProjectStatus;
     members?: User[];
     tagIds?: string[];
     tasks?: Task[];
+    actuals?: ProjectActuals | null;
 }
 
 @Table({ tableName: "projects", timestamps: true })
@@ -107,6 +124,10 @@ class Project extends Model<IProject> implements IProject {
 
     @HasMany(() => Task)
     tasks!: Task[];
+
+    @Default({})
+    @Column(DataType.JSONB)
+    actuals?: ProjectActuals | null;
 
     // Hook for creating a project
     @AfterCreate

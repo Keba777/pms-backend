@@ -36,6 +36,7 @@ module.exports = {
         allowNull: false,
       },
       tagIds: { type: Sequelize.ARRAY(Sequelize.UUID), allowNull: true },
+      actuals: { type: Sequelize.JSONB, defaultValue: {}, allowNull: false },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
