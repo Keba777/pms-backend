@@ -5,6 +5,8 @@ import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import bcrypt from "bcryptjs";
 import fs from "fs";
+import jwt from "jsonwebtoken";
+import nodemailer from "nodemailer";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -22,7 +24,7 @@ declare module "express-serve-static-core" {
 const registerUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
-      email,
+      email: rawEmail,
       first_name,
       last_name,
       phone,
@@ -34,6 +36,14 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       status,
       access
     } = req.body;
+
+    const email = rawEmail.toLowerCase();  // Normalize to lowercase
+
+    // Check if user already exists (case-insensitive)
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return next(new ErrorResponse("User already exists", 400));
+    }
 
     // Check if role exists
     const role = await Role.findOne({ where: { name: role_name } });
@@ -52,11 +62,11 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
         folder: "/pms/images",
         use_filename: true,
       });
-      fs.unlink(req.file.path, () => {});
+      fs.unlink(req.file.path, () => { });
       profile_picture = result.secure_url;
     }
 
-    // Create user
+    // Create user with lowercase email
     const user = await User.create({
       email,
       first_name,
@@ -83,7 +93,9 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
 // @route   POST /api/v1/auth/login
 const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { email, password } = req.body;
+    const { email: rawEmail, password } = req.body;
+
+    const email = rawEmail.toLowerCase();  // Normalize to lowercase
 
     const user = await User.findOne({
       where: { email },
@@ -118,7 +130,123 @@ const getCurrentUser = async (req: Request, res: Response, next: NextFunction) =
     if (!user) {
       return next(new ErrorResponse("User doesn't exist", 400));
     }
-    return res.status(200).json({ user });
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Server error", 500));
+  }
+};
+
+// @desc    Change password (requires old password)
+// @route   PATCH /api/v1/auth/change-password
+const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return next(new ErrorResponse("Unauthorized", 401));
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    // Verify old password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return next(new ErrorResponse("Old password is incorrect", 400));
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Server error", 500));
+  }
+};
+
+// @desc    Forgot password - send reset link
+// @route   POST /api/v1/auth/forgot-password
+const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email: rawEmail } = req.body;
+
+    const email = rawEmail.toLowerCase();  // Normalize to lowercase
+
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return next(new ErrorResponse("No user with that email", 404));
+    }
+
+    // Generate JWT reset token 
+    const resetToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET || "this is the secret",
+      { expiresIn: "1h" } // 1 hour expiration
+    );
+
+    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`;  // Use env or fallback to backend host
+    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;  // Frontend route
+    const message = `You are receiving this email because you (or someone else) has requested a password reset. Please click on the following link to reset your password: \n\n ${resetUrl} \n\n If you did not request this, please ignore this email.`;
+
+    const transporter = nodemailer.createTransport({
+      service: "Gmail", // or your email service
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    await transporter.sendMail({
+      to: user.email,
+      subject: "Password Reset Token",
+      text: message,
+    });
+
+    res.status(200).json({ success: true, message: "Reset email sent" });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Email could not be sent", 500));
+  }
+};
+
+// @desc    Reset password using token
+// @route   PUT /api/v1/auth/reset-password/:resetToken
+const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const resetToken = req.params.resetToken;
+
+    let payload;
+    try {
+      payload = jwt.verify(resetToken, process.env.JWT_SECRET || "this is the secret") as { id: string };
+    } catch (err) {
+      return next(new ErrorResponse("Invalid or expired token", 400));
+    }
+
+    const user = await User.findByPk(payload.id);
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
+    }
+
+    const { password } = req.body;
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    sendingTokenResponse(user, 200, res);
   } catch (error) {
     console.error(error);
     next(new ErrorResponse("Server error", 500));
@@ -167,4 +295,4 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
     });
 };
 
-export { registerUser, loginUser, getCurrentUser };
+export { registerUser, loginUser, getCurrentUser, changePassword, forgotPassword, resetPassword };
