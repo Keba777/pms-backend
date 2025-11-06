@@ -205,4 +205,104 @@ const updateActivityActuals = async (req: Request, res: Response, next: NextFunc
     }
 };
 
-export { createActivity, getAllActivities, getActivityById, updateActivity, deleteActivity, updateActivityActuals };
+/**
+ * @desc    Update activity progress (new endpoint)
+ * @route   PUT /api/v1/activities/:id/progress
+ * @body    { progress: number, remark?, status?, checkedBy?, approvedBy?, action?, summaryReport?, comment?, approvedDate?, dateTime? }
+ *
+ * Notes:
+ * - This endpoint will append an entry to Activity.progressUpdates (via the model hook)
+ *   by passing `progressUpdate` and `userId` in the update options.
+ * - It will also persist `progress` on the activity record (so both the activity.progress
+ *   and the progressUpdates JSONB will be kept in sync).
+ */
+const updateActivityProgress = async (req: Request, res: Response, next: NextFunction) => {
+    const t = await Activity.sequelize?.transaction();
+    try {
+        const activity = await Activity.findByPk(req.params.id, { transaction: t });
+        if (!activity) {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("Activity not found", 404));
+        }
+
+        const {
+            progress,
+            remark,
+            status,
+            checkedBy,
+            approvedBy,
+            action,
+            summaryReport,
+            comment,
+            approvedDate,
+            dateTime,
+        } = req.body;
+
+        if (typeof progress !== "number") {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("progress (number) is required", 400));
+        }
+
+        // Build the progressUpdate object that the model hook expects
+        const progressUpdate: any = {
+            id: undefined, // model/hook will generate if missing
+            dateTime: dateTime || new Date().toISOString(),
+            fromProgress: (activity as any).previous ? (activity as any).previous("progress") : activity.getDataValue("progress"),
+            progress,
+            remark,
+            status,
+            checkedBy,
+            approvedBy,
+            action,
+            summaryReport,
+            comment,
+            approvedDate: approvedDate ?? null,
+            userId: (req as any).user?.id || req.body.userId || undefined,
+        };
+
+        // Persist progress on the activity and pass the progressUpdate via options so the hook appends it.
+        // We also persist checked_by_name when checkedBy provided to keep fields useful for reporting.
+        const updatePayload: any = { progress };
+        if (checkedBy) updatePayload.checked_by_name = checkedBy;
+
+        await activity.update(updatePayload, {
+            transaction: t,
+            userId: (req as any).user?.id || req.body.userId || undefined,
+            progressUpdate,
+        });
+
+        // Commit transaction
+        if (t) await t.commit();
+
+        const updatedActivity = await Activity.findByPk(activity.id, {
+            include: [
+                {
+                    model: RequestModel,
+                    as: "requests",
+                },
+                {
+                    model: User,
+                    as: "assignedUsers",
+                    through: { attributes: [] },
+                    attributes: { exclude: ["password"] },
+                },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedActivity });
+    } catch (error) {
+        console.error(error);
+        if (t) await t.rollback();
+        next(new ErrorResponse("Error updating activity progress", 500));
+    }
+};
+
+export {
+    createActivity,
+    getAllActivities,
+    getActivityById,
+    updateActivity,
+    deleteActivity,
+    updateActivityActuals,
+    updateActivityProgress,
+};

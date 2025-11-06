@@ -82,7 +82,7 @@ app.use("/api/v1/users", protectRoute, userRouter);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/projects", protectRoute, projectRouter)
 app.use("/api/v1/tasks", protectRoute, taskRouter)
-app.use("/api/v1/activities",  activityRouter)
+app.use("/api/v1/activities", protectRoute,  activityRouter)
 app.use("/api/v1/tags", protectRoute, tagRouter)
 app.use("/api/v1/master-schedule", protectRoute, masterScheduleRouter)
 app.use("/api/v1/equipments", protectRoute, equipmentRouter)

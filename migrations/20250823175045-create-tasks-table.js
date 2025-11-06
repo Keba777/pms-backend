@@ -54,6 +54,9 @@ module.exports = {
         defaultValue: {},
       },
 
+      // NEW FIELD: progressUpdates
+      progressUpdates: { type: Sequelize.JSONB, allowNull: true },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

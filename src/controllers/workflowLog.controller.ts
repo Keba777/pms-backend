@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
+import { ReqWithUser } from "../types/req-with-user";
 import WorkflowLog from "../models/WorkflowLog.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Create a new workflow log
 // @route   POST /api/v1/workflow-logs
-const createWorkflowLog = async (req: Request, res: Response, next: NextFunction) => {
+const createWorkflowLog = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { entityType, entityId, action, status, details } = req.body;
         if (!req.user || !req.user.id) {

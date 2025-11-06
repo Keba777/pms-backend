@@ -69,6 +69,10 @@ module.exports = {
       checked_by_name: { type: Sequelize.STRING(100), allowNull: true },
       checked_by_date: { type: Sequelize.DATE, allowNull: true },
       actuals: { type: Sequelize.JSONB, allowNull: true },
+
+      // ✅ NEW FIELD added to match model
+      progressUpdates: { type: Sequelize.JSONB, allowNull: true },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

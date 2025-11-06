@@ -37,6 +37,10 @@ module.exports = {
       },
       tagIds: { type: Sequelize.ARRAY(Sequelize.UUID), allowNull: true },
       actuals: { type: Sequelize.JSONB, defaultValue: {}, allowNull: false },
+
+      // NEW FIELD: progressUpdates
+      progressUpdates: { type: Sequelize.JSONB, allowNull: true },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

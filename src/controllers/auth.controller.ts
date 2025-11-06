@@ -8,20 +8,22 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
-declare module "express-serve-static-core" {
-  interface Request {
-    file?: Express.Multer.File;
-  }
-  interface Request {
-    user?: {
-      id: string;
-    };
-  }
-}
+/**
+ * Local Request type that includes the optional `user` and `file` fields.
+ * Using a local intersection type avoids module augmentation problems.
+ */
+export type ReqWithUser = Request & {
+  user?: { id: string } | any; 
+  file?: Express.Multer.File;
+};
 
 // @desc    Register user
 // @route   POST /api/v1/auth/register
-const registerUser = async (req: Request, res: Response, next: NextFunction) => {
+const registerUser = async (
+  req: ReqWithUser,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const {
       email: rawEmail,
@@ -34,10 +36,10 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
       siteId,
       responsiblities,
       status,
-      access
+      access,
     } = req.body;
 
-    const email = rawEmail.toLowerCase();  // Normalize to lowercase
+    const email = rawEmail.toLowerCase(); // Normalize to lowercase
 
     // Check if user already exists (case-insensitive)
     const existingUser = await User.findOne({ where: { email } });
@@ -62,7 +64,7 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
         folder: "/pms/images",
         use_filename: true,
       });
-      fs.unlink(req.file.path, () => { });
+      fs.unlink(req.file.path, () => {});
       profile_picture = result.secure_url;
     }
 
@@ -91,11 +93,15 @@ const registerUser = async (req: Request, res: Response, next: NextFunction) => 
 
 // @desc    Check if user exists and log in
 // @route   POST /api/v1/auth/login
-const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+const loginUser = async (
+  req: ReqWithUser,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { email: rawEmail, password } = req.body;
 
-    const email = rawEmail.toLowerCase();  // Normalize to lowercase
+    const email = rawEmail.toLowerCase(); // Normalize to lowercase
 
     const user = await User.findOne({
       where: { email },
@@ -122,7 +128,11 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Get current user
 // @route   GET /api/v1/auth/me
-const getCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
+const getCurrentUser = async (
+  req: ReqWithUser,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const user = await User.findByPk(req.user?.id, {
       include: ["projects", "tasks", "activities"],
@@ -139,7 +149,11 @@ const getCurrentUser = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Change password (requires old password)
 // @route   PATCH /api/v1/auth/change-password
-const changePassword = async (req: Request, res: Response, next: NextFunction) => {
+const changePassword = async (
+  req: ReqWithUser,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { oldPassword, newPassword } = req.body;
     const userId = req.user?.id;
@@ -167,7 +181,9 @@ const changePassword = async (req: Request, res: Response, next: NextFunction) =
     user.password = hashedNewPassword;
     await user.save();
 
-    res.status(200).json({ success: true, message: "Password updated successfully" });
+    res
+      .status(200)
+      .json({ success: true, message: "Password updated successfully" });
   } catch (error) {
     console.error(error);
     next(new ErrorResponse("Server error", 500));
@@ -176,26 +192,31 @@ const changePassword = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Forgot password - send reset link
 // @route   POST /api/v1/auth/forgot-password
-const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+const forgotPassword = async (
+  req: ReqWithUser,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { email: rawEmail } = req.body;
 
-    const email = rawEmail.toLowerCase();  // Normalize to lowercase
+    const email = rawEmail.toLowerCase(); // Normalize to lowercase
 
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return next(new ErrorResponse("No user with that email", 404));
     }
 
-    // Generate JWT reset token 
+    // Generate JWT reset token
     const resetToken = jwt.sign(
       { id: user.id },
       process.env.JWT_SECRET || "this is the secret",
       { expiresIn: "1h" } // 1 hour expiration
     );
 
-    const frontendUrl = process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`;  // Use env or fallback to backend host
-    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;  // Frontend route
+    const frontendUrl =
+      process.env.FRONTEND_URL || `${req.protocol}://${req.get("host")}`; // Use env or fallback to backend host
+    const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`; // Frontend route
     const message = `You are receiving this email because you (or someone else) has requested a password reset. Please click on the following link to reset your password: \n\n ${resetUrl} \n\n If you did not request this, please ignore this email.`;
 
     const transporter = nodemailer.createTransport({
@@ -221,13 +242,20 @@ const forgotPassword = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Reset password using token
 // @route   PUT /api/v1/auth/reset-password/:resetToken
-const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+const resetPassword = async (
+  req: ReqWithUser,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const resetToken = req.params.resetToken;
 
     let payload;
     try {
-      payload = jwt.verify(resetToken, process.env.JWT_SECRET || "this is the secret") as { id: string };
+      payload = jwt.verify(
+        resetToken,
+        process.env.JWT_SECRET || "this is the secret"
+      ) as { id: string };
     } catch (err) {
       return next(new ErrorResponse("Invalid or expired token", 400));
     }
@@ -254,7 +282,7 @@ const resetPassword = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 // Function to send token response
-const sendingTokenResponse = (user: User, statusCode: number, res: Response) => {
+const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
   const token = user.getSignedJwtToken();
   const options: {
     expires: Date;
@@ -262,7 +290,8 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
     secure?: boolean;
   } = {
     expires: new Date(
-      Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRE || "10") * 24 * 60 * 60 * 1000
+      Date.now() +
+        parseInt(process.env.JWT_COOKIE_EXPIRE || "10") * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };
@@ -295,4 +324,11 @@ const sendingTokenResponse = (user: User, statusCode: number, res: Response) => 
     });
 };
 
-export { registerUser, loginUser, getCurrentUser, changePassword, forgotPassword, resetPassword };
+export {
+  registerUser,
+  loginUser,
+  getCurrentUser,
+  changePassword,
+  forgotPassword,
+  resetPassword,
+};

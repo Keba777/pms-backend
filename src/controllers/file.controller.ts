@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { ReqWithUser } from "../types/req-with-user";
 import File from "../models/File.model";
 import cloudinary from "../config/cloudinary";
 import ErrorResponse from "../utils/error-response.utils";
@@ -7,7 +8,7 @@ import fs from "fs";
 
 // @desc    Upload a new file
 // @route   POST /api/v1/files
-export const uploadFile = async (req: Request, res: Response, next: NextFunction) => {
+export const uploadFile = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
             return next(new ErrorResponse("No files uploaded", 400));

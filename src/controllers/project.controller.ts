@@ -216,4 +216,86 @@ const updateProjectActuals = async (req: Request, res: Response, next: NextFunct
     }
 };
 
-export { createProject, getAllProjects, getProjectById, updateProject, deleteProject, updateProjectActuals };
+/**
+ * @desc    Update project progress
+ * @route   PUT /api/v1/projects/:id/progress
+ * @body    { progress: number, remark?, status?, checkedBy?, approvedBy?, action?, summaryReport?, comment?, approvedDate?, dateTime? }
+ */
+const updateProjectProgress = async (req: Request, res: Response, next: NextFunction) => {
+    const t = await Project.sequelize?.transaction();
+    try {
+        const project = await Project.findByPk(req.params.id, { transaction: t });
+        if (!project) {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("Project not found", 404));
+        }
+
+        const {
+            progress,
+            remark,
+            status,
+            checkedBy,
+            approvedBy,
+            action,
+            summaryReport,
+            comment,
+            approvedDate,
+            dateTime,
+        } = req.body;
+
+        if (typeof progress !== "number") {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("progress (number) is required", 400));
+        }
+
+        const progressUpdate: any = {
+            id: undefined,
+            dateTime: dateTime || new Date().toISOString(),
+            fromProgress: project.getDataValue("progress"),
+            progress,
+            remark,
+            status,
+            checkedBy,
+            approvedBy,
+            action,
+            summaryReport,
+            comment,
+            approvedDate: approvedDate ?? null,
+            userId: (req as any).user?.id || req.body.userId,
+        };
+
+        const updatePayload: any = { progress };
+        if (checkedBy) updatePayload.checked_by_name = checkedBy;
+
+        await project.update(updatePayload, {
+            transaction: t,
+            userId: (req as any).user?.id || req.body.userId,
+            progressUpdate,
+        });
+
+        if (t) await t.commit();
+
+        const updatedProject = await Project.findByPk(project.id, {
+            include: [
+                { model: Task, as: "tasks" },
+                { model: User, as: "members", through: { attributes: [] }, attributes: { exclude: ["password"] } },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedProject });
+    } catch (error) {
+        console.error(error);
+        if (t) await t.rollback();
+        next(new ErrorResponse("Error updating project progress", 500));
+    }
+};
+
+export {
+    createProject,
+    getAllProjects,
+    getProjectById,
+    updateProject,
+    deleteProject,
+    updateProjectActuals,
+    updateProjectProgress,
+};

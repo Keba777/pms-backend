@@ -218,4 +218,87 @@ const updateTaskActuals = async (req: Request, res: Response, next: NextFunction
     }
 };
 
-export { createTask, getAllTasks, getTaskById, updateTask, deleteTask, updateTaskActuals };
+
+/**
+ * @desc    Update task progress
+ * @route   PUT /api/v1/tasks/:id/progress
+ * @body    { progress: number, remark?, status?, checkedBy?, approvedBy?, action?, summaryReport?, comment?, approvedDate?, dateTime? }
+ */
+const updateTaskProgress = async (req: Request, res: Response, next: NextFunction) => {
+    const t = await Task.sequelize?.transaction();
+    try {
+        const task = await Task.findByPk(req.params.id, { transaction: t });
+        if (!task) {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("Task not found", 404));
+        }
+
+        const {
+            progress,
+            remark,
+            status,
+            checkedBy,
+            approvedBy,
+            action,
+            summaryReport,
+            comment,
+            approvedDate,
+            dateTime,
+        } = req.body;
+
+        if (typeof progress !== "number") {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("progress (number) is required", 400));
+        }
+
+        const progressUpdate: any = {
+            id: undefined,
+            dateTime: dateTime || new Date().toISOString(),
+            fromProgress: task.getDataValue("progress"),
+            progress,
+            remark,
+            status,
+            checkedBy,
+            approvedBy,
+            action,
+            summaryReport,
+            comment,
+            approvedDate: approvedDate ?? null,
+            userId: (req as any).user?.id || req.body.userId,
+        };
+
+        const updatePayload: any = { progress };
+        if (checkedBy) updatePayload.checked_by_name = checkedBy;
+
+        await task.update(updatePayload, {
+            transaction: t,
+            userId: (req as any).user?.id || req.body.userId,
+            progressUpdate,
+        });
+
+        if (t) await t.commit();
+
+        const updatedTask = await Task.findByPk(task.id, {
+            include: [
+                { model: Activity, as: "activities" },
+                { model: User, as: "assignedUsers", through: { attributes: [] }, attributes: { exclude: ["password"] } },
+            ],
+        });
+
+        res.status(200).json({ success: true, data: updatedTask });
+    } catch (error) {
+        console.error(error);
+        if (t) await t.rollback();
+        next(new ErrorResponse("Error updating task progress", 500));
+    }
+};
+
+export {
+    createTask,
+    getAllTasks,
+    getTaskById,
+    updateTask,
+    deleteTask,
+    updateTaskActuals,
+    updateTaskProgress,
+};

@@ -1,20 +1,20 @@
 import { Request, Response, NextFunction } from "express";
+import { ReqWithUser } from "../types/req-with-user";
 import Todo from "../models/Todo.model";
 import User from "../models/User.model";
 import TodoProgress from "../models/TodoProgress.model";
-import TodoMember from "../models/TodoMember.model";
 import ErrorResponse from "../utils/error-response.utils";
 import Department from "../models/Department.model";
 
 // @desc    Create a new Todo
 // @route   POST /api/v1/todos
-export const createTodo = async (req: Request, res: Response, next: NextFunction) => {
+export const createTodo = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, ...todoData } = req.body;
 
         // Default givenDate to now
         todoData.givenDate = new Date();
-        todoData.assignedById = req.user!.id
+        todoData.assignedById = req.user!.id;
 
         const todo = await Todo.create(todoData);
 

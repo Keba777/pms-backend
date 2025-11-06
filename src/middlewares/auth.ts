@@ -1,23 +1,17 @@
 import { Response, Request, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/User.model";
+import { ReqWithUser } from "../types/req-with-user";
 
-const protectRoute = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-
+const protectRoute = async (req: ReqWithUser, res: Response, next: NextFunction): Promise<void> => {
     let token: string = "";
     if (
         req.headers.authorization &&
         req.headers.authorization.startsWith("Bearer")
     ) {
-        // Set token from Bearer token in header
         token = req.headers.authorization.split(" ")[1];
     }
-    //  else if (req.cookies.token) {
-    //     // Set token from cookie
-    //     token = req.cookies.token;
-    //   }
 
-    // Make sure token exists
     if (!token) {
         res
             .status(401)
@@ -26,7 +20,6 @@ const protectRoute = async (req: Request, res: Response, next: NextFunction): Pr
     }
 
     try {
-        // Verify token
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET || ""

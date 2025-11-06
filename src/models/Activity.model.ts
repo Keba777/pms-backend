@@ -11,7 +11,9 @@ import {
     AfterCreate,
     AfterUpdate,
     AfterDestroy,
+    BeforeUpdate,
 } from "sequelize-typescript";
+import { randomUUID } from "crypto";
 import Task from "./Task.model";
 import Request from "./Request.model";
 import User from "./User.model";
@@ -55,6 +57,23 @@ export interface Actuals {
     materials_list: MaterialItem[] | null;
 }
 
+// Progress update item stored in JSONB per change
+export interface ProgressUpdateItem {
+    id?: string; // generated UUID if missing
+    dateTime: string; // ISO string
+    fromProgress?: number; // previous progress (optional)
+    progress: number; // new progress value
+    remark?: string;
+    status?: string;
+    checkedBy?: string;
+    approvedBy?: string;
+    action?: string;
+    summaryReport?: string;
+    comment?: string;
+    approvedDate?: string | null; // ISO string or null
+    userId?: string; // who applied the change (optional)
+}
+
 export interface IActivity {
     id: string;
     activity_name: string;
@@ -88,6 +107,7 @@ export interface IActivity {
     checked_by_name?: string;
     checked_by_date?: Date;
     actuals?: Actuals | null;
+    progressUpdates?: ProgressUpdateItem[] | null;
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -288,6 +308,92 @@ class Activity extends Model<IActivity> implements IActivity {
         allowNull: true,
     })
     actuals?: Actuals | null;
+
+    // NEW: progressUpdates JSONB column
+    @Column({
+        type: DataType.JSONB,
+        allowNull: true,
+    })
+    progressUpdates?: ProgressUpdateItem[] | null;
+
+    // BeforeUpdate hook: append progress update entry if progress changed,
+    // or if options.progressUpdate is provided append that object.
+    @BeforeUpdate
+    static async handleProgressUpdates(instance: Activity, options: any) {
+        try {
+            const userIdFromOptions: string | undefined = options?.userId;
+
+            // Try using the public `previous()` API first (typed), else fallback to getDataValue
+            const prevProgressUpdatesRaw = (instance as any).previous
+                ? (instance as any).previous("progressUpdates")
+                : undefined;
+            const prevProgressUpdates = Array.isArray(prevProgressUpdatesRaw)
+                ? prevProgressUpdatesRaw
+                : instance.getDataValue("progressUpdates") ?? [];
+
+            const workingUpdates: ProgressUpdateItem[] = Array.isArray(prevProgressUpdates)
+                ? [...prevProgressUpdates]
+                : [];
+
+            // If caller supplied a full progressUpdate in options, prefer that (recommended)
+            if (options && options.progressUpdate) {
+                const provided: Partial<ProgressUpdateItem> = options.progressUpdate;
+                const item: ProgressUpdateItem = {
+                    id: provided.id || randomUUID(),
+                    dateTime: provided.dateTime || new Date().toISOString(),
+                    fromProgress: provided.fromProgress,
+                    progress: typeof provided.progress === "number" ? provided.progress : instance.getDataValue("progress"),
+                    remark: provided.remark,
+                    status: provided.status,
+                    checkedBy: provided.checkedBy,
+                    approvedBy: provided.approvedBy,
+                    action: provided.action,
+                    summaryReport: provided.summaryReport,
+                    comment: provided.comment,
+                    approvedDate: provided.approvedDate ?? null,
+                    userId: provided.userId || userIdFromOptions,
+                };
+                workingUpdates.push(item);
+
+                // ensure main progress reflects provided progress if present
+                if (typeof provided.progress === "number") {
+                    instance.setDataValue("progress", provided.progress);
+                }
+                instance.setDataValue("progressUpdates", workingUpdates);
+                return;
+            }
+
+            // Otherwise, automatic behavior when progress changed:
+            const progressPreviously = (instance as any).previous
+                ? (instance as any).previous("progress")
+                : undefined;
+            const prevProgress = typeof progressPreviously === "number" ? progressPreviously : undefined;
+
+            // Use Sequelize's changed() method to detect change
+            const changedFn = (instance as any).changed;
+            const progressChanged = typeof changedFn === "function" ? !!(instance as any).changed("progress") : prevProgress !== undefined && prevProgress !== instance.getDataValue("progress");
+
+            if (progressChanged) {
+                const prev = typeof prevProgress === "number" ? prevProgress : 0;
+                const newProgress = instance.getDataValue("progress");
+                const item: ProgressUpdateItem = {
+                    id: randomUUID(),
+                    dateTime: new Date().toISOString(),
+                    fromProgress: prev,
+                    progress: typeof newProgress === "number" ? newProgress : 0,
+                    checkedBy: instance.getDataValue("checked_by_name") ?? undefined,
+                    status: instance.getDataValue("status") ?? undefined,
+                    userId: userIdFromOptions,
+                };
+                workingUpdates.push(item);
+                instance.setDataValue("progressUpdates", workingUpdates);
+            }
+        } catch (err) {
+            // don't block update on hook errors; log for troubleshooting
+            // eslint-disable-next-line no-console
+            console.warn("Error in Activity.handleProgressUpdates hook:", err);
+        }
+    }
 
     // Hook for creating an activity
     @AfterCreate

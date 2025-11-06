@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { ReqWithUser } from "../types/req-with-user";
 import Todo from "../models/Todo.model";
 import TodoProgress from "../models/TodoProgress.model";
 import cloudinary from "../config/cloudinary";
@@ -6,7 +7,7 @@ import ErrorResponse from "../utils/error-response.utils";
 
 // @desc    Add or update progress for a Todo
 // @route   POST /api/v1/todos/:todoId/progress
-export const addTodoProgress = async (req: Request, res: Response, next: NextFunction) => {
+export const addTodoProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { progress, remark } = req.body;
         const { todoId } = req.params;

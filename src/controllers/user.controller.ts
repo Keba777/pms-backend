@@ -89,12 +89,6 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Update a user
 // @route   PUT /api/v1/users/:id
-declare module "express-serve-static-core" {
-    interface Request {
-        file?: Express.Multer.File;
-    }
-}
-
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const user = await User.findByPk(req.params.id);
