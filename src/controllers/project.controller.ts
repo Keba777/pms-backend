@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Project from "../models/Project.model";
 import Task from "../models/Task.model";
+import Activity from "../models/Activity.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 
@@ -28,6 +29,16 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
         const createdProject = await Project.findByPk(project.id, {
             include: [
                 {
+                    model: Task,
+                    as: "tasks",
+                    include: [
+                        {
+                            model: Activity,
+                            as: "activities",
+                        },
+                    ],
+                },
+                {
                     model: User,
                     as: "members",
                     through: { attributes: [] },
@@ -43,7 +54,7 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
-// @desc    Get all projects (with tasks and members), sorted by creation date
+// @desc    Get all projects (with tasks, activities, and members), sorted by creation date
 // @route   GET /api/v1/projects
 const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -52,6 +63,12 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
                 {
                     model: Task,
                     as: "tasks",
+                    include: [
+                        {
+                            model: Activity,
+                            as: "activities",
+                        },
+                    ],
                 },
                 {
                     model: User,
@@ -70,7 +87,7 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
-// @desc    Get a project by ID (with tasks and members)
+// @desc    Get a project by ID (with tasks, activities, and members)
 // @route   GET /api/v1/projects/:id
 const getProjectById = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -79,6 +96,12 @@ const getProjectById = async (req: Request, res: Response, next: NextFunction) =
                 {
                     model: Task,
                     as: "tasks",
+                    include: [
+                        {
+                            model: Activity,
+                            as: "activities",
+                        },
+                    ],
                 },
                 {
                     model: User,
@@ -132,6 +155,12 @@ const updateProject = async (req: Request, res: Response, next: NextFunction) =>
                 {
                     model: Task,
                     as: "tasks",
+                    include: [
+                        {
+                            model: Activity,
+                            as: "activities",
+                        },
+                    ],
                 },
                 {
                     model: User,
@@ -199,6 +228,12 @@ const updateProjectActuals = async (req: Request, res: Response, next: NextFunct
                 {
                     model: Task,
                     as: "tasks",
+                    include: [
+                        {
+                            model: Activity,
+                            as: "activities",
+                        },
+                    ],
                 },
                 {
                     model: User,
@@ -277,7 +312,16 @@ const updateProjectProgress = async (req: Request, res: Response, next: NextFunc
 
         const updatedProject = await Project.findByPk(project.id, {
             include: [
-                { model: Task, as: "tasks" },
+                { 
+                    model: Task, 
+                    as: "tasks",
+                    include: [
+                        {
+                            model: Activity,
+                            as: "activities",
+                        },
+                    ],
+                },
                 { model: User, as: "members", through: { attributes: [] }, attributes: { exclude: ["password"] } },
             ],
         });
