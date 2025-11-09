@@ -4,6 +4,7 @@ import Task from "../models/Task.model";
 import Activity from "../models/Activity.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
+import Site from "../models/Site.model";
 
 // @desc    Create a new project
 // @route   POST /api/v1/projects
@@ -76,6 +77,10 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
+                {
+                    model: Site,
+                    as: "projectSite"
+                }
             ],
             order: [["createdAt", "ASC"]],
         });
@@ -109,6 +114,10 @@ const getProjectById = async (req: Request, res: Response, next: NextFunction) =
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
+                 {
+                    model: Site,
+                    as: "projectSite"
+                }
             ],
         });
 
@@ -168,6 +177,10 @@ const updateProject = async (req: Request, res: Response, next: NextFunction) =>
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
+                 {
+                    model: Site,
+                    as: "projectSite"
+                }
             ],
         });
 
@@ -241,6 +254,10 @@ const updateProjectActuals = async (req: Request, res: Response, next: NextFunct
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
+                 {
+                    model: Site,
+                    as: "projectSite"
+                }
             ],
         });
 
@@ -323,6 +340,10 @@ const updateProjectProgress = async (req: Request, res: Response, next: NextFunc
                     ],
                 },
                 { model: User, as: "members", through: { attributes: [] }, attributes: { exclude: ["password"] } },
+                 {
+                    model: Site,
+                    as: "projectSite"
+                }
             ],
         });
 

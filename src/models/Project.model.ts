@@ -11,12 +11,15 @@ import {
     AfterUpdate,
     AfterDestroy,
     BeforeUpdate,
+    BelongsTo,
+    ForeignKey,
 } from "sequelize-typescript";
 import { randomUUID } from "crypto";
 import Task from "./Task.model";
 import User from "./User.model";
 import ProjectMember from "./ProjectMember.model";
 import WorkflowLog from "./WorkflowLog.model";
+import Site from "./Site.model";
 
 type ProjectStatus =
     | "Not Started"
@@ -45,6 +48,7 @@ export interface IProject {
     client: string;
     site: string;
     site_id?: string;
+    projectSite?: Site;
     progress?: number;
     isFavourite?: boolean;
     status: ProjectStatus;
@@ -105,11 +109,12 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.STRING(100))
     site!: string;
 
-    @Column({
-        type: DataType.UUID,
-        allowNull: true,
-    })
+    @ForeignKey(() => Site)
+    @Column({ type: DataType.UUID, allowNull: false })
     site_id?: string;
+
+    @BelongsTo(() => Site)
+    projectSite?: Site;
 
     @Default(0)
     @Column(DataType.INTEGER)
