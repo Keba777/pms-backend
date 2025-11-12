@@ -24,7 +24,6 @@ import Site from "../models/Site.model";
 import { EquipmentTimesheet, LaborTimesheet, MaterialBalanceSheet } from "../models/Timesheet.model";
 import Issue from "../models/Issue.model";
 import StoreRequisition from "../models/StoreRequisition.model";
-import ChatMessage from "../models/ChatMessage.model";
 import LaborInformation from "../models/LaborInformation.model";
 import KPI from "../models/KPI.model";
 import Dispatch from "../models/Dispatch.model";
@@ -38,6 +37,7 @@ import Invoice from "../models/Invoice.model";
 import Payment from "../models/Payment.model";
 import Budget from "../models/Budget.model";
 import Payroll from "../models/Payroll.model";
+import { ChatMessage, ChatRoom, ChatRoomMember } from "../models/Chat.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -77,7 +77,6 @@ const sequelize: Sequelize = new Sequelize({
         MaterialBalanceSheet,
         Issue,
         StoreRequisition,
-        ChatMessage,
         LaborInformation,
         KPI,
         Dispatch,
@@ -90,7 +89,10 @@ const sequelize: Sequelize = new Sequelize({
         Invoice,
         Payment,
         Budget,
-        Payroll
+        Payroll,
+        ChatRoom,
+        ChatRoomMember,
+        ChatMessage
     ],
 
     logging: false,

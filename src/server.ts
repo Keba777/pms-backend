@@ -3,7 +3,6 @@ import path from 'path';
 import http from 'http';
 import sequelize from './config/db';
 import app from './app';
-import { initializeWebSocket } from './utils/websocket';
 
 // Load environment variables
 dotenv.config({
@@ -22,7 +21,6 @@ async function start() {
     }
 
     const server = http.createServer(app);
-    initializeWebSocket(server);
 
     const PORT = process.env.PORT || 8000;
     server.listen(PORT, () => {
