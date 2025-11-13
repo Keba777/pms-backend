@@ -46,7 +46,6 @@ export interface IProject {
     end_date: Date;
     budget: number;
     client: string;
-    site: string;
     site_id?: string;
     projectSite?: Site;
     progress?: number;
@@ -105,9 +104,6 @@ class Project extends Model<IProject> implements IProject {
 
     @Column(DataType.STRING(100))
     client!: string;
-
-    @Column(DataType.STRING(100))
-    site!: string;
 
     @ForeignKey(() => Site)
     @Column({ type: DataType.UUID, allowNull: false })
