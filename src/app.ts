@@ -35,6 +35,7 @@ import payrollRouter from "./routes/payroll.route";
 import budgetRouter from "./routes/budget.route";
 import invoiceRouter from "./routes/invoice.route";
 import chatRouter from "./routes/chat.route";
+import collaborationRouter from "./routes/collaboration.route";
 import protectRoute from "./middlewares/auth";
 
 dotenv.config({
@@ -110,6 +111,7 @@ app.use("/api/v1/payrolls", protectRoute, payrollRouter);
 app.use("/api/v1/budgets", protectRoute, budgetRouter);
 app.use("/api/v1/invoices", protectRoute, invoiceRouter);
 app.use("/api/v1/chats", protectRoute, chatRouter);
+app.use("/api/v1/collaborations", protectRoute, collaborationRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });
