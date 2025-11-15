@@ -17,6 +17,7 @@ export interface ILaborInformation {
     startsAt: Date;
     endsAt: Date;
     status: 'Allocated' | 'Unallocated';
+    profile_picture?: string;
 }
 
 @Table({ tableName: 'labor_informations', timestamps: true })
@@ -49,6 +50,9 @@ class LaborInformation extends Model<ILaborInformation> implements ILaborInforma
         allowNull: false,
     })
     status!: 'Allocated' | 'Unallocated';
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    profile_picture?: string;
 }
 
 export default LaborInformation;

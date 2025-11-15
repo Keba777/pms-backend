@@ -22,6 +22,9 @@ module.exports = {
         type: Sequelize.ENUM("Allocated", "Unallocated"),
         allowNull: false,
       },
+      // New field
+      profile_picture: { type: Sequelize.STRING, allowNull: true },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -36,6 +39,9 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
+    // Drop table on rollback
     await queryInterface.dropTable("labor_informations");
+    // If you need to also remove the ENUM type in Postgres, add that here.
+    // await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_labor_informations_status";');
   },
 };
