@@ -152,6 +152,10 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
 
     const createdLaborsIds: string[] = [];
 
+    // Allowed enums for validation
+    const allowedSex = ["Male", "Female"];
+    const allowedTerms = ["Part Time", "Contract", "Temporary", "Permanent"];
+
     // Process each labor entry sequentially (keeps file pointer deterministic)
     for (let i = 0; i < laborsData.length; i++) {
       const laborEntry = laborsData[i];
@@ -232,23 +236,31 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
 
         // 1) If profile_picture is a URL -> re-upload to Cloudinary
         if (typeof picture === "string" && picture.startsWith("http")) {
-          const url = await uploadToCloudinary(picture);
-          if (url) profilePictureUrl = url;
+          try {
+            const url = await uploadToCloudinary(picture);
+            if (url) profilePictureUrl = url;
+          } catch (e) {
+            console.warn("Failed to upload profile picture from URL:", e);
+          }
         }
 
         // 2) If it's a base64 data URI
         else if (typeof picture === "string" && picture.startsWith("data:image")) {
-          const base64Data = picture.replace(/^data:image\/\w+;base64,/, "");
-          const buffer = Buffer.from(base64Data, "base64");
-          const tempPath = path.join(__dirname, `../../temp/laborinfo_${Date.now()}_${i}_${j}.png`);
-          fs.writeFileSync(tempPath, buffer);
-          const url = await uploadToCloudinary(tempPath);
           try {
-            fs.unlinkSync(tempPath);
+            const base64Data = picture.replace(/^data:image\/\w+;base64,/, "");
+            const buffer = Buffer.from(base64Data, "base64");
+            const tempPath = path.join(__dirname, `../../temp/laborinfo_${Date.now()}_${i}_${j}.png`);
+            fs.writeFileSync(tempPath, buffer);
+            const url = await uploadToCloudinary(tempPath);
+            try {
+              fs.unlinkSync(tempPath);
+            } catch (e) {
+              // ignore
+            }
+            if (url) profilePictureUrl = url;
           } catch (e) {
-            // ignore
+            console.warn("Failed to handle base64 profile picture:", e);
           }
-          if (url) profilePictureUrl = url;
         }
 
         // 3) If an uploaded file exists and info.fileName provided, try to match by originalname
@@ -268,20 +280,49 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
           }
 
           if (matchedFile) {
-            // upload and attempt to unlink temp path
-            const url = await uploadToCloudinary(matchedFile.path);
             try {
-              fs.unlinkSync(matchedFile.path);
+              const url = await uploadToCloudinary(matchedFile.path);
+              try {
+                fs.unlinkSync(matchedFile.path);
+              } catch (e) {
+                // ignore unlink errors
+              }
+              if (url) profilePictureUrl = url;
             } catch (e) {
-              // ignore unlink errors
+              console.warn("Failed to upload matched file for profile picture:", e);
             }
-            if (url) profilePictureUrl = url;
           }
         }
 
+        // Prepare optional fields (validate enums / coerce numbers)
+        let sexValue: "Male" | "Female" | undefined = undefined;
+        if (info.sex && typeof info.sex === "string") {
+          const trimmed = info.sex.trim();
+          if (allowedSex.includes(trimmed)) sexValue = trimmed as "Male" | "Female";
+        }
+
+        let termsValue:
+          | "Part Time"
+          | "Contract"
+          | "Temporary"
+          | "Permanent"
+          | undefined = undefined;
+        if (info.terms && typeof info.terms === "string") {
+          const trimmed = info.terms.trim();
+          if (allowedTerms.includes(trimmed)) termsValue = trimmed as any;
+        }
+
+        let estSalaryValue: number | undefined = undefined;
+        if (info.estSalary !== undefined && info.estSalary !== null && info.estSalary !== "") {
+          const parsed = Number(info.estSalary);
+          if (!Number.isNaN(parsed)) estSalaryValue = parsed;
+        }
+
+        const positionValue = typeof info.position === "string" && info.position.trim() !== "" ? info.position.trim() : undefined;
+        const educationLevelValue = typeof info.educationLevel === "string" && info.educationLevel.trim() !== "" ? info.educationLevel.trim() : undefined;
+
         // Create the LaborInformation row
         try {
-          // Removed unused 'createdInfo' variable — we no longer assign to an unused const.
           await LaborInformation.create({
             firstName: info.firstName,
             lastName: info.lastName,
@@ -289,9 +330,13 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
             startsAt: new Date(info.startsAt),
             endsAt: new Date(info.endsAt),
             status: info.status ?? "Unallocated",
-            // If your LaborInformation model already has profile_picture column this will be saved.
-            // If not present in model this field is ignored (but you said you only wanted controller changes).
             profile_picture: profilePictureUrl,
+            // New optional fields
+            position: positionValue,
+            sex: sexValue,
+            terms: termsValue,
+            estSalary: estSalaryValue,
+            educationLevel: educationLevelValue,
           } as any);
         } catch (err) {
           console.error("Failed to create LaborInformation for", info, err);

@@ -25,6 +25,18 @@ module.exports = {
       // New field
       profile_picture: { type: Sequelize.STRING, allowNull: true },
 
+      position: { type: Sequelize.STRING, allowNull: true },
+      sex: {
+        type: Sequelize.ENUM("Male", "Female"),
+        allowNull: true,
+      },
+      terms: {
+        type: Sequelize.ENUM("Part Time", "Contract", "Temporary", "Permanent"),
+        allowNull: true,
+      },
+      estSalary: { type: Sequelize.FLOAT, allowNull: true },
+      educationLevel: { type: Sequelize.STRING, allowNull: true },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

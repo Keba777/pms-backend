@@ -18,6 +18,11 @@ export interface ILaborInformation {
     endsAt: Date;
     status: 'Allocated' | 'Unallocated';
     profile_picture?: string;
+    position?: string;
+    sex?: 'Male' | 'Female';
+    terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
+    estSalary?: number;
+    educationLevel?: string
 }
 
 @Table({ tableName: 'labor_informations', timestamps: true })
@@ -53,6 +58,27 @@ class LaborInformation extends Model<ILaborInformation> implements ILaborInforma
 
     @Column({ type: DataType.STRING, allowNull: true })
     profile_picture?: string;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    position?: string;
+
+    @Column({
+        type: DataType.ENUM('Male', 'Female'),
+        allowNull: true,
+    })
+    sex?: 'Male' | 'Female';
+
+    @Column({
+        type: DataType.ENUM('Part Time', 'Contract', 'Temporary', 'Permanent'),
+        allowNull: true,
+    })
+    terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
+
+    @Column({ type: DataType.FLOAT, allowNull: true })
+    estSalary?: number;
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    educationLevel?: string;
 }
 
 export default LaborInformation;
