@@ -49,6 +49,36 @@ module.exports = {
         type: Sequelize.ENUM("Low Access", "Full Access", "Average Access"),
         defaultValue: "Average Access",
       },
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      gender: {
+        type: Sequelize.ENUM('Male', 'Female'),
+        allowNull: false,
+        defaultValue: 'Male',
+      },
+      position: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      terms: {
+        type: Sequelize.ENUM('Part Time', 'Contract', 'Temporary', 'Permanent'),
+        allowNull: true,
+      },
+      joiningDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      estSalary: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
+      ot: {
+        type: Sequelize.FLOAT,
+        allowNull: true,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

@@ -43,6 +43,13 @@ export interface IUser {
     activities?: Activity[];
     requests?: Request[];
     access?: "Low Access" | "Full Access" | "Average Access";
+    username: string;
+    gender: 'Male' | 'Female';
+    position?: string;
+    terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
+    joiningDate?: Date;
+    estSalary?: number;
+    ot?: number;
 }
 
 @Table({
@@ -141,6 +148,34 @@ class User extends Model<IUser> implements IUser {
     })
     access?: "Low Access" | "Full Access" | "Average Access";
 
+    @Column({ type: DataType.STRING, unique: true, allowNull: false })
+    username!: string;
+
+    @Column({
+        type: DataType.ENUM('Male', 'Female'),
+        allowNull: false,
+        defaultValue: 'Male'
+    })
+    gender!: 'Male' | 'Female';
+
+    @Column({ type: DataType.STRING, allowNull: true })
+    position?: string;
+
+    @Column({
+        type: DataType.ENUM('Part Time', 'Contract', 'Temporary', 'Permanent'),
+        allowNull: true
+    })
+    terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
+
+    @Column({ type: DataType.DATE, allowNull: true })
+    joiningDate?: Date;
+
+    @Column({ type: DataType.FLOAT, allowNull: true })
+    estSalary?: number;
+
+    @Column({ type: DataType.FLOAT, allowNull: true })
+    ot?: number;
+
     // Hash password before creating or updating when changed
     @BeforeCreate
     @BeforeUpdate
@@ -148,6 +183,28 @@ class User extends Model<IUser> implements IUser {
         if (instance.changed("password")) {
             const salt = await bcrypt.genSalt(10);
             instance.password = await bcrypt.hash(instance.password, salt);
+        }
+    }
+
+    @BeforeCreate
+    static async generateUsername(instance: User) {
+        if (!instance.username) {
+            let base = `${instance.first_name.toLowerCase()}.${instance.last_name.toLowerCase()}`;
+            let username = base;
+            let count = 1;
+            while (await User.findOne({ where: { username } })) {
+                username = `${base}${count}`;
+                count++;
+            }
+            instance.username = username;
+        }
+    }
+
+    @BeforeCreate
+    @BeforeUpdate
+    static async normalizeUsername(instance: User) {
+        if (instance.changed('username') && instance.username) {
+            instance.username = instance.username.toLowerCase();
         }
     }
 

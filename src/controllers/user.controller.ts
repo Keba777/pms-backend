@@ -107,7 +107,7 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extract and validate required fields
-        const { first_name, last_name, phone, email, password = "123456", role_id, siteId } = req.body;
+        const { first_name, last_name, phone, email, password = "123456", role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
 
         if (!first_name || !last_name || !phone || !email || !role_id || !siteId) {
             return next(new ErrorResponse("Missing required fields", 400));
@@ -144,6 +144,13 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
             status: req.body.status,
             access: req.body.access,
             responsiblities: req.body.responsibilities,
+            username: username ? username.toLowerCase() : undefined,
+            gender: gender || 'Male',
+            position,
+            terms,
+            joiningDate,
+            estSalary,
+            ot,
         };
 
         const user = await User.create(userData);
@@ -258,6 +265,10 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
 
       const salt = await bcrypt.genSalt(10);
       userData.password = await bcrypt.hash(password, salt);
+      if (userData.username) userData.username = userData.username.toLowerCase();
+      if (userData.estSalary) userData.estSalary = parseFloat(userData.estSalary);
+      if (userData.ot) userData.ot = parseFloat(userData.ot);
+      if (userData.joiningDate) userData.joiningDate = new Date(userData.joiningDate);
     }
 
     // ------------------------------------------------------------------ //
@@ -319,6 +330,11 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
           updates.responsiblities = updates.responsibilities;
           delete updates.responsibilities;
         }
+
+        if (updates.username) updates.username = updates.username.toLowerCase();
+        if (updates.estSalary) updates.estSalary = parseFloat(updates.estSalary);
+        if (updates.ot) updates.ot = parseFloat(updates.ot);
+        if (updates.joiningDate) updates.joiningDate = new Date(updates.joiningDate);
 
         await user.update(updates);
         const updatedUser = await User.findByPk(req.params.id, {

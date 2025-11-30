@@ -37,6 +37,13 @@ const registerUser = async (
       responsiblities,
       status,
       access,
+      username,
+      gender,
+      position,
+      terms,
+      joiningDate,
+      estSalary,
+      ot,
     } = req.body;
 
     const email = rawEmail.toLowerCase(); // Normalize to lowercase
@@ -82,6 +89,13 @@ const registerUser = async (
       responsiblities: responsiblities || null,
       access: access || "Low Access",
       status: status || "Active",
+      username: username ? username.toLowerCase() : undefined,
+      gender: gender || 'Male',
+      position,
+      terms,
+      joiningDate,
+      estSalary,
+      ot,
     });
 
     sendingTokenResponse(user, 201, res);
@@ -319,6 +333,13 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
         responsiblities: user.responsiblities,
         access: user.access,
         status: user.status,
+        username: user.username,
+        gender: user.gender,
+        position: user.position,
+        terms: user.terms,
+        joiningDate: user.joiningDate,
+        estSalary: user.estSalary,
+        ot: user.ot,
         token,
       },
     });
