@@ -109,8 +109,24 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         // Extract and validate required fields
         const { first_name, last_name, phone, email, password = "123456", role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
 
-        if (!first_name || !last_name || !phone || !email || !role_id || !siteId) {
+        if (!first_name || !last_name || !phone || !email) {
             return next(new ErrorResponse("Missing required fields", 400));
+        }
+
+        let finalRoleId = role_id;
+        if (!finalRoleId) {
+            const userRole = await Role.findOne({ where: { name: "User" } });
+            if (userRole) {
+                finalRoleId = userRole.id;
+            } else {
+                 console.warn("Default 'User' role not found. Creating user without role or with provided invalid role_id.");
+                 // You might want to handle this case: error out or create the role? 
+                 // For now, adhering to instruction "make sure that I have registered the role User by default it exists everytime"
+                 // Ideally we should assume it exists or error if critical.
+                 // let's error if we can't find a role, or just let it fail at db level if role_id is required?
+                 // User model says role_id is allowNull: false. So we MUST provide it.
+                 return next(new ErrorResponse("Default 'User' role not found", 500));
+            }
         }
 
         // Hash password
@@ -137,7 +153,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
             phone,
             email,
             password: hashedPassword,
-            role_id,
+            role_id: finalRoleId,
             siteId,
             profile_picture,
             department_id: req.body.department_id,
@@ -259,8 +275,17 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
     for (const userData of usersData) {
       const { first_name, last_name, phone, email, password = "123456", role_id, siteId } = userData;
 
-      if (!first_name || !last_name || !phone || !email || !role_id || !siteId) {
+      if (!first_name || !last_name || !phone || !email) {
         return next(new ErrorResponse("Missing required fields in one or more users", 400));
+      }
+
+      if (!role_id) {
+          const userRole = await Role.findOne({ where: { name: "User" } });
+          if (userRole) {
+              userData.role_id = userRole.id;
+          } else {
+             return next(new ErrorResponse("Default 'User' role not found", 500));
+          }
       }
 
       const salt = await bcrypt.genSalt(10);

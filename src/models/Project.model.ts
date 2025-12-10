@@ -20,6 +20,7 @@ import User from "./User.model";
 import ProjectMember from "./ProjectMember.model";
 import WorkflowLog from "./WorkflowLog.model";
 import Site from "./Site.model";
+import Client from "./Client.model";
 
 type ProjectStatus =
     | "Not Started"
@@ -108,6 +109,13 @@ class Project extends Model<IProject> implements IProject {
     @ForeignKey(() => Site)
     @Column({ type: DataType.UUID, allowNull: false })
     site_id?: string;
+
+    @ForeignKey(() => Client)
+    @Column({ type: DataType.UUID, allowNull: true })
+    client_id?: string;
+
+    @BelongsTo(() => Client)
+    clientInfo?: Client;
 
     @BelongsTo(() => Site)
     projectSite?: Site;

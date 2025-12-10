@@ -34,7 +34,7 @@ export interface IUser {
     password: string;
     profile_picture?: string;
     department_id?: string;
-    siteId: string;
+    siteId?: string;
     site?: Site
     responsiblities?: string[]
     status?: "Active" | "InActive";
@@ -102,8 +102,8 @@ class User extends Model<IUser> implements IUser {
     department?: Department;
 
     @ForeignKey(() => Site)
-    @Column({ type: DataType.UUID, allowNull: false })
-    siteId!: string;
+    @Column({ type: DataType.UUID, allowNull: true })
+    siteId?: string;
     @BelongsTo(() => Site)
     site!: Site;
 
