@@ -39,6 +39,7 @@ import Budget from "../models/Budget.model";
 import Payroll from "../models/Payroll.model";
 import { ChatMessage, ChatRoom, ChatRoomMember } from "../models/Chat.model";
 import { ActivityLog, Notification as ColalborationNotification, Discussion } from "../models/Collaboration.model";
+import Client from "../models/Client.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -97,6 +98,7 @@ const sequelize: Sequelize = new Sequelize({
         Discussion,
         ColalborationNotification,
         ActivityLog,
+        Client
     ],
 
     logging: false,
