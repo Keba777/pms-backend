@@ -1,0 +1,2772 @@
+[
+    {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Admin",
+        "permissions": null,
+        "createdAt": "2025-03-20T23:44:19.831Z",
+        "updatedAt": "2025-03-20T23:44:19.831Z"
+    },
+    {
+        "id": "aa192529-c692-458e-bf96-42b7d4782c3d",
+        "name": "Client",
+        "permissions": null,
+        "createdAt": "2025-03-27T11:11:45.311Z",
+        "updatedAt": "2025-04-10T11:42:13.956Z"
+    },
+    {
+        "id": "b12c1d62-1c78-4bb1-9e4f-772d48c3ec3a",
+        "name": "Procurement",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {},
+            "departments": {},
+            "users": {},
+            "clients": {},
+            "roles": {},
+            "workspaces": {},
+            "master-schedule": {},
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {},
+            "timesheet": {},
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {},
+            "schedule": {},
+            "status": {},
+            "resources": {},
+            "materials": {},
+            "equipments": {},
+            "labors": {},
+            "resource_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "mywarehouse": {},
+            "site-materials": {},
+            "site-equipments": {},
+            "site-labors": {},
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {},
+            "employee_position": {},
+            "payslips": {},
+            "allowances": {},
+            "deductions": {},
+            "expenses": {},
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "general_settings": {},
+            "permissions": {},
+            "languages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "email_settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sms_gateway": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "pusher": {},
+            "media_storage": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "templates": {},
+            "system_updater": {},
+            "project_report": {},
+            "task_report": {}
+        },
+        "createdAt": "2025-04-10T11:47:57.795Z",
+        "updatedAt": "2025-07-04T20:49:49.678Z"
+    },
+    {
+        "id": "e1ea8779-315f-4a3f-a795-3d041a1c4e17",
+        "name": "Project Manager",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {},
+            "users": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "clients": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "roles": {},
+            "workspaces": {
+                "manage": true
+            },
+            "master-schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "reports": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "settings": {},
+            "schedule": {},
+            "status": {},
+            "resources": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "materials": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "equipments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "labors": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resource_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "mywarehouse": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "site-materials": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "site-equipments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "site-labors": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {},
+            "employee_position": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "manage": true
+            },
+            "allowances": {},
+            "deductions": {},
+            "expenses": {
+                "manage": true
+            },
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activity_log": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "general_settings": {},
+            "permissions": {},
+            "languages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "email_settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sms_gateway": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "pusher": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "media_storage": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "templates": {},
+            "system_updater": {},
+            "project_report": {},
+            "task_report": {}
+        },
+        "createdAt": "2025-04-10T11:48:49.109Z",
+        "updatedAt": "2025-07-04T20:51:50.120Z"
+    },
+    {
+        "id": "a1f9408d-4371-4e86-957e-d0bcfe1b66ce",
+        "name": "Consultant",
+        "permissions": {
+            "users": {
+                "manage": true
+            },
+            "projects": {
+                "manage": true
+            },
+            "tasks": {
+                "manage": true
+            },
+            "clients": {
+                "manage": true
+            },
+            "workspaces": {
+                "manage": true
+            },
+            "meetings": {
+                "manage": true
+            },
+            "contracts": {
+                "manage": true
+            },
+            "timesheet": {
+                "manage": true
+            },
+            "payslips": {
+                "manage": true
+            },
+            "estimatesInvoices": {
+                "manage": true
+            },
+            "expenses": {
+                "manage": true
+            },
+            "milestones": {
+                "manage": true
+            },
+            "activities": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:49:03.857Z",
+        "updatedAt": "2025-04-10T11:49:03.857Z"
+    },
+    {
+        "id": "809f4603-3930-4e79-b2b0-f15c0a6a9b8c",
+        "name": "Supervisor",
+        "permissions": {
+            "users": {
+                "manage": true
+            },
+            "projects": {
+                "manage": true
+            },
+            "tasks": {
+                "manage": true
+            },
+            "clients": {
+                "manage": true
+            },
+            "workspaces": {
+                "manage": true
+            },
+            "meetings": {
+                "manage": true
+            },
+            "contracts": {
+                "manage": true
+            },
+            "timesheet": {
+                "manage": true
+            },
+            "payslips": {
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true
+            },
+            "systemNotifications": {
+                "manage": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "activities": {
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:49:20.007Z",
+        "updatedAt": "2025-04-10T11:49:20.007Z"
+    },
+    {
+        "id": "e0c29db7-e7f0-4163-8ff8-0d8052b5ea0f",
+        "name": "Site Engineer",
+        "permissions": {
+            "tasks": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "projects": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "clients": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "users": {
+                "edit": true,
+                "delete": true,
+                "manage": true,
+                "create": true
+            },
+            "workspaces": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "meetings": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "contracts": {
+                "delete": true,
+                "edit": true,
+                "manage": true,
+                "create": true
+            },
+            "timesheet": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "create": true,
+                "edit": true,
+                "delete": true,
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true,
+                "delete": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "systemNotifications": {
+                "manage": true,
+                "delete": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true,
+                "create": true,
+                "update": true,
+                "delete": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "manager": {
+                "project": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:49:35.519Z",
+        "updatedAt": "2025-04-10T11:49:35.519Z"
+    },
+    {
+        "id": "b26c1e02-77b5-4f64-b4e7-3ccbc45afa22",
+        "name": "Building Engineer",
+        "permissions": {
+            "tasks": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "projects": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "clients": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "users": {
+                "edit": true,
+                "delete": true,
+                "manage": true,
+                "create": true
+            },
+            "workspaces": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "meetings": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "contracts": {
+                "delete": true,
+                "edit": true,
+                "manage": true,
+                "create": true
+            },
+            "timesheet": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "create": true,
+                "edit": true,
+                "delete": true,
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true,
+                "delete": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "systemNotifications": {
+                "manage": true,
+                "delete": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true,
+                "create": true,
+                "update": true,
+                "delete": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "manager": {
+                "project": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:49:52.191Z",
+        "updatedAt": "2025-04-10T11:49:52.191Z"
+    },
+    {
+        "id": "839a7bd9-ffa9-42ae-8539-1dcbc54f7880",
+        "name": "Cashier",
+        "permissions": {
+            "contracts": {
+                "delete": true,
+                "edit": true,
+                "manage": true,
+                "create": true
+            },
+            "payslips": {
+                "create": true,
+                "edit": true,
+                "delete": true,
+                "manage": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            }
+        },
+        "createdAt": "2025-04-10T11:50:39.616Z",
+        "updatedAt": "2025-04-10T11:50:39.616Z"
+    },
+    {
+        "id": "abcf88d0-39cb-4f15-b0cb-bb2eb47744c8",
+        "name": "Office Engineer",
+        "permissions": {
+            "tasks": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "projects": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "clients": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "users": {
+                "edit": true,
+                "delete": true,
+                "manage": true,
+                "create": true
+            },
+            "workspaces": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "meetings": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "contracts": {
+                "delete": true,
+                "edit": true,
+                "manage": true,
+                "create": true
+            },
+            "timesheet": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "create": true,
+                "edit": true,
+                "delete": true,
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true,
+                "delete": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "systemNotifications": {
+                "manage": true,
+                "delete": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true,
+                "create": true,
+                "update": true,
+                "delete": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "manager": {
+                "project": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:50:06.739Z",
+        "updatedAt": "2025-04-10T11:50:06.739Z"
+    },
+    {
+        "id": "74614c3e-f433-4fb0-b791-1ed653a801f2",
+        "name": "Water Works Engineer",
+        "permissions": {
+            "tasks": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "projects": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "clients": {
+                "edit": true,
+                "delete": true,
+                "create": true,
+                "manage": true
+            },
+            "users": {
+                "edit": true,
+                "delete": true,
+                "manage": true,
+                "create": true
+            },
+            "workspaces": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "meetings": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "contracts": {
+                "delete": true,
+                "edit": true,
+                "manage": true,
+                "create": true
+            },
+            "timesheet": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "create": true,
+                "edit": true,
+                "delete": true,
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true,
+                "delete": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true,
+                "edit": true,
+                "delete": true
+            },
+            "systemNotifications": {
+                "manage": true,
+                "delete": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true,
+                "create": true,
+                "update": true,
+                "delete": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "manager": {
+                "project": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:51:00.480Z",
+        "updatedAt": "2025-04-10T11:51:00.480Z"
+    },
+    {
+        "id": "6d77a086-8982-4c98-88f0-99c6b9979cc8",
+        "name": "Foreman",
+        "permissions": {
+            "users": {
+                "manage": true
+            },
+            "projects": {
+                "manage": true
+            },
+            "tasks": {
+                "manage": true
+            },
+            "clients": {
+                "manage": true
+            },
+            "workspaces": {
+                "manage": true
+            },
+            "meetings": {
+                "manage": true
+            },
+            "contracts": {
+                "manage": true
+            },
+            "timesheet": {
+                "manage": true
+            },
+            "payslips": {
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true
+            },
+            "systemNotifications": {
+                "manage": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "activities": {
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:51:20.108Z",
+        "updatedAt": "2025-04-10T11:51:20.108Z"
+    },
+    {
+        "id": "cd8f47e9-982e-4f0f-a779-805946b47292",
+        "name": "Quality Control",
+        "permissions": {
+            "users": {
+                "manage": true
+            },
+            "projects": {
+                "manage": true
+            },
+            "tasks": {
+                "manage": true
+            },
+            "clients": {
+                "manage": true
+            },
+            "workspaces": {
+                "manage": true
+            },
+            "meetings": {
+                "manage": true
+            },
+            "contracts": {
+                "manage": true
+            },
+            "timesheet": {
+                "manage": true
+            },
+            "payslips": {
+                "manage": true
+            },
+            "activityLog": {
+                "manage": true
+            },
+            "estimatesInvoices": {
+                "create": true,
+                "manage": true
+            },
+            "expenses": {
+                "create": true,
+                "manage": true
+            },
+            "milestones": {
+                "create": true,
+                "manage": true
+            },
+            "systemNotifications": {
+                "manage": true
+            },
+            "inventories": {
+                "manage": true
+            },
+            "resourceAllocation": {
+                "manage": true
+            },
+            "requests": {
+                "manage": true
+            },
+            "hr": {
+                "manage": true
+            },
+            "masterSchedule": {
+                "manage": true
+            },
+            "adminSchedule": {
+                "manage": true
+            },
+            "memberSchedule": {
+                "manage": true
+            },
+            "activities": {
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-10T11:51:28.128Z",
+        "updatedAt": "2025-04-10T11:51:28.128Z"
+    },
+    {
+        "id": "2f9b6337-4e45-4b5a-bc6b-ceb84c84e63f",
+        "name": "Project Planner",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {},
+            "users": {},
+            "clients": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "roles": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "workspaces": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "masterschedule": {},
+            "meetings": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "timesheet": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {}
+        },
+        "createdAt": "2025-04-10T11:47:09.871Z",
+        "updatedAt": "2025-04-28T09:06:20.374Z"
+    },
+    {
+        "id": "cfca9e09-546e-4a12-a9a4-d0b814d792fc",
+        "name": "General Manager",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "users": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "clients": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "roles": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "workspaces": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "master-schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "reports": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "status": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resources": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "materials": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "equipments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "labors": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resource_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "mywarehouse": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "priority": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "budget": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "budgets": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resource_allocation": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "warehouses": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "transfer": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "incoming_transfer": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "dispatch": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "delivery": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "damages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "inventory_history": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "inventory_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "hrm": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "employee_position": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "allowances": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "deductions": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "expenses": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "estimates_invoices": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payment_methods": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "taxes": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "units": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "items": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "notes": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "leave_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activity_log": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "general_settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "permissions": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "languages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "email_settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sms_gateway": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "pusher": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "media_storage": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "templates": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "system_updater": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "project_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "task_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-04-29T11:16:21.626Z",
+        "updatedAt": "2025-04-29T11:16:21.626Z"
+    },
+    {
+        "id": "bbb1ffa1-2683-4542-aebc-50f9eb5ebeb4",
+        "name": "HR Manager",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {},
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {},
+            "users": {},
+            "clients": {},
+            "roles": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "workspaces": {},
+            "master-schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {},
+            "timesheet": {},
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "schedule": {},
+            "status": {},
+            "resources": {},
+            "materials": {},
+            "equipments": {},
+            "labors": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resource_requests": {},
+            "mywarehouse": {},
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "employee_position": {},
+            "payslips": {},
+            "allowances": {},
+            "deductions": {},
+            "expenses": {},
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {},
+            "general_settings": {},
+            "permissions": {},
+            "languages": {},
+            "email_settings": {},
+            "sms_gateway": {},
+            "pusher": {},
+            "media_storage": {},
+            "templates": {},
+            "system_updater": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "project_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "task_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-03-27T11:12:24.117Z",
+        "updatedAt": "2025-05-16T10:49:56.621Z"
+    },
+    {
+        "id": "13761808-4d09-433d-bb6e-39d3adb8c311",
+        "name": "Finance and Admins Head",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "users": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "clients": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "roles": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "workspaces": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "master-schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "reports": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "status": {},
+            "resources": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "materials": {},
+            "equipments": {},
+            "labors": {},
+            "resource_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "mywarehouse": {},
+            "site-materials": {},
+            "site-equipments": {},
+            "site-labors": {},
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "budget": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "budgets": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resource_allocation": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {},
+            "employee_position": {},
+            "payslips": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "allowances": {},
+            "deductions": {},
+            "expenses": {
+                "create": true,
+                "delete": true,
+                "manage": true
+            },
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {},
+            "general_settings": {},
+            "permissions": {},
+            "languages": {},
+            "email_settings": {},
+            "sms_gateway": {},
+            "pusher": {},
+            "media_storage": {},
+            "templates": {},
+            "system_updater": {},
+            "project_report": {},
+            "task_report": {}
+        },
+        "createdAt": "2025-04-10T11:47:42.352Z",
+        "updatedAt": "2025-07-04T20:54:16.416Z"
+    },
+    {
+        "id": "a3d1c6b5-7e4c-44e8-a2b1-5c6d3a4e8f7b",
+        "name": "User",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {},
+            "departments": {},
+            "users": {},
+            "clients": {},
+            "roles": {},
+            "workspaces": {},
+            "master-schedule": {},
+            "meetings": {},
+            "contracts": {},
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {},
+            "schedule": {},
+            "status": {},
+            "resources": {},
+            "materials": {},
+            "equipments": {},
+            "labors": {},
+            "resource_requests": {},
+            "mywarehouse": {},
+            "site-materials": {},
+            "site-equipments": {},
+            "site-labors": {},
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {},
+            "employee_position": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {},
+            "allowances": {},
+            "deductions": {},
+            "expenses": {},
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {},
+            "general_settings": {},
+            "permissions": {},
+            "languages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "email_settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sms_gateway": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "pusher": {},
+            "media_storage": {},
+            "templates": {},
+            "system_updater": {},
+            "project_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "task_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-03-20T23:44:19.831Z",
+        "updatedAt": "2025-07-04T20:47:03.867Z"
+    },
+    {
+        "id": "bf2c9607-86ef-4c34-8c05-bc76470c6d5b",
+        "name": "Equipment Manager",
+        "permissions": {
+            "projects": {},
+            "tasks": {},
+            "activities": {},
+            "requests": {},
+            "departments": {},
+            "users": {},
+            "clients": {},
+            "roles": {},
+            "workspaces": {},
+            "master-schedule": {},
+            "meetings": {},
+            "contracts": {},
+            "timesheet": {},
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {},
+            "schedule": {},
+            "status": {},
+            "resources": {},
+            "materials": {},
+            "equipments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "labors": {},
+            "resource_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "mywarehouse": {},
+            "site-materials": {},
+            "site-equipments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "site-labors": {},
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "inventory_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "hrm": {},
+            "employee_position": {},
+            "payslips": {},
+            "allowances": {},
+            "deductions": {},
+            "expenses": {},
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "general_settings": {},
+            "permissions": {},
+            "languages": {},
+            "email_settings": {},
+            "sms_gateway": {},
+            "pusher": {},
+            "media_storage": {},
+            "templates": {},
+            "system_updater": {},
+            "project_report": {},
+            "task_report": {}
+        },
+        "createdAt": "2025-04-10T11:50:28.742Z",
+        "updatedAt": "2025-05-24T10:01:25.079Z"
+    },
+    {
+        "id": "dcdb769f-5f11-4ee1-ab10-b3ac86c1553b",
+        "name": "Warehouse Manager",
+        "permissions": {
+            "projects": {},
+            "tasks": {},
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "manage": true
+            },
+            "departments": {},
+            "users": {},
+            "clients": {},
+            "roles": {},
+            "workspaces": {},
+            "master-schedule": {},
+            "meetings": {},
+            "contracts": {},
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {},
+            "schedule": {},
+            "status": {},
+            "resources": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "materials": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "equipments": {},
+            "labors": {},
+            "resource_requests": {},
+            "mywarehouse": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "site-materials": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "site-equipments": {},
+            "site-labors": {},
+            "priority": {},
+            "chat": {},
+            "todos": {},
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "delivery": {},
+            "damages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {},
+            "employee_position": {},
+            "payslips": {},
+            "allowances": {},
+            "deductions": {},
+            "expenses": {},
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {},
+            "general_settings": {},
+            "permissions": {},
+            "languages": {},
+            "email_settings": {},
+            "sms_gateway": {},
+            "pusher": {},
+            "media_storage": {},
+            "templates": {},
+            "system_updater": {},
+            "project_report": {},
+            "task_report": {}
+        },
+        "createdAt": "2025-04-10T11:47:25.913Z",
+        "updatedAt": "2025-06-03T07:39:14.022Z"
+    },
+    {
+        "id": "e9930d61-a42f-4a3e-9bda-586a266f6776",
+        "name": "Project Analyst",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {},
+            "users": {
+                "update": true,
+                "manage": true
+            },
+            "clients": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "roles": {},
+            "workspaces": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "master-schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {},
+            "payments": {},
+            "reports": {},
+            "settings": {},
+            "schedule": {},
+            "status": {},
+            "resources": {},
+            "materials": {},
+            "equipments": {},
+            "labors": {},
+            "resource_requests": {},
+            "mywarehouse": {},
+            "site-materials": {},
+            "site-equipments": {},
+            "site-labors": {},
+            "priority": {},
+            "chat": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "todos": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {},
+            "delivery": {},
+            "damages": {},
+            "inventory_history": {},
+            "inventory_report": {},
+            "hrm": {},
+            "employee_position": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payslips": {
+                "manage": true
+            },
+            "allowances": {},
+            "deductions": {},
+            "expenses": {
+                "manage": true
+            },
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activity_log": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "general_settings": {},
+            "permissions": {},
+            "languages": {},
+            "email_settings": {},
+            "sms_gateway": {},
+            "pusher": {},
+            "media_storage": {},
+            "templates": {},
+            "system_updater": {},
+            "project_report": {},
+            "task_report": {}
+        },
+        "createdAt": "2025-04-10T11:48:32.941Z",
+        "updatedAt": "2025-07-04T20:48:22.620Z"
+    },
+    {
+        "id": "8f93e3e9-7038-4293-92a9-b492e54d6d7a",
+        "name": "Labor Manager",
+        "permissions": {
+            "projects": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "tasks": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "activities": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "departments": {},
+            "users": {},
+            "clients": {},
+            "roles": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "workspaces": {},
+            "master-schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "meetings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "contracts": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "timesheet": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "invoices": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "payments": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "reports": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "schedule": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "status": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resources": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "materials": {},
+            "equipments": {},
+            "labors": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "resource_requests": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "mywarehouse": {},
+            "site-materials": {},
+            "site-equipments": {},
+            "site-labors": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "priority": {},
+            "chat": {},
+            "todos": {},
+            "sites": {},
+            "budget": {},
+            "budgets": {},
+            "resource_allocation": {},
+            "warehouses": {},
+            "transfer": {},
+            "incoming_transfer": {},
+            "dispatch": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "delivery": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "damages": {},
+            "inventory_history": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "inventory_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "hrm": {},
+            "employee_position": {},
+            "payslips": {},
+            "allowances": {},
+            "deductions": {},
+            "expenses": {},
+            "estimates_invoices": {},
+            "payment_methods": {},
+            "taxes": {},
+            "units": {},
+            "items": {},
+            "notes": {},
+            "leave_requests": {},
+            "activity_log": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "general_settings": {},
+            "permissions": {},
+            "languages": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "email_settings": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "sms_gateway": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "pusher": {},
+            "media_storage": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "templates": {},
+            "system_updater": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "project_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            },
+            "task_report": {
+                "create": true,
+                "update": true,
+                "delete": true,
+                "manage": true
+            }
+        },
+        "createdAt": "2025-10-22T09:48:26.578Z",
+        "updatedAt": "2025-10-22T09:48:26.578Z"
+    }
+]

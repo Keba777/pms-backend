@@ -14,7 +14,11 @@ async function start() {
         await sequelize.authenticate();
         console.log('Database connected successfully.');
         // Auto‑sync models (optional)
-        // await sequelize.sync({ alter: true });
+        if (process.env.NODE_ENV !== 'production') {
+            console.log("Auto-migrating database schema...");
+            await sequelize.sync({ alter: true });
+            console.log("Database schema synced.");
+        }
     } catch (err) {
         console.error('Unable to connect to DB:', err);
         process.exit(1);
