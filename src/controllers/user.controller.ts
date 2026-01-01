@@ -107,10 +107,22 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // Extract and validate required fields
-    const { first_name, last_name, phone, email, password = "123456", role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
+    // Extract and validate required fields
+    let { first_name, last_name, phone, email, password, role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
 
     if (!first_name || !last_name || !phone || !email) {
       return next(new ErrorResponse("Missing required fields", 400));
+    }
+
+    // Auto-generate username if not provided
+    if (!username || username.trim() === "") {
+      const randomNumber = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
+      username = `${first_name.toLowerCase()}${last_name.toLowerCase()}${randomNumber}`;
+    }
+
+    // Set default password if not provided or empty
+    if (!password || password.trim() === "") {
+      password = "123456";
     }
 
     let finalRoleId = role_id;
@@ -120,11 +132,6 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         finalRoleId = userRole.id;
       } else {
         console.warn("Default 'User' role not found. Creating user without role or with provided invalid role_id.");
-        // You might want to handle this case: error out or create the role? 
-        // For now, adhering to instruction "make sure that I have registered the role User by default it exists everytime"
-        // Ideally we should assume it exists or error if critical.
-        // let's error if we can't find a role, or just let it fail at db level if role_id is required?
-        // User model says role_id is allowNull: false. So we MUST provide it.
         return next(new ErrorResponse("Default 'User' role not found", 500));
       }
     }
@@ -135,12 +142,14 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
     let profile_picture;
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
+      // Use absolute path for upload
+      const absolutePath = path.resolve(req.file.path);
+      const result = await cloudinary.uploader.upload(absolutePath, {
         folder: "/pms/images",
         use_filename: true,
       });
 
-      fs.unlink(req.file.path, (err: any) => {
+      fs.unlink(absolutePath, (err: any) => {
         if (err) console.warn("Failed to delete temp file:", err);
       });
 

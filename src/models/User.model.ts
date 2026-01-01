@@ -43,7 +43,7 @@ export interface IUser {
     activities?: Activity[];
     requests?: Request[];
     access?: "Low Access" | "Full Access" | "Average Access";
-    username: string;
+    username?: string;
     gender: 'Male' | 'Female';
     position?: string;
     terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
@@ -147,8 +147,8 @@ class User extends Model<IUser> implements IUser {
     })
     access?: "Low Access" | "Full Access" | "Average Access";
 
-    @Column({ type: DataType.STRING, unique: true, allowNull: false })
-    username!: string;
+    @Column({ type: DataType.STRING, unique: true, allowNull: true })
+    username?: string;
 
     @Column({
         type: DataType.STRING,
