@@ -1,27 +1,52 @@
 import { NextFunction, Request, Response } from "express";
+import { ReqWithUser } from "../types/req-with-user";
 import Project from "../models/Project.model";
 import Task from "../models/Task.model";
 import Activity from "../models/Activity.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 import Site from "../models/Site.model";
+import Client from "../models/Client.model";
+import cloudinary from "../config/cloudinary";
+import fs from "fs";
 
 // @desc    Create a new project
 // @route   POST /api/v1/projects
 const createProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { members, ...projectData } = req.body;
-        const project = await Project.create(projectData);
 
-        if (members?.length) {
+        // Handle file uploads
+        const files = (req.files as Express.Multer.File[]) || [];
+        const attachmentUrls: string[] = [];
+
+        for (const file of files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: "project_attachments",
+                resource_type: "auto",
+            });
+            fs.unlinkSync(file.path);
+            attachmentUrls.push(result.secure_url);
+        }
+
+        const projectPayload = {
+            ...projectData,
+            attachments: attachmentUrls
+        };
+
+        const project = (await Project.create(projectPayload, { userId: (req as ReqWithUser).user?.id } as any)) as any;
+
+        const membersList = Array.isArray(members) ? members : (members ? [members] : []);
+
+        if (membersList.length > 0) {
             // Validate users exist
             const users = await User.findAll({
                 where: {
-                    id: members
+                    id: membersList
                 }
             });
 
-            if (users.length !== members.length) {
+            if (users.length !== membersList.length) {
                 return next(new ErrorResponse("Some users could not be found", 400));
             }
             await project.$set("members", users);
@@ -44,6 +69,14 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
                     as: "members",
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] }
+                },
+                {
+                    model: Site,
+                    as: "projectSite"
+                },
+                {
+                    model: Client,
+                    as: "clientInfo"
                 }
             ]
         });
@@ -80,6 +113,10 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
                 {
                     model: Site,
                     as: "projectSite"
+                },
+                {
+                    model: Client,
+                    as: "clientInfo"
                 }
             ],
             order: [["createdAt", "ASC"]],
@@ -114,9 +151,13 @@ const getProjectById = async (req: Request, res: Response, next: NextFunction) =
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
-                 {
+                {
                     model: Site,
                     as: "projectSite"
+                },
+                {
+                    model: Client,
+                    as: "clientInfo"
                 }
             ],
         });
@@ -136,24 +177,53 @@ const getProjectById = async (req: Request, res: Response, next: NextFunction) =
 // @route   PUT /api/v1/projects/:id
 const updateProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { members, ...projectData } = req.body;
-
+        const { members, existingAttachments, ...projectData } = req.body;
         const project = await Project.findByPk(req.params.id);
+
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
         }
 
-        await project.update(projectData);
+        // Handle file uploads (new files)
+        const files = (req.files as Express.Multer.File[]) || [];
+        const newAttachmentUrls: string[] = [];
 
-        if (Array.isArray(members) && members.length > 0) {
+        for (const file of files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: "project_attachments",
+                resource_type: "auto",
+            });
+            fs.unlinkSync(file.path);
+            newAttachmentUrls.push(result.secure_url);
+        }
+
+        // Handle existing attachments
+        let keptAttachments: string[] = [];
+        if (existingAttachments) {
+            // If coming from FormData, it might be a single string or an array of strings
+            keptAttachments = Array.isArray(existingAttachments)
+                ? existingAttachments
+                : [existingAttachments];
+        }
+
+        const updatedAttachments = [...keptAttachments, ...newAttachmentUrls];
+
+        await project.update({
+            ...projectData,
+            attachments: updatedAttachments
+        }, { userId: (req as ReqWithUser).user?.id } as any);
+
+        const membersList = Array.isArray(members) ? members : (members ? [members] : []);
+
+        if (membersList.length > 0) {
             // Validate users exist
             const users = await User.findAll({
                 where: {
-                    id: members
+                    id: membersList
                 }
             });
 
-            if (users.length !== members.length) {
+            if (users.length !== membersList.length) {
                 return next(new ErrorResponse("Some users could not be found", 400));
             }
             await project.$set("members", users);
@@ -177,9 +247,13 @@ const updateProject = async (req: Request, res: Response, next: NextFunction) =>
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
-                 {
+                {
                     model: Site,
                     as: "projectSite"
+                },
+                {
+                    model: Client,
+                    as: "clientInfo"
                 }
             ],
         });
@@ -254,9 +328,13 @@ const updateProjectActuals = async (req: Request, res: Response, next: NextFunct
                     through: { attributes: [] },
                     attributes: { exclude: ["password"] },
                 },
-                 {
+                {
                     model: Site,
                     as: "projectSite"
+                },
+                {
+                    model: Client,
+                    as: "clientInfo"
                 }
             ],
         });
@@ -329,8 +407,8 @@ const updateProjectProgress = async (req: Request, res: Response, next: NextFunc
 
         const updatedProject = await Project.findByPk(project.id, {
             include: [
-                { 
-                    model: Task, 
+                {
+                    model: Task,
                     as: "tasks",
                     include: [
                         {
@@ -340,9 +418,13 @@ const updateProjectProgress = async (req: Request, res: Response, next: NextFunc
                     ],
                 },
                 { model: User, as: "members", through: { attributes: [] }, attributes: { exclude: ["password"] } },
-                 {
+                {
                     model: Site,
                     as: "projectSite"
+                },
+                {
+                    model: Client,
+                    as: "clientInfo"
                 }
             ],
         });

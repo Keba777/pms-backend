@@ -46,7 +46,8 @@ export interface IProject {
     start_date: Date;
     end_date: Date;
     budget: number;
-    client: string;
+    client_id?: string;
+    clientInfo?: Client;
     site_id?: string;
     projectSite?: Site;
     progress?: number;
@@ -56,6 +57,7 @@ export interface IProject {
     tagIds?: string[];
     tasks?: Task[];
     actuals?: ProjectActuals | null;
+    attachments?: string[];
 
     // progress updates
     progressUpdates?: ProgressUpdateItem[] | null;
@@ -100,11 +102,8 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.DATE)
     end_date!: Date;
 
-    @Column(DataType.DECIMAL(12, 2))
+    @Column(DataType.DECIMAL(20, 2))
     budget!: number;
-
-    @Column(DataType.STRING(100))
-    client!: string;
 
     @ForeignKey(() => Site)
     @Column({ type: DataType.UUID, allowNull: false })
@@ -143,6 +142,13 @@ class Project extends Model<IProject> implements IProject {
         allowNull: true,
     })
     tagIds?: string[];
+
+    @Column({
+        type: DataType.ARRAY(DataType.STRING),
+        allowNull: true,
+        defaultValue: []
+    })
+    attachments?: string[];
 
     @HasMany(() => Task)
     tasks!: Task[];
