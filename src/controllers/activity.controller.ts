@@ -3,22 +3,62 @@ import Activity from "../models/Activity.model";
 import ErrorResponse from "../utils/error-response.utils";
 import RequestModel from "../models/Request.model";
 import User from "../models/User.model";
+import cloudinary from "../config/cloudinary";
+import fs from "fs";
+import path from "path";
 
 // @desc    Create a new activity
 // @route   POST /api/v1/activities
 const createActivity = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, ...activityData } = req.body;
-        const activity = await Activity.create(activityData);
-        if (assignedUsers?.length) {
+
+        // Handle file uploads
+        const files = (req.files as Express.Multer.File[]) || [];
+        const attachmentUrls: string[] = [];
+
+        for (const file of files) {
+            // file.path is now absolute from multer config
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: "activity_attachments",
+                resource_type: "auto",
+            });
+            fs.unlinkSync(file.path);
+            attachmentUrls.push(result.secure_url);
+        }
+
+        // Parse JSON fields from FormData
+        const jsonFields = ["work_force", "machinery_list", "materials_list", "actuals"];
+        jsonFields.forEach((field) => {
+            if (typeof activityData[field] === "string") {
+                try {
+                    activityData[field] = JSON.parse(activityData[field]);
+                } catch (e) {
+                    // console.warn(`Failed to parse ${field}:`, e);
+                }
+            }
+        });
+
+        const activityPayload = {
+            ...activityData,
+            attachments: attachmentUrls
+        };
+
+        const activity = await Activity.create(activityPayload);
+        // Normalize assignedUsers to array
+        const userIds = Array.isArray(assignedUsers)
+            ? assignedUsers
+            : assignedUsers ? [assignedUsers] : [];
+
+        if (userIds.length > 0) {
             // Validate users exist
             const users = await User.findAll({
                 where: {
-                    id: assignedUsers,
+                    id: userIds,
                 },
             });
 
-            if (users.length !== assignedUsers.length) {
+            if (users.length !== userIds.length) {
                 return next(new ErrorResponse("Some users could not be found", 400));
             }
             await activity.$set("assignedUsers", users);
@@ -105,14 +145,52 @@ const getActivityById = async (req: Request, res: Response, next: NextFunction) 
 // @route   PUT /api/v1/activities/:id
 const updateActivity = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { assignedUsers, ...activityData } = req.body;
+        const { assignedUsers, existingAttachments, ...activityData } = req.body;
 
         const activity = await Activity.findByPk(req.params.id);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
 
-        await activity.update(activityData);
+        // Handle file uploads (new files)
+        const files = (req.files as Express.Multer.File[]) || [];
+        const newAttachmentUrls: string[] = [];
+
+        for (const file of files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: "activity_attachments",
+                resource_type: "auto",
+            });
+            fs.unlinkSync(file.path);
+            newAttachmentUrls.push(result.secure_url);
+        }
+
+        // Handle existing attachments
+        let keptAttachments: string[] = [];
+        if (existingAttachments) {
+            keptAttachments = Array.isArray(existingAttachments)
+                ? existingAttachments
+                : [existingAttachments];
+        }
+
+        const updatedAttachments = [...keptAttachments, ...newAttachmentUrls];
+
+        // Parse JSON fields from FormData
+        const jsonFields = ["work_force", "machinery_list", "materials_list", "actuals"];
+        jsonFields.forEach((field) => {
+            if (typeof activityData[field] === "string") {
+                try {
+                    activityData[field] = JSON.parse(activityData[field]);
+                } catch (e) {
+                    // console.warn(`Failed to parse ${field}:`, e);
+                }
+            }
+        });
+
+        await activity.update({
+            ...activityData,
+            attachments: updatedAttachments
+        });
 
         if (Array.isArray(assignedUsers)) {
             const users = await User.findAll({

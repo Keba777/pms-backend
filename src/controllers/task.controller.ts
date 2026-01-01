@@ -3,22 +3,54 @@ import Task from "../models/Task.model";
 import Activity from "../models/Activity.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
+import cloudinary from "../config/cloudinary";
+import fs from "fs";
+import path from "path";
 
 // @desc    Create a new task
 // @route   POST /api/v1/tasks
 const createTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, ...taskData } = req.body;
-        const task = await Task.create(taskData);
-        if (assignedUsers?.length) {
+
+        // Handle file uploads
+        const files = (req.files as Express.Multer.File[]) || [];
+        const attachmentUrls: string[] = [];
+
+        for (const file of files) {
+            // file.path is now absolute from multer config
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: "task_attachments",
+                resource_type: "auto",
+            });
+            fs.unlinkSync(file.path);
+            attachmentUrls.push(result.secure_url);
+        }
+
+        const taskPayload = {
+            ...taskData,
+            attachments: attachmentUrls
+        };
+
+        const task = await Task.create(taskPayload);
+        // Normalize assignedUsers to array if it is a single value (FormData quirk)
+        if (assignedUsers && !Array.isArray(assignedUsers)) {
+            // @ts-ignore
+            req.body.assignedUsers = [assignedUsers];
+        }
+        const userIds = Array.isArray(assignedUsers)
+            ? assignedUsers
+            : assignedUsers ? [assignedUsers] : [];
+
+        if (userIds.length > 0) {
             // Validate users exist
             const users = await User.findAll({
                 where: {
-                    id: assignedUsers,
+                    id: userIds,
                 },
             });
 
-            if (users.length !== assignedUsers.length) {
+            if (users.length !== userIds.length) {
                 return next(new ErrorResponse("Some users could not be found", 400));
             }
             await task.$set("assignedUsers", users);
@@ -105,14 +137,41 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
 // @route   PUT /api/v1/tasks/:id
 const updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { assignedUsers, ...taskData } = req.body;
+        const { assignedUsers, existingAttachments, ...taskData } = req.body;
 
         const task = await Task.findByPk(req.params.id);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
         }
 
-        await task.update(taskData);
+        // Handle file uploads (new files)
+        const files = (req.files as Express.Multer.File[]) || [];
+        const newAttachmentUrls: string[] = [];
+
+        for (const file of files) {
+            const result = await cloudinary.uploader.upload(file.path, {
+                folder: "task_attachments",
+                resource_type: "auto",
+            });
+            fs.unlinkSync(file.path);
+            newAttachmentUrls.push(result.secure_url);
+        }
+
+        // Handle existing attachments
+        let keptAttachments: string[] = [];
+        if (existingAttachments) {
+            // If coming from FormData, it might be a single string or an array of strings
+            keptAttachments = Array.isArray(existingAttachments)
+                ? existingAttachments
+                : [existingAttachments];
+        }
+
+        const updatedAttachments = [...keptAttachments, ...newAttachmentUrls];
+
+        await task.update({
+            ...taskData,
+            attachments: updatedAttachments
+        });
 
         if (Array.isArray(assignedUsers)) {
             // Validate users exist

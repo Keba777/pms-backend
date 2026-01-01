@@ -108,6 +108,7 @@ export interface IActivity {
     checked_by_date?: Date;
     actuals?: Actuals | null;
     progressUpdates?: ProgressUpdateItem[] | null;
+    attachments?: string[];
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -118,6 +119,13 @@ class Activity extends Model<IActivity> implements IActivity {
         defaultValue: DataType.UUIDV4,
     })
     id!: string;
+
+    @Column({
+        type: DataType.ARRAY(DataType.STRING),
+        allowNull: true,
+        defaultValue: [],
+    })
+    attachments?: string[];
 
     @Column({
         type: DataType.STRING(100),

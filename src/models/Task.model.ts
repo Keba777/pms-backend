@@ -73,6 +73,7 @@ export interface ITask {
     budget?: number | string; // top-level budget (DECIMAL)
     actuals?: TaskActuals | null; // small task-specific actuals object
     progressUpdates?: ProgressUpdateItem[] | null;
+    attachments?: string[];
 }
 
 @Table({ tableName: "tasks", timestamps: true })
@@ -81,6 +82,13 @@ class Task extends Model<ITask> implements ITask {
     @Default(DataType.UUIDV4)
     @Column(DataType.UUID)
     id!: string;
+
+    @Column({
+        type: DataType.ARRAY(DataType.STRING),
+        allowNull: true,
+        defaultValue: [],
+    })
+    attachments?: string[];
 
     @Column(DataType.STRING(100))
     task_name!: string;
