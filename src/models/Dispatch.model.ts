@@ -81,10 +81,10 @@ class Dispatch extends Model<IDispatch> implements IDispatch {
     @Column({ type: DataType.STRING, allowNull: true })
     vehicleType?: string;
 
-    @Column({ type: DataType.ENUM("Plane", "Truck"), allowNull: true })
+    @Column({ type: DataType.STRING, allowNull: true })
     dispatchedBy?: "Plane" | "Truck";
 
-    @Column({ type: DataType.ENUM("Pending", "In Transit", "Delivered", "Cancelled"), allowNull: false, defaultValue: "Pending" })
+    @Column({ type: DataType.STRING, allowNull: false, defaultValue: "Pending" })
     status!: "Pending" | "In Transit" | "Delivered" | "Cancelled";
 }
 

@@ -71,7 +71,7 @@ class Issue extends Model<IIssue> implements IIssue {
     raisedBy!: User;
 
     @Column({
-        type: DataType.ENUM("Urgent", "Medium", "Low"),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: "Medium",
     })
@@ -99,7 +99,7 @@ class Issue extends Model<IIssue> implements IIssue {
     actionTaken?: string;
 
     @Column({
-        type: DataType.ENUM("Open", "In Progress", "Resolved", "Closed"),
+        type: DataType.STRING,
         allowNull: false,
         defaultValue: "Open",
     })

@@ -142,7 +142,7 @@ class Activity extends Model<IActivity> implements IActivity {
     task!: Task;
 
     @Column({
-        type: DataType.ENUM("Critical", "High", "Medium", "Low"),
+        type: DataType.STRING,
         defaultValue: "Medium",
         allowNull: false,
     })
@@ -182,14 +182,14 @@ class Activity extends Model<IActivity> implements IActivity {
     progress!: number;
 
     @Column({
-        type: DataType.ENUM("Not Started", "Started", "InProgress", "Canceled", "Onhold", "Completed"),
+        type: DataType.STRING,
         defaultValue: "Not Started",
         allowNull: false,
     })
     status!: "Not Started" | "Started" | "InProgress" | "Canceled" | "Onhold" | "Completed";
 
     @Column({
-        type: DataType.ENUM("Approved", "Not Approved", "Pending"),
+        type: DataType.STRING,
         defaultValue: "Pending",
         allowNull: false,
     })

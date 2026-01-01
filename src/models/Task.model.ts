@@ -95,7 +95,7 @@ class Task extends Model<ITask> implements ITask {
     @BelongsTo(() => Project)
     project!: Project;
 
-    @Column(DataType.ENUM("Critical", "High", "Medium", "Low"))
+    @Column(DataType.STRING)
     priority!: "Critical" | "High" | "Medium" | "Low";
 
     @Column(DataType.DATE)
@@ -109,20 +109,13 @@ class Task extends Model<ITask> implements ITask {
     progress!: number;
 
     @Column({
-        type: DataType.ENUM(
-            "Not Started",
-            "Started",
-            "InProgress",
-            "Canceled",
-            "Onhold",
-            "Completed"
-        ),
+        type: DataType.STRING,
         defaultValue: "Not Started",
     })
     status!: TaskStatus;
 
     @Column({
-        type: DataType.ENUM("Approved", "Not Approved", "Pending"),
+        type: DataType.STRING,
         defaultValue: "Not Approved",
     })
     approvalStatus!: "Approved" | "Not Approved" | "Pending";

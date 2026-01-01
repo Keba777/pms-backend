@@ -97,14 +97,14 @@ class Equipment extends Model<IEquipment> implements IEquipment {
     condition?: string;
 
     @Column({
-        type: DataType.ENUM('Raycon', 'Rental'),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: 'Raycon',
     })
     owner?: 'Raycon' | 'Rental';
 
     @Column({
-        type: DataType.ENUM('Available', 'Unavailable'),
+        type: DataType.STRING,
         defaultValue: 'Unavailable',
     })
     status!: 'Available' | 'Unavailable';

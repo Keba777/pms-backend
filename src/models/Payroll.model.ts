@@ -50,7 +50,7 @@ class Payroll extends Model<IPayroll> implements IPayroll {
     pay_period!: string;
 
     @Default("pending")
-    @Column(DataType.ENUM("pending", "paid"))
+    @Column(DataType.STRING)
     status!: "pending" | "paid";
 }
 

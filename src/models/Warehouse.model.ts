@@ -40,7 +40,7 @@ class Warehouse extends Model<IWarehouse> implements IWarehouse {
     owner!: string;
 
     @Column({
-        type: DataType.ENUM('Operational', 'Non-Operational'),
+        type: DataType.STRING,
         allowNull: false,
     })
     workingStatus!: 'Operational' | 'Non-Operational';
@@ -59,7 +59,7 @@ class Warehouse extends Model<IWarehouse> implements IWarehouse {
     remark?: string;
 
     @Column({
-        type: DataType.ENUM('Active', 'Inactive', 'Under Maintenance'),
+        type: DataType.STRING,
         allowNull: false,
     })
     status!: 'Active' | 'Inactive' | 'Under Maintenance';

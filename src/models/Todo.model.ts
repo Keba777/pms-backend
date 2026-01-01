@@ -45,7 +45,7 @@ class Todo extends Model<ITodo> implements ITodo {
     type!: string;
 
     @Column({
-        type: DataType.ENUM("Urgent", "High", "Medium", "Low"),
+        type: DataType.STRING,
         allowNull: false,
     })
     priority!: "Urgent" | "High" | "Medium" | "Low";
@@ -89,7 +89,7 @@ class Todo extends Model<ITodo> implements ITodo {
     department?: Department;
 
     @Column({
-        type: DataType.ENUM("Not Started", "In progress", "Pending", "Completed"),
+        type: DataType.STRING,
         defaultValue: "Not Started",
         allowNull: false,
     })

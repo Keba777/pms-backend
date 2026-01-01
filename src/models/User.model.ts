@@ -36,7 +36,7 @@ export interface IUser {
     department_id?: string;
     siteId?: string;
     site?: Site
-    responsiblities?: string[]
+    responsibilities?: string[]
     status?: "Active" | "InActive";
     projects?: Project[];
     tasks?: Task[];
@@ -94,7 +94,6 @@ class User extends Model<IUser> implements IUser {
     @Column({
         type: DataType.UUID,
         allowNull: true,
-        defaultValue: null,
     })
     department_id?: string;
 
@@ -107,11 +106,11 @@ class User extends Model<IUser> implements IUser {
     @BelongsTo(() => Site)
     site!: Site;
 
-    @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: false })
-    responsiblities?: string[];
+    @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
+    responsibilities?: string[];
 
     @Column({
-        type: DataType.ENUM("Active", "InActive"),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: "Active",
     })
@@ -142,7 +141,7 @@ class User extends Model<IUser> implements IUser {
     requests?: Request[];
 
     @Column({
-        type: DataType.ENUM("Average", "Full Access", "Average Access"),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: "Average",
     })
@@ -152,7 +151,7 @@ class User extends Model<IUser> implements IUser {
     username!: string;
 
     @Column({
-        type: DataType.ENUM('Male', 'Female'),
+        type: DataType.STRING,
         allowNull: false,
         defaultValue: 'Male'
     })
@@ -162,7 +161,7 @@ class User extends Model<IUser> implements IUser {
     position?: string;
 
     @Column({
-        type: DataType.ENUM('Part Time', 'Contract', 'Temporary', 'Permanent'),
+        type: DataType.STRING,
         allowNull: true
     })
     terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';

@@ -33,13 +33,13 @@ class KPI extends Model<IKPI> implements IKPI {
     })
     id!: string;
 
-    @Column(DataType.ENUM('Labor', 'Machinery'))
+    @Column(DataType.STRING)
     type!: 'Labor' | 'Machinery';
 
     @Column(DataType.INTEGER)
     score!: number;
 
-    @Column(DataType.ENUM('Bad', 'Good', 'V.Good', 'Excellent'))
+    @Column(DataType.STRING)
     status!: 'Bad' | 'Good' | 'V.Good' | 'Excellent';
 
     @Column(DataType.TEXT)

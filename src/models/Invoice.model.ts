@@ -48,7 +48,7 @@ class Invoice extends Model<IInvoice> implements IInvoice {
     @BelongsTo(() => User)
     user!: User;
 
-    @Column(DataType.ENUM("income", "expense"))
+    @Column(DataType.STRING)
     type!: "income" | "expense";
 
     @Column(DataType.DECIMAL(12, 2))
@@ -58,7 +58,7 @@ class Invoice extends Model<IInvoice> implements IInvoice {
     due_date!: Date;
 
     @Default("pending")
-    @Column(DataType.ENUM("pending", "paid", "overdue"))
+    @Column(DataType.STRING)
     status!: "pending" | "paid" | "overdue";
 
     @Column(DataType.TEXT)

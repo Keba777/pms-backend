@@ -67,7 +67,7 @@ class RequestDelivery extends Model<IRequestDelivery> implements IRequestDeliver
     remarks?: string;
 
     @Column({
-        type: DataType.ENUM('Pending', 'Delivered', 'Cancelled'),
+        type: DataType.STRING,
         allowNull: false,
         defaultValue: 'Pending',
     })

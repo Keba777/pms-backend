@@ -91,7 +91,7 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.TEXT)
     description?: string;
 
-    @Column(DataType.ENUM("Critical", "High", "Medium", "Low"))
+    @Column(DataType.STRING)
     priority!: "Critical" | "High" | "Medium" | "Low";
 
     @Column(DataType.DATE)
@@ -128,16 +128,7 @@ class Project extends Model<IProject> implements IProject {
     @Column(DataType.BOOLEAN)
     isFavourite!: boolean;
 
-    @Column(
-        DataType.ENUM(
-            "Not Started",
-            "Started",
-            "InProgress",
-            "Canceled",
-            "Onhold",
-            "Completed"
-        )
-    )
+    @Column(DataType.STRING)
     status!: IProject["status"];
 
     @BelongsToMany(() => User, {

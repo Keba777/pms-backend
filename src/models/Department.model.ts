@@ -33,7 +33,7 @@ class Department extends Model<IDepartment> implements IDepartment {
     description?: string;
 
     @Column({
-        type: DataType.ENUM("Active", "Inactive", "Pending"),
+        type: DataType.STRING,
         allowNull: true,
     })
     status?: "Active" | "Inactive" | "Pending";

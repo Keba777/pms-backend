@@ -9,7 +9,7 @@ import {
   CreatedAt,
   UpdatedAt,
 } from "sequelize-typescript";
-import User from "./User.model"; 
+import User from "./User.model";
 
 export type ResourceType = "project" | "task" | "activity" | "todo";
 
@@ -26,7 +26,7 @@ export class Discussion extends Model<any, any> {
   date!: Date;
 
   @Column({
-    type: DataType.ENUM("project", "task", "activity", "todo"),
+    type: DataType.STRING,
     allowNull: false,
   })
   type!: ResourceType;
@@ -81,7 +81,7 @@ export class Notification extends Model<any, any> {
   date!: Date;
 
   @Column({
-    type: DataType.ENUM("project", "task", "activity", "todo"),
+    type: DataType.STRING,
     allowNull: false,
   })
   type!: ResourceType;
@@ -137,7 +137,7 @@ export class ActivityLog extends Model<any, any> {
   date!: Date;
 
   @Column({
-    type: DataType.ENUM("project", "task", "activity", "todo"),
+    type: DataType.STRING,
     allowNull: false,
   })
   type!: ResourceType;

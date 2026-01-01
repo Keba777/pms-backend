@@ -82,14 +82,14 @@ class Labor extends Model<ILabor> implements ILabor {
     laborInformations!: LaborInformation[];
 
     @Column({
-        type: DataType.ENUM('Allocated', 'Unallocated', 'OnLeave'),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: "Unallocated",
     })
     allocationStatus?: "Allocated" | "Unallocated" | "OnLeave";
 
     @Column({
-        type: DataType.ENUM('Active', 'InActive'),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: "InActive",
     })

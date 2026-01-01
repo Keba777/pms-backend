@@ -10,7 +10,7 @@ import {
   BelongsToMany,
   Default,
 } from "sequelize-typescript";
-import User, { IUser } from "./User.model"; 
+import User, { IUser } from "./User.model";
 import { Optional } from "sequelize";
 
 export interface IChatRoomAttributes {
@@ -162,7 +162,7 @@ class ChatMessage extends Model<IChatMessageAttributes, IChatMessage> implements
   sender_id!: string;
 
   @Column({
-    type: DataType.ENUM("text", "voice", "file"),
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: "text",
   })
@@ -187,7 +187,7 @@ class ChatMessage extends Model<IChatMessageAttributes, IChatMessage> implements
   filename?: string;
 
   @Column({
-    type: DataType.STRING(50),
+    type: DataType.STRING(255),
     allowNull: true, // MIME type for files/voice (e.g., 'audio/m4a', 'application/pdf')
   })
   mime_type?: string;
@@ -199,4 +199,4 @@ class ChatMessage extends Model<IChatMessageAttributes, IChatMessage> implements
   sender!: User;
 }
 
-export { ChatRoom, ChatRoomMember, ChatMessage};
+export { ChatRoom, ChatRoomMember, ChatMessage };

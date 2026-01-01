@@ -30,165 +30,165 @@ const uploadToCloudinary = async (source: string): Promise<string | null> => {
 // @desc    Get all users
 // @route   GET /api/v1/users
 const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const users = await User.findAll({
-            attributes: { exclude: ["password"] },
-            include: [
-                {
-                    model: Role,
-                    attributes: ["id", "name", "permissions"],
-                },
-                {
-                    model: Department,
-                    as: "department",
-                    attributes: ["id", "name"],
-                },
-                {
-                    model: Site,
-                    as: "site",
-                    attributes: ["id", "name"],
-                },
-                { model: Project, through: { attributes: [] } },
-                { model: Task, through: { attributes: [] } },
-                { model: Activity, through: { attributes: [] } },
-                { model: RequestModel },
-            ],
-            order: [["createdAt", "ASC"]],
-        });
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Role,
+          attributes: ["id", "name", "permissions"],
+        },
+        {
+          model: Department,
+          as: "department",
+          attributes: ["id", "name"],
+        },
+        {
+          model: Site,
+          as: "site",
+          attributes: ["id", "name"],
+        },
+        { model: Project, through: { attributes: [] } },
+        { model: Task, through: { attributes: [] } },
+        { model: Activity, through: { attributes: [] } },
+        { model: RequestModel },
+      ],
+      order: [["createdAt", "ASC"]],
+    });
 
-        res.status(200).json({ success: true, data: users });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error retrieving users", 500));
-    }
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error retrieving users", 500));
+  }
 };
 
 // @desc    Get a user by ID
 // @route   GET /api/v1/users/:id
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const user = await User.findByPk(req.params.id, {
-            attributes: { exclude: ["password"] },
-            include: [
-                {
-                    model: Role,
-                    attributes: ["id", "name", "permissions"],
-                },
-                {
-                    model: Department,
-                    as: "department",
-                    attributes: ["id", "name"],
-                },
-                {
-                    model: Site,
-                    as: "site",
-                    attributes: ["id", "name"],
-                },
-                { model: Project, through: { attributes: [] } },
-                { model: Task, through: { attributes: [] } },
-                { model: Activity, through: { attributes: [] } },
-                { model: RequestModel },
-            ],
-        });
+  try {
+    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: ["password"] },
+      include: [
+        {
+          model: Role,
+          attributes: ["id", "name", "permissions"],
+        },
+        {
+          model: Department,
+          as: "department",
+          attributes: ["id", "name"],
+        },
+        {
+          model: Site,
+          as: "site",
+          attributes: ["id", "name"],
+        },
+        { model: Project, through: { attributes: [] } },
+        { model: Task, through: { attributes: [] } },
+        { model: Activity, through: { attributes: [] } },
+        { model: RequestModel },
+      ],
+    });
 
-        if (!user) {
-            return next(new ErrorResponse("User not found", 404));
-        }
-
-        res.status(200).json({ success: true, data: user });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error retrieving user", 500));
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
     }
+
+    res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error retrieving user", 500));
+  }
 };
 
 // @desc    Create a new user
 // @route   POST /api/v1/users
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        // Extract and validate required fields
-        const { first_name, last_name, phone, email, password = "123456", role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
+  try {
+    // Extract and validate required fields
+    const { first_name, last_name, phone, email, password = "123456", role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
 
-        if (!first_name || !last_name || !phone || !email) {
-            return next(new ErrorResponse("Missing required fields", 400));
-        }
-
-        let finalRoleId = role_id;
-        if (!finalRoleId) {
-            const userRole = await Role.findOne({ where: { name: "User" } });
-            if (userRole) {
-                finalRoleId = userRole.id;
-            } else {
-                 console.warn("Default 'User' role not found. Creating user without role or with provided invalid role_id.");
-                 // You might want to handle this case: error out or create the role? 
-                 // For now, adhering to instruction "make sure that I have registered the role User by default it exists everytime"
-                 // Ideally we should assume it exists or error if critical.
-                 // let's error if we can't find a role, or just let it fail at db level if role_id is required?
-                 // User model says role_id is allowNull: false. So we MUST provide it.
-                 return next(new ErrorResponse("Default 'User' role not found", 500));
-            }
-        }
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        let profile_picture;
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: "/pms/images",
-                use_filename: true,
-            });
-
-            fs.unlink(req.file.path, (err: any) => {
-                if (err) console.warn("Failed to delete temp file:", err);
-            });
-
-            profile_picture = result.secure_url;
-        }
-
-        const userData = {
-            first_name,
-            last_name,
-            phone,
-            email,
-            password: hashedPassword,
-            role_id: finalRoleId,
-            siteId,
-            profile_picture,
-            department_id: req.body.department_id,
-            status: req.body.status,
-            access: req.body.access,
-            responsiblities: req.body.responsibilities,
-            username: username ? username.toLowerCase() : undefined,
-            gender: gender || 'Male',
-            position,
-            terms,
-            joiningDate,
-            estSalary,
-            ot,
-        };
-
-        const user = await User.create(userData);
-
-        const newUser = await User.findByPk(user.id, {
-            attributes: { exclude: ["password"] },
-            include: [
-                { model: Role, attributes: ["id", "name", "permissions"] },
-                { model: Department, as: "department", attributes: ["id", "name"] },
-                { model: Site, as: "site", attributes: ["id", "name"] },
-                { model: Project, through: { attributes: [] } },
-                { model: Task, through: { attributes: [] } },
-                { model: Activity, through: { attributes: [] } },
-                { model: RequestModel },
-            ],
-        });
-
-        res.status(201).json({ success: true, data: newUser });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error creating user", 500));
+    if (!first_name || !last_name || !phone || !email) {
+      return next(new ErrorResponse("Missing required fields", 400));
     }
+
+    let finalRoleId = role_id;
+    if (!finalRoleId) {
+      const userRole = await Role.findOne({ where: { name: "User" } });
+      if (userRole) {
+        finalRoleId = userRole.id;
+      } else {
+        console.warn("Default 'User' role not found. Creating user without role or with provided invalid role_id.");
+        // You might want to handle this case: error out or create the role? 
+        // For now, adhering to instruction "make sure that I have registered the role User by default it exists everytime"
+        // Ideally we should assume it exists or error if critical.
+        // let's error if we can't find a role, or just let it fail at db level if role_id is required?
+        // User model says role_id is allowNull: false. So we MUST provide it.
+        return next(new ErrorResponse("Default 'User' role not found", 500));
+      }
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    let profile_picture;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "/pms/images",
+        use_filename: true,
+      });
+
+      fs.unlink(req.file.path, (err: any) => {
+        if (err) console.warn("Failed to delete temp file:", err);
+      });
+
+      profile_picture = result.secure_url;
+    }
+
+    const userData = {
+      first_name,
+      last_name,
+      phone,
+      email,
+      password: hashedPassword,
+      role_id: finalRoleId,
+      siteId,
+      profile_picture,
+      department_id: req.body.department_id,
+      status: req.body.status,
+      access: req.body.access,
+      responsibilities: req.body.responsibilities,
+      username: username ? username.toLowerCase() : undefined,
+      gender: gender || 'Male',
+      position,
+      terms,
+      joiningDate,
+      estSalary,
+      ot,
+    };
+
+    const user = await User.create(userData);
+
+    const newUser = await User.findByPk(user.id, {
+      attributes: { exclude: ["password"] },
+      include: [
+        { model: Role, attributes: ["id", "name", "permissions"] },
+        { model: Department, as: "department", attributes: ["id", "name"] },
+        { model: Site, as: "site", attributes: ["id", "name"] },
+        { model: Project, through: { attributes: [] } },
+        { model: Task, through: { attributes: [] } },
+        { model: Activity, through: { attributes: [] } },
+        { model: RequestModel },
+      ],
+    });
+
+    res.status(201).json({ success: true, data: newUser });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error creating user", 500));
+  }
 };
 
 // @desc    Import multiple users
@@ -251,7 +251,7 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
         else if (uploadedFiles && uploadedFiles.length > index) {
           const file = uploadedFiles[index];
           const url = await uploadToCloudinary(file.path);
-          fs.unlink(file.path, () => {});
+          fs.unlink(file.path, () => { });
           userData.profile_picture = url;
         }
 
@@ -259,15 +259,7 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
       })
     );
 
-    // Rename responsibilities to responsiblities to match model
-    usersData.forEach(userData => {
-      if ('responsibilities' in userData) {
-        userData.responsiblities = userData.responsibilities;
-        delete userData.responsibilities;
-      } else {
-        userData.responsiblities = [];
-      }
-    });
+    // responsibilities is now correctly named in the model
 
     // ------------------------------------------------------------------ //
     // 2. Validate required fields + hash passwords
@@ -280,12 +272,12 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
       }
 
       if (!role_id) {
-          const userRole = await Role.findOne({ where: { name: "User" } });
-          if (userRole) {
-              userData.role_id = userRole.id;
-          } else {
-             return next(new ErrorResponse("Default 'User' role not found", 500));
-          }
+        const userRole = await Role.findOne({ where: { name: "User" } });
+        if (userRole) {
+          userData.role_id = userRole.id;
+        } else {
+          return next(new ErrorResponse("Default 'User' role not found", 500));
+        }
       }
 
       const salt = await bcrypt.genSalt(10);
@@ -325,87 +317,83 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
 // @desc    Update a user
 // @route   PUT /api/v1/users/:id
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
-            return next(new ErrorResponse("User not found", 404));
-        }
-
-        const updates: Record<string, any> = { ...req.body };
-        if (updates.password) {
-            // Hash password if provided
-            const salt = await bcrypt.genSalt(10);
-            updates.password = await bcrypt.hash(updates.password, salt);
-        }
-        if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: "/pms/images",
-                use_filename: true,
-            });
-
-            fs.unlink(req.file.path, (err: any) => {
-                if (err) console.warn("Failed to delete temp file:", err);
-            });
-
-            updates.profile_picture = result.secure_url;
-        }
-
-        // Rename responsibilities to responsiblities to match model
-        if ('responsibilities' in updates) {
-          updates.responsiblities = updates.responsibilities;
-          delete updates.responsibilities;
-        }
-
-        if (updates.username) updates.username = updates.username.toLowerCase();
-        if (updates.estSalary) updates.estSalary = parseFloat(updates.estSalary);
-        if (updates.ot) updates.ot = parseFloat(updates.ot);
-        if (updates.joiningDate) updates.joiningDate = new Date(updates.joiningDate);
-
-        await user.update(updates);
-        const updatedUser = await User.findByPk(req.params.id, {
-            attributes: { exclude: ["password"] },
-            include: [
-                { model: Role, attributes: ["id", "name", "permissions"] },
-                { model: Department, as: "department", attributes: ["id", "name"] },
-                { model: Site, as: "site", attributes: ["id", "name"] },
-                { model: Project, through: { attributes: [] } },
-                { model: Task, through: { attributes: [] } },
-                { model: Activity, through: { attributes: [] } },
-                { model: RequestModel },
-            ],
-        });
-
-        res.status(200).json({ success: true, data: updatedUser });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error updating user", 500));
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
     }
+
+    const updates: Record<string, any> = { ...req.body };
+    if (updates.password) {
+      // Hash password if provided
+      const salt = await bcrypt.genSalt(10);
+      updates.password = await bcrypt.hash(updates.password, salt);
+    }
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "/pms/images",
+        use_filename: true,
+      });
+
+      fs.unlink(req.file.path, (err: any) => {
+        if (err) console.warn("Failed to delete temp file:", err);
+      });
+
+      updates.profile_picture = result.secure_url;
+    }
+
+    // responsibilities is now correctly named in the model
+
+    if (updates.username) updates.username = updates.username.toLowerCase();
+    if (updates.estSalary) updates.estSalary = parseFloat(updates.estSalary);
+    if (updates.ot) updates.ot = parseFloat(updates.ot);
+    if (updates.joiningDate) updates.joiningDate = new Date(updates.joiningDate);
+
+    await user.update(updates);
+    const updatedUser = await User.findByPk(req.params.id, {
+      attributes: { exclude: ["password"] },
+      include: [
+        { model: Role, attributes: ["id", "name", "permissions"] },
+        { model: Department, as: "department", attributes: ["id", "name"] },
+        { model: Site, as: "site", attributes: ["id", "name"] },
+        { model: Project, through: { attributes: [] } },
+        { model: Task, through: { attributes: [] } },
+        { model: Activity, through: { attributes: [] } },
+        { model: RequestModel },
+      ],
+    });
+
+    res.status(200).json({ success: true, data: updatedUser });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error updating user", 500));
+  }
 };
 
 // @desc    Delete a user
 // @route   DELETE /api/v1/users/:id
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const user = await User.findByPk(req.params.id);
-        if (!user) {
-            return next(new ErrorResponse("User not found", 404));
-        }
-
-        await user.destroy();
-        res.status(200).json({ success: true, message: "User deleted successfully" });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error deleting user", 500));
+  try {
+    const user = await User.findByPk(req.params.id);
+    if (!user) {
+      return next(new ErrorResponse("User not found", 404));
     }
+
+    await user.destroy();
+    res.status(200).json({ success: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error deleting user", 500));
+  }
 };
 
 const fetchUsersExcluding = async (excludeId: string) => {
-    return User.findAll({
-        where: {
-            id: { [Op.ne]: excludeId }
-        },
-        attributes: ['id', 'name', 'email']
-    });
+  return User.findAll({
+    where: {
+      id: { [Op.ne]: excludeId }
+    },
+    attributes: ['id', 'name', 'email']
+  });
 };
 
 export { getAllUsers, getUserById, createUser, importUsers, updateUser, deleteUser, fetchUsersExcluding };

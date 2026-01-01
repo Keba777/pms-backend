@@ -13,7 +13,7 @@ import nodemailer from "nodemailer";
  * Using a local intersection type avoids module augmentation problems.
  */
 export type ReqWithUser = Request & {
-  user?: { id: string } | any; 
+  user?: { id: string } | any;
   file?: Express.Multer.File;
 };
 
@@ -34,7 +34,7 @@ const registerUser = async (
       password,
       department_id,
       siteId,
-      responsiblities,
+      responsibilities,
       status,
       access,
       username,
@@ -71,7 +71,7 @@ const registerUser = async (
         folder: "/pms/images",
         use_filename: true,
       });
-      fs.unlink(req.file.path, () => {});
+      fs.unlink(req.file.path, () => { });
       profile_picture = result.secure_url;
     }
 
@@ -86,7 +86,7 @@ const registerUser = async (
       profile_picture,
       department_id: department_id || null,
       siteId: siteId,
-      responsiblities: responsiblities || null,
+      responsibilities: responsibilities || null,
       access: access || "Low Access",
       status: status || "Active",
       username: username ? username.toLowerCase() : undefined,
@@ -305,7 +305,7 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
   } = {
     expires: new Date(
       Date.now() +
-        parseInt(process.env.JWT_COOKIE_EXPIRE || "10") * 24 * 60 * 60 * 1000
+      parseInt(process.env.JWT_COOKIE_EXPIRE || "10") * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };
@@ -330,7 +330,7 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
         profile_picture: user.profile_picture,
         department_id: user.department_id,
         siteId: user.siteId,
-        responsiblities: user.responsiblities,
+        responsibilities: user.responsibilities,
         access: user.access,
         status: user.status,
         username: user.username,

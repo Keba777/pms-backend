@@ -53,7 +53,7 @@ class File extends Model<IFile> implements IFile {
     fileUrl!: string; // Cloudinary URL
 
     @Column({
-        type: DataType.ENUM("project", "task", "activity", "todo"),
+        type: DataType.STRING,
         allowNull: false,
     })
     type!: "project" | "task" | "activity" | "todo";

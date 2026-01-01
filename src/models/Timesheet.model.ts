@@ -87,7 +87,7 @@ export class LaborTimesheet extends Model<ILaborTimesheet> implements ILaborTime
     @Column({ type: DataType.FLOAT, allowNull: false })
     totalPay!: number;
 
-    @Column({ type: DataType.ENUM("Pending", "Approved", "Rejected"), defaultValue: "Pending" })
+    @Column({ type: DataType.STRING, defaultValue: "Pending" })
     status!: TimeSheetStatus;
 }
 
@@ -149,7 +149,7 @@ export class EquipmentTimesheet extends Model<IEquipmentTimesheet> implements IE
     rate!: number;
     @Column({ type: DataType.FLOAT, allowNull: false })
     totalPay!: number;
-    @Column({ type: DataType.ENUM("Pending", "Approved", "Rejected"), defaultValue: "Pending" })
+    @Column({ type: DataType.STRING, defaultValue: "Pending" })
     status!: TimeSheetStatus;
 }
 

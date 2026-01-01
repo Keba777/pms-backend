@@ -25,7 +25,7 @@ export interface IRequest {
     laborCount?: number;
     equipmentCount?: number;
     status: "Pending" | "In Progress" | "Completed" | "Rejected";
-    priority?: "Urgent" | "Medium" | "Low" 
+    priority?: "Urgent" | "Medium" | "Low"
     laborIds?: string[];
     materialIds?: string[];
     equipmentIds?: string[];
@@ -59,11 +59,9 @@ class Request extends Model<IRequest> implements IRequest {
     department?: Department;
 
     @ForeignKey(() => Site)
-    @Default("3269c7c0-a303-438e-bee4-71f5bdec22b2")
     @Column({
         type: DataType.UUID,
         allowNull: true,
-        defaultValue: "3269c7c0-a303-438e-bee4-71f5bdec22b2"
     })
     siteId?: string;
     @BelongsTo(() => Site)
@@ -76,7 +74,7 @@ class Request extends Model<IRequest> implements IRequest {
     activity?: Activity;
 
     @Column({
-        type: DataType.ENUM("Pending", "In Progress", "Completed", "Rejected"),
+        type: DataType.STRING,
         allowNull: false,
         defaultValue: "Pending",
     })

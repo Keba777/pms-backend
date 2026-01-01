@@ -50,7 +50,7 @@ class Payment extends Model<IPayment> implements IPayment {
     @Column(DataType.DATE)
     payment_date!: Date;
 
-    @Column(DataType.ENUM("cash", "bank_transfer", "check", "mobile_money"))
+    @Column(DataType.STRING)
     method!: "cash" | "bank_transfer" | "check" | "mobile_money";
 
     @Column(DataType.STRING(100))

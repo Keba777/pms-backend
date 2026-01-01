@@ -67,7 +67,7 @@ class Material extends Model<IMaterial> implements IMaterial {
     shelfNo?: string;
 
     @Column({
-        type: DataType.ENUM('Available', 'Unavailable'),
+        type: DataType.STRING,
         allowNull: true,
         defaultValue: 'Unavailable',
     })

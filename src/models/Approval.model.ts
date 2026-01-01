@@ -58,7 +58,7 @@ class Approval extends Model<IApproval> implements IApproval {
     stepOrder!: number;
 
     @Column({
-        type: DataType.ENUM("Pending", "Approved", "Rejected"),
+        type: DataType.STRING,
         allowNull: false,
         defaultValue: "Pending",
     })

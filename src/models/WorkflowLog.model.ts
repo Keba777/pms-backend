@@ -28,7 +28,7 @@ class WorkflowLog extends Model<IWorkflowLog> implements IWorkflowLog {
     id!: string;
 
     @Column({
-        type: DataType.ENUM("Project", "Task", "Activity", "Approval"),
+        type: DataType.STRING,
         allowNull: false,
     })
     entityType!: "Project" | "Task" | "Activity" | "Approval";

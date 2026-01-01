@@ -51,7 +51,7 @@ class LaborInformation extends Model<ILaborInformation> implements ILaborInforma
     endsAt!: Date;
 
     @Column({
-        type: DataType.ENUM('Allocated', 'Unallocated'),
+        type: DataType.STRING,
         allowNull: false,
     })
     status!: 'Allocated' | 'Unallocated';
@@ -63,13 +63,13 @@ class LaborInformation extends Model<ILaborInformation> implements ILaborInforma
     position?: string;
 
     @Column({
-        type: DataType.ENUM('Male', 'Female'),
+        type: DataType.STRING,
         allowNull: true,
     })
     sex?: 'Male' | 'Female';
 
     @Column({
-        type: DataType.ENUM('Part Time', 'Contract', 'Temporary', 'Permanent'),
+        type: DataType.STRING,
         allowNull: true,
     })
     terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';

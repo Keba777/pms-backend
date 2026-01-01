@@ -53,7 +53,7 @@ class Client extends Model<IClient> implements IClient {
 
     @Default("Active")
     @Column({
-        type: DataType.ENUM("Active", "Inactive"),
+        type: DataType.STRING,
         allowNull: false
     })
     status!: "Active" | "Inactive";
