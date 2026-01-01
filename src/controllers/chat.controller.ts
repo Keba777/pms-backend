@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { ReqWithUser } from "../types/req-with-user"; 
+import { ReqWithUser } from "../types/req-with-user";
 import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";

@@ -314,6 +314,48 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
     options["secure"] = true;
   }
 
+  // Define default permissions for all users
+  const DEFAULT_PERMISSIONS = [
+    'dashboard:view',
+    'projects:view',
+    'activities:view',
+    'tasks:view',
+    'todos:view',
+    'requests:view', // Covers 'requests' and 'approvals' context usually
+    'request-approval:view',
+    'chat:view'
+  ];
+
+  let permissions: string[] = [];
+
+  if (user.role && user.role.name === 'Admin') {
+    permissions = ['*'];
+  } else if (user.role && user.role.permissions) {
+    // Flatten permissions
+    const rolePermissions = user.role.permissions;
+    const flattened: string[] = [];
+
+    // Add defaults first
+    flattened.push(...DEFAULT_PERMISSIONS);
+
+    Object.keys(rolePermissions).forEach((resource) => {
+      const actions = rolePermissions[resource];
+      if (actions) {
+        Object.keys(actions).forEach((action) => {
+          if (actions[action as keyof typeof actions] === true) {
+            flattened.push(`${resource}:${action}`);
+          }
+        });
+      }
+    });
+
+    // Deduplicate just in case
+    permissions = Array.from(new Set(flattened));
+  } else {
+    // Fallback if no role/permissions, still give defaults
+    permissions = DEFAULT_PERMISSIONS;
+  }
+
   res
     .status(statusCode)
     .cookie("token", token, options)
@@ -341,6 +383,7 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
         estSalary: user.estSalary,
         ot: user.ot,
         token,
+        permissions, // Send the flattened permissions
       },
     });
 };
