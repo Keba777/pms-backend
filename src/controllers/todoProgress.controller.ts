@@ -4,6 +4,7 @@ import Todo from "../models/Todo.model";
 import TodoProgress from "../models/TodoProgress.model";
 import cloudinary from "../config/cloudinary";
 import ErrorResponse from "../utils/error-response.utils";
+import fs from "fs";
 
 // @desc    Add or update progress for a Todo
 // @route   POST /api/v1/todos/:todoId/progress
@@ -17,9 +18,13 @@ export const addTodoProgress = async (req: ReqWithUser, res: Response, next: Nex
 
         let uploadedFiles: string[] = [];
         if (req.files && Array.isArray(req.files)) {
-            const uploadPromises = req.files.map((file: Express.Multer.File) =>
-                cloudinary.uploader.upload(file.path, { resource_type: "auto" })
-            );
+            const uploadPromises = (req.files as Express.Multer.File[]).map(async (file) => {
+                const result = await cloudinary.uploader.upload(file.path, { resource_type: "auto" });
+                if (fs.existsSync(file.path)) {
+                    fs.unlinkSync(file.path);
+                }
+                return result;
+            });
             const results = await Promise.all(uploadPromises);
             uploadedFiles = results.map(r => r.secure_url);
         }

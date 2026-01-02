@@ -24,7 +24,8 @@ interface ITodo {
     assignedUsers?: User[];
     givenDate: Date;
     dueDate: Date;
-    target?: Date;
+    target_date?: Date;
+    target?: string[];
     kpiId?: string;
     kpi?: KPI;
     departmentId: string;
@@ -72,7 +73,10 @@ class Todo extends Model<ITodo> implements ITodo {
     dueDate!: Date;
 
     @Column({ type: DataType.DATE, allowNull: true })
-    target?: Date;
+    target_date?: Date;
+
+    @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
+    target?: string[];
 
     @ForeignKey(() => KPI)
     @Column({ type: DataType.UUID, allowNull: true })

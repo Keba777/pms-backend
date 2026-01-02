@@ -58,7 +58,13 @@ const allowedOrigins = [
     "http://raycon.rayconplc.com",
     "https://raycon.rayconplc.com",
     "http://nilepms.com",
-    "https://nilepms.com"
+    "https://nilepms.com",
+    "http://192.168.8.105:8081",
+    "http://localhost:8081",
+    "http://192.168.8.105:8082",
+    "http://localhost:8082",
+    "http://10.0.2.2:8081",
+    "http://10.0.2.2:8082"
 ];
 
 app.use(cors({
@@ -70,7 +76,7 @@ app.use(cors({
         }
     },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"], 
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true, // Required for cookies/auth headers
 }));
 
@@ -85,7 +91,7 @@ app.use("/api/v1/users", protectRoute, userRouter);
 app.use("/api/v1/roles", roleRouter);
 app.use("/api/v1/projects", protectRoute, projectRouter)
 app.use("/api/v1/tasks", protectRoute, taskRouter)
-app.use("/api/v1/activities", protectRoute,  activityRouter)
+app.use("/api/v1/activities", protectRoute, activityRouter)
 app.use("/api/v1/tags", protectRoute, tagRouter)
 app.use("/api/v1/master-schedule", protectRoute, masterScheduleRouter)
 app.use("/api/v1/equipments", protectRoute, equipmentRouter)
