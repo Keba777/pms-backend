@@ -11,6 +11,7 @@ import {
 import User from "./User.model";
 import Equipment from "./Equipment.model";
 import Material from "./Material.model";
+import Organization from "./Organization.model";
 
 // Interface for Labor Timesheet entries
 enum TimeSheetStatus {
@@ -35,6 +36,7 @@ export interface ILaborTimesheet {
     rate: number;
     totalPay: number;
     status: TimeSheetStatus;
+    orgId?: string;
 }
 
 @Table({ tableName: "labor_timesheets", timestamps: true })
@@ -89,6 +91,13 @@ export class LaborTimesheet extends Model<ILaborTimesheet> implements ILaborTime
 
     @Column({ type: DataType.STRING, defaultValue: "Pending" })
     status!: TimeSheetStatus;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 // Equipment Timesheet entries
@@ -108,6 +117,7 @@ export interface IEquipmentTimesheet {
     rate: number;
     totalPay: number;
     status: TimeSheetStatus;
+    orgId?: string;
 }
 
 @Table({ tableName: "equipment_timesheets", timestamps: true })
@@ -151,6 +161,13 @@ export class EquipmentTimesheet extends Model<IEquipmentTimesheet> implements IE
     totalPay!: number;
     @Column({ type: DataType.STRING, defaultValue: "Pending" })
     status!: TimeSheetStatus;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 // Material Balance Sheet entries
@@ -164,9 +181,10 @@ export interface IMaterialBalanceSheet {
     assignedTo: string;
     remark?: string;
     status: string;
+    orgId?: string;
 }
 
-@Table({ tableName: "material_balance_timesheets", timestamps: true })
+@Table({ tableName: "material_balance_sheets", timestamps: true })
 export class MaterialBalanceSheet extends Model<IMaterialBalanceSheet> implements IMaterialBalanceSheet {
     @PrimaryKey
     @Default(DataType.UUIDV4)
@@ -200,4 +218,11 @@ export class MaterialBalanceSheet extends Model<IMaterialBalanceSheet> implement
 
     @Column({ type: DataType.STRING, allowNull: false })
     status!: string;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }

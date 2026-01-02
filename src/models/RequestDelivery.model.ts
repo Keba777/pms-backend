@@ -10,6 +10,7 @@ import {
 } from "sequelize-typescript";
 import Approval from "./Approval.model";
 import Site from "./Site.model";
+import Organization from "./Organization.model";
 
 
 export interface IRequestDelivery {
@@ -25,6 +26,7 @@ export interface IRequestDelivery {
     site?: Site;
     remarks?: string;
     status: 'Pending' | 'Delivered' | 'Cancelled';
+    orgId?: string;
 }
 
 @Table({ tableName: 'request_deliveries', timestamps: true })
@@ -72,6 +74,13 @@ class RequestDelivery extends Model<IRequestDelivery> implements IRequestDeliver
         defaultValue: 'Pending',
     })
     status!: 'Pending' | 'Delivered' | 'Cancelled';
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default RequestDelivery;

@@ -1,4 +1,5 @@
-import { Table, Column, Model, DataType, PrimaryKey } from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from "sequelize-typescript";
+import Organization from "./Organization.model";
 
 export interface IDepartment {
     id: string;
@@ -9,6 +10,7 @@ export interface IDepartment {
         name: string;
         description?: string;
     };
+    orgId?: string;
 }
 
 @Table({ tableName: "departments", timestamps: true })
@@ -46,6 +48,13 @@ class Department extends Model<IDepartment> implements IDepartment {
         name: string;
         description?: string;
     };
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Department;

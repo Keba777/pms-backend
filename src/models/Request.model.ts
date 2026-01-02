@@ -14,6 +14,7 @@ import User from "./User.model";
 import Approval from "./Approval.model";
 import Activity from "./Activity.model";
 import Site from "./Site.model";
+import Organization from "./Organization.model";
 
 export interface IRequest {
     id: string;
@@ -29,6 +30,7 @@ export interface IRequest {
     laborIds?: string[];
     materialIds?: string[];
     equipmentIds?: string[];
+    orgId?: string;
 }
 
 @Table({ tableName: "requests", timestamps: true })
@@ -91,6 +93,13 @@ class Request extends Model<IRequest> implements IRequest {
 
     @HasMany(() => Approval)
     approvals!: Approval[];
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Request;

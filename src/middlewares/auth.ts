@@ -24,7 +24,7 @@ const protectRoute = async (req: ReqWithUser, res: Response, next: NextFunction)
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET || ""
-        ) as JwtPayload;
+        ) as JwtPayload & { orgId?: string };
         const user = await User.findByPk(decoded.id, {
             include: ['role']
         });

@@ -7,10 +7,10 @@ import {
     ForeignKey,
     BelongsTo,
 } from 'sequelize-typescript';
-
 import User from './User.model';
 import LaborInformation from './LaborInformation.model';
 import Equipment from './Equipment.model';
+import Organization from './Organization.model';
 
 export interface IKPI {
     id: string;
@@ -22,6 +22,7 @@ export interface IKPI {
     laborInfoId?: string;
     equipmentId?: string;
     target?: number;
+    orgId?: string;
 }
 
 @Table({ tableName: 'kpis', timestamps: true })
@@ -68,6 +69,13 @@ class KPI extends Model<IKPI> implements IKPI {
 
     @Column({ type: DataType.INTEGER, allowNull: true })
     target?: number;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default KPI;

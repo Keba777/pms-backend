@@ -2,6 +2,7 @@ import readline from 'readline';
 import sequelize from '../config/db';
 import User from '../models/User.model';
 import Role from '../models/Role.model';
+import Organization from '../models/Organization.model';
 import bcrypt from 'bcryptjs';
 
 const rl = readline.createInterface({
@@ -54,6 +55,10 @@ const main = async () => {
         // Re-fetch correct role object
         const finalRole = await Role.findOne({ where: { name: roleName } });
         if (!finalRole) throw new Error("Could not assign a role.");
+
+        // Find default organization
+        const nilepms = await Organization.findOne({ where: { orgName: "Nilepms" } as any });
+        if (!nilepms) throw new Error("Default organization 'Nilepms' not found. Please run init-nilepms script first.");
 
 
         const usernameInput = await askQuestion('Username (Optional, auto-generated if skipped): ');
@@ -133,6 +138,7 @@ const main = async () => {
             email: email,
             password: password, // Passing plain text, relying on model hook
             role_id: finalRole.id,
+            orgId: nilepms.id,
             status: 'Active',
             access: 'Average Access', // Default 
             gender: (genderInput && (genderInput.toLowerCase() === 'female')) ? 'Female' : 'Male',

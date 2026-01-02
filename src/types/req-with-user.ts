@@ -7,7 +7,7 @@ import { Request } from "express";
  * Replace `any` with your specific User instance type if you want stronger typing.
  */
 export type ReqWithUser = Request & {
-  user?: { id: string } | any;
+  user?: { id: string; orgId: string } | any;
   file?: Express.Multer.File;
   files?: Express.Multer.File[] | any;
 };

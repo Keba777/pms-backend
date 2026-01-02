@@ -10,6 +10,7 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 export type ResourceType = "project" | "task" | "activity" | "todo";
 
@@ -60,6 +61,13 @@ export class Discussion extends Model<any, any> {
   @Default(false)
   @Column({ type: DataType.BOOLEAN, allowNull: false })
   pinned!: boolean;
+
+  @ForeignKey(() => Organization)
+  @Column({ type: DataType.UUID })
+  orgId!: string;
+
+  @BelongsTo(() => Organization)
+  organization!: Organization;
 
   @CreatedAt
   createdAt!: Date;
@@ -117,6 +125,13 @@ export class Notification extends Model<any, any> {
   @Column({ type: DataType.JSONB, allowNull: true })
   meta?: object;
 
+  @ForeignKey(() => Organization)
+  @Column({ type: DataType.UUID })
+  orgId!: string;
+
+  @BelongsTo(() => Organization)
+  organization!: Organization;
+
   @CreatedAt
   createdAt!: Date;
 
@@ -163,6 +178,13 @@ export class ActivityLog extends Model<any, any> {
 
   @BelongsTo(() => ActivityLog, { foreignKey: "parentActivityId", as: "parentActivity" })
   parentActivity?: ActivityLog;
+
+  @ForeignKey(() => Organization)
+  @Column({ type: DataType.UUID })
+  orgId!: string;
+
+  @BelongsTo(() => Organization)
+  organization!: Organization;
 
   @CreatedAt
   createdAt!: Date;

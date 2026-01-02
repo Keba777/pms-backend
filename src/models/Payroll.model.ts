@@ -10,6 +10,7 @@ import {
 } from "sequelize-typescript";
 import Project from "./Project.model";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 export interface IPayroll {
     id: string;
@@ -20,6 +21,7 @@ export interface IPayroll {
     amount: number;
     pay_period: string;
     status: "pending" | "paid";
+    orgId?: string;
 }
 
 @Table({ tableName: "payrolls", timestamps: true })
@@ -52,6 +54,13 @@ class Payroll extends Model<IPayroll> implements IPayroll {
     @Default("pending")
     @Column(DataType.STRING)
     status!: "pending" | "paid";
+
+    @ForeignKey(() => Organization)
+    @Column(DataType.UUID)
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Payroll;

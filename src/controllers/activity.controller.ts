@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import Activity from "../models/Activity.model";
 import ErrorResponse from "../utils/error-response.utils";
 import RequestModel from "../models/Request.model";
 import User from "../models/User.model";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
-import path from "path";
+import { ReqWithUser } from "../types/req-with-user";
 
 // @desc    Create a new activity
 // @route   POST /api/v1/activities
-const createActivity = async (req: Request, res: Response, next: NextFunction) => {
+const createActivity = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, ...activityData } = req.body;
 
@@ -41,7 +41,8 @@ const createActivity = async (req: Request, res: Response, next: NextFunction) =
 
         const activityPayload = {
             ...activityData,
-            attachments: attachmentUrls
+            attachments: attachmentUrls,
+            orgId: req.user?.orgId
         };
 
         const activity = await Activity.create(activityPayload);
@@ -86,9 +87,17 @@ const createActivity = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Get all activities with associated requests and assigned users
 // @route   GET /api/v1/activities
-const getAllActivities = async (req: Request, res: Response, next: NextFunction) => {
+const getAllActivities = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
+        const user = req.user;
+        const where: any = {};
+
+        if (user?.role?.name?.toLowerCase() !== "systemadmin") {
+            where.orgId = user?.orgId;
+        }
+
         const activities = await Activity.findAll({
+            where,
             include: [
                 {
                     model: RequestModel,
@@ -113,7 +122,7 @@ const getAllActivities = async (req: Request, res: Response, next: NextFunction)
 
 // @desc    Get an activity by ID with associated materials, equipment, and labors
 // @route   GET /api/v1/activities/:id
-const getActivityById = async (req: Request, res: Response, next: NextFunction) => {
+const getActivityById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const activity = await Activity.findByPk(req.params.id, {
             include: [
@@ -134,6 +143,12 @@ const getActivityById = async (req: Request, res: Response, next: NextFunction) 
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && activity.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to access this activity", 403));
+        }
+
         res.status(200).json({ success: true, data: activity });
     } catch (error) {
         console.error(error);
@@ -143,13 +158,18 @@ const getActivityById = async (req: Request, res: Response, next: NextFunction) 
 
 // @desc    Update an activity
 // @route   PUT /api/v1/activities/:id
-const updateActivity = async (req: Request, res: Response, next: NextFunction) => {
+const updateActivity = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, existingAttachments, ...activityData } = req.body;
 
         const activity = await Activity.findByPk(req.params.id);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && activity.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this activity", 403));
         }
 
         // Handle file uploads (new files)
@@ -230,11 +250,16 @@ const updateActivity = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Delete an activity
 // @route   DELETE /api/v1/activities/:id
-const deleteActivity = async (req: Request, res: Response, next: NextFunction) => {
+const deleteActivity = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const activity = await Activity.findByPk(req.params.id);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && activity.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to delete this activity", 403));
         }
 
         await activity.destroy();
@@ -247,11 +272,16 @@ const deleteActivity = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Update activity actuals
 // @route   PATCH /api/v1/activities/:id/actuals
-const updateActivityActuals = async (req: Request, res: Response, next: NextFunction) => {
+const updateActivityActuals = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const activity = await Activity.findByPk(req.params.id);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && activity.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this activity", 403));
         }
 
         const { actuals } = req.body;
@@ -294,13 +324,19 @@ const updateActivityActuals = async (req: Request, res: Response, next: NextFunc
  * - It will also persist `progress` on the activity record (so both the activity.progress
  *   and the progressUpdates JSONB will be kept in sync).
  */
-const updateActivityProgress = async (req: Request, res: Response, next: NextFunction) => {
+const updateActivityProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     const t = await Activity.sequelize?.transaction();
     try {
         const activity = await Activity.findByPk(req.params.id, { transaction: t });
         if (!activity) {
             if (t) await t.rollback();
             return next(new ErrorResponse("Activity not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && activity.orgId !== user?.orgId) {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("Not authorized to update this activity", 403));
         }
 
         const {
@@ -384,3 +420,4 @@ export {
     updateActivityActuals,
     updateActivityProgress,
 };
+

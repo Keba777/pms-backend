@@ -6,8 +6,11 @@ import {
     PrimaryKey,
     Default,
     HasMany,
+    ForeignKey,
+    BelongsTo,
 } from "sequelize-typescript";
 import Project from "./Project.model";
+import Organization from "./Organization.model";
 
 export interface IClient {
     id: string;
@@ -16,6 +19,7 @@ export interface IClient {
     description?: string;
     attachments?: string[]; // JSONB array of strings (URLs or file references)
     status: "Active" | "Inactive";
+    orgId?: string;
     projects?: Project[];
 }
 
@@ -60,6 +64,13 @@ class Client extends Model<IClient> implements IClient {
 
     @HasMany(() => Project)
     projects?: Project[];
+
+    @ForeignKey(() => Organization)
+    @Column(DataType.UUID)
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Client;

@@ -10,6 +10,7 @@ import {
 } from "sequelize-typescript";
 import Invoice from "./Invoice.model";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 export interface IPayment {
     id: string;
@@ -21,6 +22,7 @@ export interface IPayment {
     payment_date: Date;
     method: "cash" | "bank_transfer" | "check" | "mobile_money";
     reference_number?: string;
+    orgId?: string;
 }
 
 @Table({ tableName: "payments", timestamps: true })
@@ -55,6 +57,13 @@ class Payment extends Model<IPayment> implements IPayment {
 
     @Column(DataType.STRING(100))
     reference_number?: string;
+
+    @ForeignKey(() => Organization)
+    @Column(DataType.UUID)
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Payment;

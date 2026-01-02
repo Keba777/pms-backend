@@ -40,6 +40,8 @@ import Payroll from "../models/Payroll.model";
 import { ChatMessage, ChatRoom, ChatRoomMember } from "../models/Chat.model";
 import { ActivityLog, Notification as ColalborationNotification, Discussion } from "../models/Collaboration.model";
 import Client from "../models/Client.model";
+import Organization from "../models/Organization.model";
+import LoginAttempt from "../models/LoginAttempt.model";
 
 dotenv.config({
     path: path.join(__dirname, "../../.env"),
@@ -98,7 +100,9 @@ const sequelize: Sequelize = new Sequelize({
         Discussion,
         ColalborationNotification,
         ActivityLog,
-        Client
+        Client,
+        Organization,
+        LoginAttempt
     ],
 
     logging: false,

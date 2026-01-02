@@ -12,6 +12,7 @@ import {
 import Project from "./Project.model";
 import User from "./User.model";
 import Payment from "./Payment.model";
+import Organization from "./Organization.model";
 
 export interface IInvoice {
     id: string;
@@ -25,6 +26,7 @@ export interface IInvoice {
     status: "pending" | "paid" | "overdue";
     description?: string;
     payments?: Payment[];
+    orgId?: string;
 }
 
 @Table({ tableName: "invoices", timestamps: true })
@@ -66,6 +68,13 @@ class Invoice extends Model<IInvoice> implements IInvoice {
 
     @HasMany(() => Payment)
     payments!: Payment[];
+
+    @ForeignKey(() => Organization)
+    @Column(DataType.UUID)
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Invoice;

@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import Site from './Site.model';
 import LaborInformation from './LaborInformation.model';
+import Organization from './Organization.model';
 
 export interface ILabor {
     id: string;
@@ -33,6 +34,7 @@ export interface ILabor {
     startingDate?: Date;
     dueDate?: Date;
     shiftingDate?: Date;
+    orgId?: string;
 }
 
 @Table({ tableName: 'labors', timestamps: true })
@@ -124,6 +126,13 @@ class Labor extends Model<ILabor> implements ILabor {
 
     @Column({ type: DataType.DATE, allowNull: true, field: 'shifting_date' })
     shiftingDate?: Date;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Labor;

@@ -9,6 +9,7 @@ import {
     BeforeSave,
 } from "sequelize-typescript";
 import Site from "./Site.model";
+import Organization from "./Organization.model";
 
 export interface IEquipment {
     id: string;
@@ -36,6 +37,7 @@ export interface IEquipment {
     startingDate?: Date; // New field: Starting Date
     dueDate?: Date; // New field: Due Date
     shiftingDate?: Date; // New field: Shifting Date
+    orgId?: string;
 }
 
 @Table({ tableName: "equipments", timestamps: true })
@@ -144,6 +146,13 @@ class Equipment extends Model<IEquipment> implements IEquipment {
         const quantity = equipment.quantity ?? 0;
         equipment.status = quantity > 0 ? 'Available' : 'Unavailable';
     }
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Equipment;

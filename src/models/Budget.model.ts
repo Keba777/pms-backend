@@ -9,6 +9,7 @@ import {
     BelongsTo,
 } from "sequelize-typescript";
 import Project from "./Project.model";
+import Organization from "./Organization.model";
 
 export interface IBudget {
     id: string;
@@ -17,6 +18,7 @@ export interface IBudget {
     allocated_amount: number;
     spent_amount: number;
     remaining_amount: number;
+    orgId?: string;
 }
 
 @Table({ tableName: "budgets", timestamps: true })
@@ -43,6 +45,13 @@ class Budget extends Model<IBudget> implements IBudget {
     @Default(0)
     @Column(DataType.DECIMAL(12, 2))
     remaining_amount!: number;
+
+    @ForeignKey(() => Organization)
+    @Column(DataType.UUID)
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Budget;

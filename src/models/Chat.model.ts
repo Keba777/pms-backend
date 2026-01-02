@@ -12,12 +12,14 @@ import {
 } from "sequelize-typescript";
 import User, { IUser } from "./User.model";
 import { Optional } from "sequelize";
+import Organization from "./Organization.model";
 
 export interface IChatRoomAttributes {
   id: string;
   name?: string;
   is_group: boolean;
   owner_id?: string;
+  orgId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,6 +76,13 @@ class ChatRoom extends Model<IChatRoomAttributes, IChatRoom> implements IChatRoo
 
   @HasMany(() => ChatMessage, { foreignKey: "room_id", as: "messages" })
   messages?: ChatMessage[];
+
+  @ForeignKey(() => Organization)
+  @Column({ type: DataType.UUID })
+  orgId!: string;
+
+  @BelongsTo(() => Organization)
+  organization!: Organization;
 }
 
 export interface IChatRoomMemberAttributes {
@@ -125,6 +134,7 @@ export interface IChatMessageAttributes {
   media_url?: string;
   filename?: string;
   mime_type?: string;
+  orgId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -197,6 +207,13 @@ class ChatMessage extends Model<IChatMessageAttributes, IChatMessage> implements
 
   @BelongsTo(() => User, { foreignKey: "sender_id", as: "sender" })
   sender!: User;
+
+  @ForeignKey(() => Organization)
+  @Column({ type: DataType.UUID })
+  orgId!: string;
+
+  @BelongsTo(() => Organization)
+  organization!: Organization;
 }
 
 export { ChatRoom, ChatRoomMember, ChatMessage };

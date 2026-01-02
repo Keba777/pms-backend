@@ -10,6 +10,7 @@ import {
     BelongsTo,
     BeforeUpdate,
     BeforeCreate,
+    Default,
 } from "sequelize-typescript";
 import jwt from "jsonwebtoken";
 import Role from "./Role.model";
@@ -23,12 +24,13 @@ import TaskMember from "./TaskMember.model";
 import ActivityMember from "./ActivityMember.model";
 import bcrypt from "bcryptjs";
 import Site from "./Site.model";
+import Organization from "./Organization.model";
 
 export interface IUser {
     id?: string;
     first_name: string;
     last_name: string;
-    phone: string;
+    phone?: string;
     role_id: string;
     email: string;
     password: string;
@@ -44,12 +46,14 @@ export interface IUser {
     requests?: Request[];
     access?: "Low Access" | "Full Access" | "Average Access";
     username?: string;
-    gender: 'Male' | 'Female';
+    gender?: 'Male' | 'Female';
     position?: string;
     terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
     joiningDate?: Date;
     estSalary?: number;
     ot?: number;
+    orgId?: string | null;
+    isStricted?: boolean;
 }
 
 @Table({
@@ -71,8 +75,8 @@ class User extends Model<IUser> implements IUser {
     @Column({ type: DataType.STRING(50), allowNull: false })
     last_name!: string;
 
-    @Column({ type: DataType.STRING(20), allowNull: false })
-    phone!: string;
+    @Column({ type: DataType.STRING(20), allowNull: true })
+    phone?: string;
 
     @ForeignKey(() => Role)
     @Column({ type: DataType.UUID, allowNull: false })
@@ -105,6 +109,17 @@ class User extends Model<IUser> implements IUser {
     siteId?: string;
     @BelongsTo(() => Site)
     site!: Site;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID, allowNull: true })
+    orgId?: string | null;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
+
+    @Default(false)
+    @Column(DataType.BOOLEAN)
+    isStricted!: boolean;
 
     @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
     responsibilities?: string[];
@@ -152,10 +167,10 @@ class User extends Model<IUser> implements IUser {
 
     @Column({
         type: DataType.STRING,
-        allowNull: false,
+        allowNull: true,
         defaultValue: 'Male'
     })
-    gender!: 'Male' | 'Female';
+    gender?: 'Male' | 'Female';
 
     @Column({ type: DataType.STRING, allowNull: true })
     position?: string;
@@ -210,7 +225,7 @@ class User extends Model<IUser> implements IUser {
 
     getSignedJwtToken() {
         return jwt.sign(
-            { id: this.id },
+            { id: this.id, orgId: this.orgId },
             process.env.JWT_SECRET || "this is the secret",
             {
                 expiresIn: process.env.JWT_EXPIRE

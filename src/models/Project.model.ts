@@ -21,6 +21,7 @@ import ProjectMember from "./ProjectMember.model";
 import WorkflowLog from "./WorkflowLog.model";
 import Site from "./Site.model";
 import Client from "./Client.model";
+import Organization from "./Organization.model";
 
 type ProjectStatus =
     | "Not Started"
@@ -58,6 +59,7 @@ export interface IProject {
     tasks?: Task[];
     actuals?: ProjectActuals | null;
     attachments?: string[];
+    orgId: string;
 
     // progress updates
     progressUpdates?: ProgressUpdateItem[] | null;
@@ -118,6 +120,13 @@ class Project extends Model<IProject> implements IProject {
 
     @BelongsTo(() => Site)
     projectSite?: Site;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID, allowNull: true })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 
     @Default(0)
     @Column(DataType.INTEGER)

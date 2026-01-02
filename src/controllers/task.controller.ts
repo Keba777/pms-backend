@@ -1,15 +1,15 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import Task from "../models/Task.model";
 import Activity from "../models/Activity.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
-import path from "path";
+import { ReqWithUser } from "../types/req-with-user";
 
 // @desc    Create a new task
 // @route   POST /api/v1/tasks
-const createTask = async (req: Request, res: Response, next: NextFunction) => {
+const createTask = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, ...taskData } = req.body;
 
@@ -29,7 +29,8 @@ const createTask = async (req: Request, res: Response, next: NextFunction) => {
 
         const taskPayload = {
             ...taskData,
-            attachments: attachmentUrls
+            attachments: attachmentUrls,
+            orgId: req.user?.orgId
         };
 
         const task = await Task.create(taskPayload);
@@ -78,9 +79,17 @@ const createTask = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Get all tasks (with activities and assigned users), sorted by creation date
 // @route   GET /api/v1/tasks
-const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
+const getAllTasks = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
+        const user = req.user;
+        const where: any = {};
+
+        if (user?.role?.name?.toLowerCase() !== "systemadmin") {
+            where.orgId = user?.orgId;
+        }
+
         const tasks = await Task.findAll({
+            where,
             include: [
                 {
                     model: Activity,
@@ -105,7 +114,7 @@ const getAllTasks = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Get a task by ID (with activities and assigned users)
 // @route   GET /api/v1/tasks/:id
-const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
+const getTaskById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const task = await Task.findByPk(req.params.id, {
             include: [
@@ -126,6 +135,11 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
             return next(new ErrorResponse("Task not found", 404));
         }
 
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && task.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to access this task", 403));
+        }
+
         res.status(200).json({ success: true, data: task });
     } catch (error) {
         console.error(error);
@@ -135,13 +149,18 @@ const getTaskById = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Update a task
 // @route   PUT /api/v1/tasks/:id
-const updateTask = async (req: Request, res: Response, next: NextFunction) => {
+const updateTask = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, existingAttachments, ...taskData } = req.body;
 
         const task = await Task.findByPk(req.params.id);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && task.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this task", 403));
         }
 
         // Handle file uploads (new files)
@@ -213,11 +232,16 @@ const updateTask = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Delete a task
 // @route   DELETE /api/v1/tasks/:id
-const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
+const deleteTask = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const task = await Task.findByPk(req.params.id);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && task.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to delete this task", 403));
         }
 
         await task.destroy();
@@ -231,11 +255,16 @@ const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
 // @desc    Update task actuals
 // @route   PATCH /api/v1/tasks/:id/actuals
 // Expected body: { actuals: { start_date, end_date, progress, status, budget } }
-const updateTaskActuals = async (req: Request, res: Response, next: NextFunction) => {
+const updateTaskActuals = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const task = await Task.findByPk(req.params.id);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && task.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this task", 403));
         }
 
         const { actuals } = req.body;
@@ -283,13 +312,19 @@ const updateTaskActuals = async (req: Request, res: Response, next: NextFunction
  * @route   PUT /api/v1/tasks/:id/progress
  * @body    { progress: number, remark?, status?, checkedBy?, approvedBy?, action?, summaryReport?, comment?, approvedDate?, dateTime? }
  */
-const updateTaskProgress = async (req: Request, res: Response, next: NextFunction) => {
+const updateTaskProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     const t = await Task.sequelize?.transaction();
     try {
         const task = await Task.findByPk(req.params.id, { transaction: t });
         if (!task) {
             if (t) await t.rollback();
             return next(new ErrorResponse("Task not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && task.orgId !== user?.orgId) {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("Not authorized to update this task", 403));
         }
 
         const {
@@ -361,3 +396,4 @@ export {
     updateTaskActuals,
     updateTaskProgress,
 };
+

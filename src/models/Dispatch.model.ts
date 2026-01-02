@@ -9,6 +9,7 @@ import {
 } from "sequelize-typescript";
 import Site from "./Site.model";
 import Approval from "./Approval.model";
+import Organization from "./Organization.model";
 
 export interface IDispatch {
     id: String;
@@ -28,6 +29,7 @@ export interface IDispatch {
     vehicleType?: string;
     dispatchedBy?: "Plane" | "Truck";
     status: "Pending" | "In Transit" | "Delivered" | "Cancelled";
+    orgId?: string;
 }
 
 @Table({ tableName: 'dispatches', timestamps: true })
@@ -86,6 +88,13 @@ class Dispatch extends Model<IDispatch> implements IDispatch {
 
     @Column({ type: DataType.STRING, allowNull: false, defaultValue: "Pending" })
     status!: "Pending" | "In Transit" | "Delivered" | "Cancelled";
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Dispatch;

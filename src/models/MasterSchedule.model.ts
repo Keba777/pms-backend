@@ -1,4 +1,5 @@
-import { Table, Column, Model, DataType, PrimaryKey } from "sequelize-typescript";
+import { Table, Column, Model, DataType, PrimaryKey, ForeignKey, BelongsTo } from "sequelize-typescript";
+import Organization from "./Organization.model";
 
 export interface IMasterSchedule {
     id: string;
@@ -6,6 +7,7 @@ export interface IMasterSchedule {
     reference_id: string; // ID from Projects/Tasks/Activities
     start_date: Date;
     end_date: Date;
+    orgId?: string;
 }
 
 @Table({ tableName: "master_schedule" })
@@ -40,6 +42,13 @@ class MasterSchedule extends Model<IMasterSchedule> implements IMasterSchedule {
         allowNull: false,
     })
     end_date!: Date;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default MasterSchedule;

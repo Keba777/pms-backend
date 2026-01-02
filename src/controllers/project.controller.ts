@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { ReqWithUser } from "../types/req-with-user";
 import Project from "../models/Project.model";
 import Task from "../models/Task.model";
@@ -12,7 +12,7 @@ import fs from "fs";
 
 // @desc    Create a new project
 // @route   POST /api/v1/projects
-const createProject = async (req: Request, res: Response, next: NextFunction) => {
+const createProject = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { members, ...projectData } = req.body;
 
@@ -31,10 +31,11 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
 
         const projectPayload = {
             ...projectData,
-            attachments: attachmentUrls
+            attachments: attachmentUrls,
+            orgId: req.user?.orgId
         };
 
-        const project = (await Project.create(projectPayload, { userId: (req as ReqWithUser).user?.id } as any)) as any;
+        const project = (await Project.create(projectPayload, { userId: req.user?.id } as any)) as any;
 
         const membersList = Array.isArray(members) ? members : (members ? [members] : []);
 
@@ -90,9 +91,18 @@ const createProject = async (req: Request, res: Response, next: NextFunction) =>
 
 // @desc    Get all projects (with tasks, activities, and members), sorted by creation date
 // @route   GET /api/v1/projects
-const getAllProjects = async (req: Request, res: Response, next: NextFunction) => {
+const getAllProjects = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
+        const user = req.user;
+        const where: any = {};
+
+        // If not SystemAdmin, filter by orgId
+        if (user?.role?.name?.toLowerCase() !== "systemadmin") {
+            where.orgId = user?.orgId;
+        }
+
         const projects = await Project.findAll({
+            where,
             include: [
                 {
                     model: Task,
@@ -131,7 +141,7 @@ const getAllProjects = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Get a project by ID (with tasks, activities, and members)
 // @route   GET /api/v1/projects/:id
-const getProjectById = async (req: Request, res: Response, next: NextFunction) => {
+const getProjectById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const project = await Project.findByPk(req.params.id, {
             include: [
@@ -166,6 +176,11 @@ const getProjectById = async (req: Request, res: Response, next: NextFunction) =
             return next(new ErrorResponse("Project not found", 404));
         }
 
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && project.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to access this project", 403));
+        }
+
         res.status(200).json({ success: true, data: project });
     } catch (error) {
         console.error(error);
@@ -175,13 +190,18 @@ const getProjectById = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Update a project
 // @route   PUT /api/v1/projects/:id
-const updateProject = async (req: Request, res: Response, next: NextFunction) => {
+const updateProject = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { members, existingAttachments, ...projectData } = req.body;
         const project = await Project.findByPk(req.params.id);
 
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && project.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this project", 403));
         }
 
         // Handle file uploads (new files)
@@ -211,7 +231,7 @@ const updateProject = async (req: Request, res: Response, next: NextFunction) =>
         await project.update({
             ...projectData,
             attachments: updatedAttachments
-        }, { userId: (req as ReqWithUser).user?.id } as any);
+        }, { userId: req.user?.id } as any);
 
         const membersList = Array.isArray(members) ? members : (members ? [members] : []);
 
@@ -268,11 +288,16 @@ const updateProject = async (req: Request, res: Response, next: NextFunction) =>
 
 // @desc    Delete a project
 // @route   DELETE /api/v1/projects/:id
-const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
+const deleteProject = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const project = await Project.findByPk(req.params.id);
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && project.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to delete this project", 403));
         }
 
         await project.destroy();
@@ -286,11 +311,16 @@ const deleteProject = async (req: Request, res: Response, next: NextFunction) =>
 // @desc    Update project actuals
 // @route   PATCH /api/v1/projects/:id/actuals
 // Expected body: { actuals: { start_date, end_date, progress, status, budget } }
-const updateProjectActuals = async (req: Request, res: Response, next: NextFunction) => {
+const updateProjectActuals = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const project = await Project.findByPk(req.params.id);
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && project.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this project", 403));
         }
 
         const { actuals } = req.body;
@@ -351,13 +381,19 @@ const updateProjectActuals = async (req: Request, res: Response, next: NextFunct
  * @route   PUT /api/v1/projects/:id/progress
  * @body    { progress: number, remark?, status?, checkedBy?, approvedBy?, action?, summaryReport?, comment?, approvedDate?, dateTime? }
  */
-const updateProjectProgress = async (req: Request, res: Response, next: NextFunction) => {
+const updateProjectProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     const t = await Project.sequelize?.transaction();
     try {
         const project = await Project.findByPk(req.params.id, { transaction: t });
         if (!project) {
             if (t) await t.rollback();
             return next(new ErrorResponse("Project not found", 404));
+        }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && project.orgId !== user?.orgId) {
+            if (t) await t.rollback();
+            return next(new ErrorResponse("Not authorized to update this project", 403));
         }
 
         const {

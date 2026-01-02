@@ -37,7 +37,10 @@ import invoiceRouter from "./routes/invoice.route";
 import chatRouter from "./routes/chat.route";
 import collaborationRouter from "./routes/collaboration.route";
 import clientRouter from "./routes/client.routes";
+import organizationRouter from "./routes/organization.route";
+import adminRouter from "./routes/admin.route";
 import protectRoute from "./middlewares/auth";
+import { multiTenancy } from "./middlewares/multi-tenancy.middleware";
 
 dotenv.config({
     path: path.join(__dirname, "../.env"),
@@ -87,39 +90,41 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/users", protectRoute, userRouter);
-app.use("/api/v1/roles", roleRouter);
-app.use("/api/v1/projects", protectRoute, projectRouter)
-app.use("/api/v1/tasks", protectRoute, taskRouter)
-app.use("/api/v1/activities", protectRoute, activityRouter)
-app.use("/api/v1/tags", protectRoute, tagRouter)
-app.use("/api/v1/master-schedule", protectRoute, masterScheduleRouter)
-app.use("/api/v1/equipments", protectRoute, equipmentRouter)
-app.use("/api/v1/warehouses", protectRoute, warehouseRouter)
-app.use("/api/v1/materials", protectRoute, materialRouter)
-app.use("/api/v1/labors", protectRoute, laborRouter)
-app.use("/api/v1/departments", protectRoute, departmentRouter);
-app.use("/api/v1/requests", protectRoute, requestRouter);
-app.use("/api/v1/approvals", protectRoute, approvalRouter);
-app.use("/api/v1/notifications", protectRoute, notificationRouter);
-app.use("/api/v1/sites", protectRoute, siteRouter);
-app.use("/api/v1/timesheets", protectRoute, timesheetRouter)
-app.use("/api/v1/issues", protectRoute, issueRouter);
-app.use("/api/v1/store-requisitions", protectRoute, storeRequisitionRouter);
-app.use("/api/v1/labor-informations", protectRoute, laborInformationRouter);
-app.use("/api/v1/kpis", protectRoute, kpiRouter);
-app.use("/api/v1/dispatches", protectRoute, dispatchRouter);
-app.use("/api/v1/request-deliveries", protectRoute, requestDeliveryRouter);
-app.use("/api/v1/workflow-logs", protectRoute, workflowLogRouter);
-app.use("/api/v1/todos", protectRoute, todoRouter);
-app.use("/api/v1/files", protectRoute, fileRoute);
-app.use("/api/v1/payments", protectRoute, paymentRouter);
-app.use("/api/v1/payrolls", protectRoute, payrollRouter);
-app.use("/api/v1/budgets", protectRoute, budgetRouter);
-app.use("/api/v1/invoices", protectRoute, invoiceRouter);
-app.use("/api/v1/chats", protectRoute, chatRouter);
-app.use("/api/v1/collaborations", protectRoute, collaborationRouter);
-app.use("/api/v1/clients", protectRoute, clientRouter);
+app.use("/api/v1/users", protectRoute, multiTenancy, userRouter);
+app.use("/api/v1/roles", protectRoute, multiTenancy, roleRouter);
+app.use("/api/v1/projects", protectRoute, multiTenancy, projectRouter)
+app.use("/api/v1/tasks", protectRoute, multiTenancy, taskRouter)
+app.use("/api/v1/activities", protectRoute, multiTenancy, activityRouter)
+app.use("/api/v1/tags", protectRoute, multiTenancy, tagRouter)
+app.use("/api/v1/master-schedule", protectRoute, multiTenancy, masterScheduleRouter)
+app.use("/api/v1/equipments", protectRoute, multiTenancy, equipmentRouter)
+app.use("/api/v1/warehouses", protectRoute, multiTenancy, warehouseRouter)
+app.use("/api/v1/materials", protectRoute, multiTenancy, materialRouter)
+app.use("/api/v1/labors", protectRoute, multiTenancy, laborRouter)
+app.use("/api/v1/departments", protectRoute, multiTenancy, departmentRouter);
+app.use("/api/v1/requests", protectRoute, multiTenancy, requestRouter);
+app.use("/api/v1/approvals", protectRoute, multiTenancy, approvalRouter);
+app.use("/api/v1/notifications", protectRoute, multiTenancy, notificationRouter);
+app.use("/api/v1/sites", protectRoute, multiTenancy, siteRouter);
+app.use("/api/v1/timesheets", protectRoute, multiTenancy, timesheetRouter)
+app.use("/api/v1/issues", protectRoute, multiTenancy, issueRouter);
+app.use("/api/v1/store-requisitions", protectRoute, multiTenancy, storeRequisitionRouter);
+app.use("/api/v1/labor-informations", protectRoute, multiTenancy, laborInformationRouter);
+app.use("/api/v1/kpis", protectRoute, multiTenancy, kpiRouter);
+app.use("/api/v1/dispatches", protectRoute, multiTenancy, dispatchRouter);
+app.use("/api/v1/request-deliveries", protectRoute, multiTenancy, requestDeliveryRouter);
+app.use("/api/v1/workflow-logs", protectRoute, multiTenancy, workflowLogRouter);
+app.use("/api/v1/todos", protectRoute, multiTenancy, todoRouter);
+app.use("/api/v1/files", protectRoute, multiTenancy, fileRoute);
+app.use("/api/v1/payments", protectRoute, multiTenancy, paymentRouter);
+app.use("/api/v1/payrolls", protectRoute, multiTenancy, payrollRouter);
+app.use("/api/v1/budgets", protectRoute, multiTenancy, budgetRouter);
+app.use("/api/v1/invoices", protectRoute, multiTenancy, invoiceRouter);
+app.use("/api/v1/chats", protectRoute, multiTenancy, chatRouter);
+app.use("/api/v1/collaborations", protectRoute, multiTenancy, collaborationRouter);
+app.use("/api/v1/clients", protectRoute, multiTenancy, clientRouter);
+app.use("/api/v1/organizations", protectRoute, multiTenancy, organizationRouter);
+app.use("/api/v1/admin", protectRoute, multiTenancy, adminRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });

@@ -8,6 +8,7 @@ import {
     Default,
 } from "sequelize-typescript";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 interface IFile {
     date: Date;
@@ -18,6 +19,7 @@ interface IFile {
     fileUrl: string;  // Cloudinary URL
     type: "project" | "task" | "activity" | "todo";
     referenceId: string; // the id of the related table entry
+    orgId?: string;
 }
 
 @Table({ tableName: "files", timestamps: true })
@@ -60,6 +62,13 @@ class File extends Model<IFile> implements IFile {
 
     @Column({ type: DataType.UUID, allowNull: false })
     referenceId!: string; // The id of the related table entry
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default File;

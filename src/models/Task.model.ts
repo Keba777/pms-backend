@@ -20,6 +20,7 @@ import Activity from "./Activity.model";
 import User from "./User.model";
 import TaskMember from "./TaskMember.model";
 import WorkflowLog from "./WorkflowLog.model";
+import Organization from "./Organization.model";
 
 type TaskStatus =
     | "Not Started"
@@ -74,6 +75,7 @@ export interface ITask {
     actuals?: TaskActuals | null; // small task-specific actuals object
     progressUpdates?: ProgressUpdateItem[] | null;
     attachments?: string[];
+    orgId: string;
 }
 
 @Table({ tableName: "tasks", timestamps: true })
@@ -137,6 +139,13 @@ class Task extends Model<ITask> implements ITask {
 
     @HasMany(() => Activity)
     activities!: Activity[];
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID, allowNull: true })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 
     /**
      * Top-level budget on task (requested).

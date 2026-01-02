@@ -9,6 +9,7 @@ import {
     Default,
 } from "sequelize-typescript";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 export interface IWorkflowLog {
     id?: string;
@@ -18,6 +19,7 @@ export interface IWorkflowLog {
     status?: string;
     userId: string;
     details?: string;
+    orgId?: string;
 }
 
 @Table({ tableName: "workflow_logs", timestamps: true })
@@ -73,6 +75,13 @@ class WorkflowLog extends Model<IWorkflowLog> implements IWorkflowLog {
         allowNull: true,
     })
     details?: string;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default WorkflowLog;

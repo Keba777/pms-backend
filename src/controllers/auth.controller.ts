@@ -1,12 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/User.model";
 import Role from "../models/Role.model";
+import LoginAttempt from "../models/LoginAttempt.model";
 import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import bcrypt from "bcryptjs";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import Organization from "../models/Organization.model";
 
 /**
  * Local Request type that includes the optional `user` and `file` fields.
@@ -75,6 +77,12 @@ const registerUser = async (
       profile_picture = result.secure_url;
     }
 
+    // Find default organization (Nilepms)
+    const nilepms = await Organization.findOne({ where: { orgName: "Nilepms" } as any });
+    if (!nilepms) {
+      return next(new ErrorResponse("System not ready: Default organization not found", 500));
+    }
+
     // Create user with lowercase email
     const user = await User.create({
       email,
@@ -82,6 +90,7 @@ const registerUser = async (
       last_name,
       phone,
       role_id: role.id,
+      orgId: nilepms.id, // Assign to Nilepms by default
       password: hashedPassword,
       profile_picture,
       department_id: department_id || null,
@@ -124,14 +133,36 @@ const loginUser = async (
 
     // Check if user exists
     if (!user) {
+      // Log failed attempt (unknown user)
+      await LoginAttempt.create({
+        email: email,
+        status: "FAILED",
+        ip_address: req.ip || req.socket.remoteAddress,
+        user_agent: req.headers["user-agent"],
+      });
       return next(new ErrorResponse("Invalid credentials email", 401));
     }
 
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
+      // Log failed attempt (wrong password)
+      await LoginAttempt.create({
+        email: email,
+        status: "FAILED",
+        ip_address: req.ip || req.socket.remoteAddress,
+        user_agent: req.headers["user-agent"],
+      });
       return next(new ErrorResponse("Invalid credentials password", 401));
     }
+
+    // Log successful attempt
+    await LoginAttempt.create({
+      email: email,
+      status: "SUCCESS",
+      ip_address: req.ip || req.socket.remoteAddress,
+      user_agent: req.headers["user-agent"],
+    });
 
     sendingTokenResponse(user, 200, res);
   } catch (error) {

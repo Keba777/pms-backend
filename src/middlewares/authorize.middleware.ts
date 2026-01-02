@@ -23,7 +23,11 @@ export function authorize(action: PermissionActions, resource: string) {
             return res.status(403).json({ message: "Role not found" });
         }
 
-        if (role.name.toLowerCase() === "admin") {
+        if (
+            role.name.toLowerCase() === "admin" ||
+            role.name.toLowerCase() === "superadmin" ||
+            role.name.toLowerCase() === "systemadmin"
+        ) {
             return next();
         }
 

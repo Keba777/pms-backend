@@ -14,6 +14,7 @@ import TodoMember from "./TodoMember.model";
 import KPI from "./KPI.model";
 import Department from "./Department.model";
 import TodoProgress from "./TodoProgress.model";
+import Organization from "./Organization.model";
 
 interface ITodo {
     task: string;
@@ -35,6 +36,7 @@ interface ITodo {
     remark?: string;
     remainder?: string;
     attachment?: string[];
+    orgId: string;
 }
 
 @Table({ tableName: "todos", timestamps: true })
@@ -113,6 +115,13 @@ class Todo extends Model<ITodo> implements ITodo {
 
     @HasMany(() => TodoProgress)
     progressUpdates?: TodoProgress[];
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID, allowNull: true })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Todo;

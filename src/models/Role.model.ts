@@ -5,7 +5,10 @@ import {
   PrimaryKey,
   Default,
   DataType,
+  ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
+import Organization from "./Organization.model";
 
 export type PermissionActions = "create" | "update" | "delete" | "manage";
 
@@ -17,6 +20,7 @@ export interface IRole {
   id?: string;
   name: string;
   permissions?: IPermissions | null;
+  orgId?: string | null;
 }
 
 @Table({
@@ -41,6 +45,13 @@ class Role extends Model<IRole> implements IRole {
     defaultValue: null,
   })
   permissions?: IPermissions | null;
+
+  @ForeignKey(() => Organization)
+  @Column({ type: DataType.UUID, allowNull: true })
+  orgId?: string | null;
+
+  @BelongsTo(() => Organization)
+  organization?: Organization;
 }
 
 export default Role;

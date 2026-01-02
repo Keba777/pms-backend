@@ -8,6 +8,7 @@ import {
 } from "sequelize-typescript";
 import Todo from "./Todo.model";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 interface ITodoProgress {
     todoId: string;
@@ -15,6 +16,7 @@ interface ITodoProgress {
     progress: number;
     remark?: string;
     attachment?: string[];
+    orgId?: string;
 }
 
 @Table({ tableName: "todo_progress", timestamps: true })
@@ -41,6 +43,13 @@ class TodoProgress extends Model<ITodoProgress> implements ITodoProgress {
 
     @Column({ type: DataType.ARRAY(DataType.STRING), allowNull: true })
     attachment?: string[];
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default TodoProgress;

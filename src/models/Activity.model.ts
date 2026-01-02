@@ -19,6 +19,7 @@ import Request from "./Request.model";
 import User from "./User.model";
 import ActivityMember from "./ActivityMember.model";
 import WorkflowLog from "./WorkflowLog.model";
+import Organization from "./Organization.model";
 
 // Define interfaces for list items
 export interface WorkForceItem {
@@ -109,6 +110,7 @@ export interface IActivity {
     actuals?: Actuals | null;
     progressUpdates?: ProgressUpdateItem[] | null;
     attachments?: string[];
+    orgId: string;
 }
 
 @Table({ tableName: "activities", timestamps: true })
@@ -212,6 +214,13 @@ class Activity extends Model<IActivity> implements IActivity {
 
     @HasMany(() => Request)
     requests?: Request[];
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID, allowNull: true })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 
     @Column({
         type: DataType.STRING(255),

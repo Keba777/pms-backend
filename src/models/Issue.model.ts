@@ -13,6 +13,7 @@ import Activity from "./Activity.model";
 import Project from "./Project.model";
 import Task from "./Task.model";
 import User from "./User.model";
+import Organization from "./Organization.model";
 
 export interface IIssue {
     id: string;
@@ -31,6 +32,7 @@ export interface IIssue {
     activityId?: string;
     projectId?: string;
     taskId?: string;
+    orgId?: string;
 }
 
 @Table({
@@ -123,6 +125,13 @@ class Issue extends Model<IIssue> implements IIssue {
     taskId?: string;
     @BelongsTo(() => Task)
     task?: Task;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Issue;

@@ -10,6 +10,7 @@ import {
 } from "sequelize-typescript";
 import { UUIDV4 } from "sequelize";
 import Approval from "./Approval.model";
+import Organization from "./Organization.model";
 
 export interface IStoreRequisition {
     id: string;
@@ -18,6 +19,7 @@ export interface IStoreRequisition {
     quantity: number;
     remarks?: string;
     approvalId: string;
+    orgId?: string;
 }
 
 @Table({
@@ -50,6 +52,13 @@ class StoreRequisition
 
     @BelongsTo(() => Approval)
     approval!: Approval;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default StoreRequisition;

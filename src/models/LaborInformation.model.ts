@@ -8,6 +8,7 @@ import {
     BelongsTo,
 } from 'sequelize-typescript';
 import Labor from './Labor.model';
+import Organization from './Organization.model';
 
 export interface ILaborInformation {
     id: string;
@@ -22,7 +23,8 @@ export interface ILaborInformation {
     sex?: 'Male' | 'Female';
     terms?: 'Part Time' | 'Contract' | 'Temporary' | 'Permanent';
     estSalary?: number;
-    educationLevel?: string
+    educationLevel?: string;
+    orgId?: string;
 }
 
 @Table({ tableName: 'labor_informations', timestamps: true })
@@ -79,6 +81,13 @@ class LaborInformation extends Model<ILaborInformation> implements ILaborInforma
 
     @Column({ type: DataType.STRING, allowNull: true })
     educationLevel?: string;
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default LaborInformation;

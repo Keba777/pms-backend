@@ -14,6 +14,7 @@ import Request from "./Request.model";
 import Department from "./Department.model";
 import User from "./User.model";
 import WorkflowLog from "./WorkflowLog.model";
+import Organization from "./Organization.model";
 
 export interface IApproval {
     id: string;
@@ -32,6 +33,7 @@ export interface IApproval {
     nextDepartmentId?: string;
     nextDepartment?: Department;
     finalDepartment?: boolean;
+    orgId?: string;
 }
 
 @Table({ tableName: "approvals", timestamps: true })
@@ -136,6 +138,13 @@ class Approval extends Model<IApproval> implements IApproval {
             `Approval for request "${instance.requestId}" deleted from department "${instance.departmentId}"`
         );
     }
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 // Reusable utility function for workflow logging
@@ -159,6 +168,7 @@ async function createWorkflowLogHook(
         status: instance.getDataValue("status") || undefined,
         userId,
         details,
+        orgId: (instance as any).orgId,
     }, { transaction: options.transaction });
 }
 

@@ -9,6 +9,7 @@ import {
     BeforeSave,
 } from 'sequelize-typescript';
 import Warehouse from './Warehouse.model';
+import Organization from './Organization.model';
 
 export interface IMaterial {
     id: string;
@@ -24,6 +25,7 @@ export interface IMaterial {
     shelfNo?: string;
     status?: 'Available' | 'Unavailable';
     totalPrice?: number;
+    orgId?: string;
 }
 
 @Table({ tableName: 'materials', timestamps: true })
@@ -88,6 +90,13 @@ class Material extends Model<IMaterial> implements IMaterial {
         const quantity = material.quantity ?? 0;
         material.status = quantity > 0 ? 'Available' : 'Unavailable';
     }
+
+    @ForeignKey(() => Organization)
+    @Column({ type: DataType.UUID })
+    orgId!: string;
+
+    @BelongsTo(() => Organization)
+    organization!: Organization;
 }
 
 export default Material;

@@ -1,4 +1,5 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
+import { ReqWithUser } from "../types/req-with-user";
 import User from "../models/User.model";
 import Project from "../models/Project.model";
 import Task from "../models/Task.model";
@@ -12,6 +13,7 @@ import cloudinary from "../config/cloudinary";
 import fs from "fs";
 import { Op } from 'sequelize';
 import bcrypt from "bcryptjs";
+import Organization from "../models/Organization.model";
 import path from "path";
 
 const uploadToCloudinary = async (source: string): Promise<string | null> => {
@@ -29,9 +31,17 @@ const uploadToCloudinary = async (source: string): Promise<string | null> => {
 
 // @desc    Get all users
 // @route   GET /api/v1/users
-const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+const getAllUsers = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
+    const user = req.user;
+    const where: any = {};
+
+    if (user?.role?.name?.toLowerCase() !== "systemadmin") {
+      where.orgId = user?.orgId;
+    }
+
     const users = await User.findAll({
+      where,
       attributes: { exclude: ["password"] },
       include: [
         {
@@ -52,6 +62,10 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
         { model: Task, through: { attributes: [] } },
         { model: Activity, through: { attributes: [] } },
         { model: RequestModel },
+        {
+          model: Organization,
+          attributes: ["id", "orgName", "logo"],
+        },
       ],
       order: [["createdAt", "ASC"]],
     });
@@ -65,7 +79,7 @@ const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Get a user by ID
 // @route   GET /api/v1/users/:id
-const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+const getUserById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
     const user = await User.findByPk(req.params.id, {
       attributes: { exclude: ["password"] },
@@ -95,6 +109,16 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
       return next(new ErrorResponse("User not found", 404));
     }
 
+    const currentUser = req.user;
+    // Allow if SystemAdmin OR user is accessing themselves OR user belongs to same org
+    const isSystemAdmin = currentUser?.role?.name?.toLowerCase() === "systemadmin";
+    const isSelf = currentUser?.id === user.id;
+    const isSameOrg = currentUser?.orgId && user.orgId === currentUser.orgId;
+
+    if (!isSystemAdmin && !isSelf && !isSameOrg) {
+      return next(new ErrorResponse("Not authorized to access this user", 403));
+    }
+
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     console.error(error);
@@ -104,9 +128,8 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Create a new user
 // @route   POST /api/v1/users
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
+const createUser = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    // Extract and validate required fields
     // Extract and validate required fields
     let { first_name, last_name, phone, email, password, role_id, siteId, username, gender, position, terms, joiningDate, estSalary, ot } = req.body;
 
@@ -156,6 +179,39 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       profile_picture = result.secure_url;
     }
 
+    const currentUser = req.user;
+    const isSystemAdmin = currentUser?.role?.name?.toLowerCase() === "systemadmin";
+    const isSuperAdmin = currentUser?.role?.name?.toLowerCase() === "superadmin";
+
+    // 1) Authorization check: who can create what?
+    if (!isSystemAdmin && !isSuperAdmin) {
+      return next(new ErrorResponse("Not authorized to create users", 403));
+    }
+
+    // 2) Role validation
+    const targetRole = await Role.findByPk(finalRoleId);
+    if (!targetRole) {
+      return next(new ErrorResponse("Target role not found", 404));
+    }
+
+    const targetRoleName = targetRole.name.toLowerCase();
+
+    // Only SystemAdmin can create SuperAdmins or SystemAdmins
+    if (["systemadmin", "superadmin"].includes(targetRoleName) && !isSystemAdmin) {
+      return next(new ErrorResponse("Only SystemAdmin can create SuperAdmin or SystemAdmin users", 403));
+    }
+
+    // 3) Organization assignment
+    let finalOrgId = req.body.orgId;
+
+    if (isSystemAdmin) {
+      // SystemAdmin can specify orgId, or if not provided, it might be null (global user)
+      // but usually users should belong to an org if they are not SystemAdmin.
+    } else if (isSuperAdmin) {
+      // SuperAdmin can ONLY create users for their own organization
+      finalOrgId = currentUser?.orgId;
+    }
+
     const userData = {
       first_name,
       last_name,
@@ -176,6 +232,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       joiningDate,
       estSalary,
       ot,
+      orgId: finalOrgId,
+      isStricted: req.body.isStricted || false
     };
 
     const user = await User.create(userData);
@@ -202,8 +260,16 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Import multiple users
 // @route   POST /api/v1/users/import
-const importUsers = async (req: Request, res: Response, next: NextFunction) => {
+const importUsers = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
+    const currentUser = req.user;
+    const isSystemAdmin = currentUser?.role?.name?.toLowerCase() === "systemadmin";
+    const isSuperAdmin = currentUser?.role?.name?.toLowerCase() === "superadmin";
+
+    if (!isSystemAdmin && !isSuperAdmin) {
+      return next(new ErrorResponse("Not authorized to import users", 403));
+    }
+
     // req.body will be an array when sent as JSON (most common for CSV/Excel import)
     // req.files will contain uploaded files when using multipart/form-data
     let usersData: any[] = [];
@@ -271,7 +337,7 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
     // responsibilities is now correctly named in the model
 
     // ------------------------------------------------------------------ //
-    // 2. Validate required fields + hash passwords
+    // 2. Validate required fields + hash passwords + enforce orgId
     // ------------------------------------------------------------------ //
     for (const userData of usersData) {
       const { first_name, last_name, phone, email, password = "123456", role_id, siteId } = userData;
@@ -280,8 +346,23 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
         return next(new ErrorResponse("Missing required fields in one or more users", 400));
       }
 
+      // Enforce Org ID
+      if (!isSystemAdmin) {
+        userData.orgId = currentUser?.orgId;
+      }
+      // If system admin, they can pass orgId, or we leave it (or default logic)
+
       if (!role_id) {
-        const userRole = await Role.findOne({ where: { name: "User" } });
+        // Fallback to "User" role for that Org (or global "User" role if scoped roles not used strictly yet)
+        // Best effort: find a role named "User"
+        // Ideally we should find "User" role scoped to this org if roles are scoped.
+        // For now, simple logic:
+        const userRole = await Role.findOne({
+          where: {
+            name: "User",
+            // orgId: userData.orgId // Optional: refine this if roles are strict
+          }
+        });
         if (userRole) {
           userData.role_id = userRole.id;
         } else {
@@ -325,11 +406,19 @@ const importUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Update a user
 // @route   PUT /api/v1/users/:id
-const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+const updateUser = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {
       return next(new ErrorResponse("User not found", 404));
+    }
+
+    const currentUser = req.user;
+    const isSystemAdmin = currentUser?.role?.name?.toLowerCase() === "systemadmin";
+    const isSameOrg = currentUser?.orgId && user.orgId === currentUser.orgId;
+
+    if (!isSystemAdmin && !isSameOrg) {
+      return next(new ErrorResponse("Not authorized to update this user", 403));
     }
 
     const updates: Record<string, any> = { ...req.body };
@@ -358,6 +447,15 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
     if (updates.ot) updates.ot = parseFloat(updates.ot);
     if (updates.joiningDate) updates.joiningDate = new Date(updates.joiningDate);
 
+    // Only SuperAdmin or Admin can change isStricted
+    const isPrivileged = ["admin", "superadmin", "systemadmin"].includes(
+      currentUser?.role?.name?.toLowerCase()
+    );
+
+    if (!isPrivileged && updates.hasOwnProperty("isStricted")) {
+      delete updates.isStricted;
+    }
+
     await user.update(updates);
     const updatedUser = await User.findByPk(req.params.id, {
       attributes: { exclude: ["password"] },
@@ -381,11 +479,19 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 
 // @desc    Delete a user
 // @route   DELETE /api/v1/users/:id
-const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+const deleteUser = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) {
       return next(new ErrorResponse("User not found", 404));
+    }
+
+    const currentUser = req.user;
+    const isSystemAdmin = currentUser?.role?.name?.toLowerCase() === "systemadmin";
+    const isSameOrg = currentUser?.orgId && user.orgId === currentUser.orgId;
+
+    if (!isSystemAdmin && !isSameOrg) {
+      return next(new ErrorResponse("Not authorized to delete this user", 403));
     }
 
     await user.destroy();
@@ -406,3 +512,4 @@ const fetchUsersExcluding = async (excludeId: string) => {
 };
 
 export { getAllUsers, getUserById, createUser, importUsers, updateUser, deleteUser, fetchUsersExcluding };
+
