@@ -402,6 +402,7 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
         role: user.role,
         profile_picture: user.profile_picture,
         department_id: user.department_id,
+        orgId: user.orgId,
         siteId: user.siteId,
         responsibilities: user.responsibilities,
         access: user.access,
