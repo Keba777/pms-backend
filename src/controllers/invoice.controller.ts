@@ -1,18 +1,52 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import Invoice from "../models/Invoice.model";
 import Payment from "../models/Payment.model";
 import Project from "../models/Project.model";
 import User from "../models/User.model";
+import Notification from "../models/Notification.model";
+import ProjectMember from "../models/ProjectMember.model";
 import ErrorResponse from "../utils/error-response.utils";
+import { ReqWithUser } from "../types/req-with-user";
 
 // @desc    Create new invoice
 // @route   POST /api/v1/invoices
-const createInvoice = async (req: Request, res: Response, next: NextFunction) => {
+const createInvoice = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const invoice = await Invoice.create(req.body);
+        const invoiceData = {
+            ...req.body,
+            created_by: req.user?.id,
+            orgId: req.user?.orgId
+        };
+        const invoice = await Invoice.create(invoiceData);
         const createdInvoice = await Invoice.findByPk(invoice.id, {
             include: [Project, User, Payment],
         });
+
+        if (createdInvoice && createdInvoice.project) {
+            const project = createdInvoice.project;
+
+            // Find Project Members to notify (PMs)
+            const members = await ProjectMember.findAll({
+                where: { project_id: project.id }
+            });
+
+            const notifications = members.map(member => ({
+                user_id: member.userId,
+                type: "Financial: Invoice Created",
+                data: {
+                    invoiceId: invoice.id,
+                    projectTitle: project.title,
+                    amount: invoice.amount,
+                    message: `A new invoice/IPC for project "${project.title}" has been created.`
+                },
+                orgId: project.orgId
+            }));
+
+            if (notifications.length > 0) {
+                await Notification.bulkCreate(notifications);
+            }
+        }
+
         res.status(201).json({ success: true, data: createdInvoice });
     } catch (error) {
         console.error(error);
@@ -22,9 +56,15 @@ const createInvoice = async (req: Request, res: Response, next: NextFunction) =>
 
 // @desc    Get all invoices
 // @route   GET /api/v1/invoices
-const getAllInvoices = async (req: Request, res: Response, next: NextFunction) => {
+const getAllInvoices = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
+        const where: any = {};
+        if (req.user?.role?.name?.toLowerCase() !== "systemadmin") {
+            where.orgId = req.user?.orgId;
+        }
+
         const invoices = await Invoice.findAll({
+            where,
             include: [Project, User, Payment],
             order: [["createdAt", "DESC"]],
         });
@@ -37,7 +77,7 @@ const getAllInvoices = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Get invoice by ID
 // @route   GET /api/v1/invoices/:id
-const getInvoiceById = async (req: Request, res: Response, next: NextFunction) => {
+const getInvoiceById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const invoice = await Invoice.findByPk(req.params.id, {
             include: [Project, User, Payment],
@@ -52,7 +92,7 @@ const getInvoiceById = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Update invoice
 // @route   PUT /api/v1/invoices/:id
-const updateInvoice = async (req: Request, res: Response, next: NextFunction) => {
+const updateInvoice = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const invoice = await Invoice.findByPk(req.params.id);
         if (!invoice) return next(new ErrorResponse("Invoice not found", 404));
@@ -69,7 +109,7 @@ const updateInvoice = async (req: Request, res: Response, next: NextFunction) =>
 
 // @desc    Delete invoice
 // @route   DELETE /api/v1/invoices/:id
-const deleteInvoice = async (req: Request, res: Response, next: NextFunction) => {
+const deleteInvoice = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const invoice = await Invoice.findByPk(req.params.id);
         if (!invoice) return next(new ErrorResponse("Invoice not found", 404));

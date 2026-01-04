@@ -25,6 +25,12 @@ export interface IInvoice {
     due_date: Date;
     status: "pending" | "paid" | "overdue";
     description?: string;
+    gross_amount: number;
+    vat_amount: number;
+    withholding_amount: number;
+    retention_amount: number;
+    advance_recovery_amount: number;
+    net_amount: number;
     payments?: Payment[];
     orgId?: string;
 }
@@ -65,6 +71,28 @@ class Invoice extends Model<IInvoice> implements IInvoice {
 
     @Column(DataType.TEXT)
     description?: string;
+
+    @Column(DataType.DECIMAL(12, 2))
+    gross_amount!: number;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    vat_amount!: number;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    withholding_amount!: number;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    retention_amount!: number;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    advance_recovery_amount!: number;
+
+    @Column(DataType.DECIMAL(12, 2))
+    net_amount!: number;
 
     @HasMany(() => Payment)
     payments!: Payment[];

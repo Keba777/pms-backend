@@ -18,6 +18,8 @@ export interface IBudget {
     allocated_amount: number;
     spent_amount: number;
     remaining_amount: number;
+    description?: string;
+    status: "Planned" | "Active" | "Closed";
     orgId?: string;
 }
 
@@ -45,6 +47,13 @@ class Budget extends Model<IBudget> implements IBudget {
     @Default(0)
     @Column(DataType.DECIMAL(12, 2))
     remaining_amount!: number;
+
+    @Column(DataType.TEXT)
+    description?: string;
+
+    @Default("Active")
+    @Column(DataType.STRING)
+    status!: "Planned" | "Active" | "Closed";
 
     @ForeignKey(() => Organization)
     @Column(DataType.UUID)

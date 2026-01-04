@@ -22,6 +22,10 @@ export interface IPayment {
     payment_date: Date;
     method: "cash" | "bank_transfer" | "check" | "mobile_money";
     reference_number?: string;
+    reason?: string;
+    vat_amount?: number;
+    withholding_amount?: number;
+    attachment_url?: string;
     orgId?: string;
 }
 
@@ -57,6 +61,20 @@ class Payment extends Model<IPayment> implements IPayment {
 
     @Column(DataType.STRING(100))
     reference_number?: string;
+
+    @Column(DataType.TEXT)
+    reason?: string;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    vat_amount?: number;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    withholding_amount?: number;
+
+    @Column(DataType.STRING)
+    attachment_url?: string;
 
     @ForeignKey(() => Organization)
     @Column(DataType.UUID)

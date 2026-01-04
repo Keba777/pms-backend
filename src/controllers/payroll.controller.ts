@@ -1,14 +1,19 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import Payroll from "../models/Payroll.model";
 import Project from "../models/Project.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
+import { ReqWithUser } from "../types/req-with-user";
 
 // @desc    Create payroll
 // @route   POST /api/v1/payrolls
-const createPayroll = async (req: Request, res: Response, next: NextFunction) => {
+const createPayroll = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payroll = await Payroll.create(req.body);
+        const payrollData = {
+            ...req.body,
+            orgId: req.user?.orgId
+        };
+        const payroll = await Payroll.create(payrollData);
         const createdPayroll = await Payroll.findByPk(payroll.id, {
             include: [Project, User],
         });
@@ -21,9 +26,15 @@ const createPayroll = async (req: Request, res: Response, next: NextFunction) =>
 
 // @desc    Get all payrolls
 // @route   GET /api/v1/payrolls
-const getAllPayrolls = async (req: Request, res: Response, next: NextFunction) => {
+const getAllPayrolls = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
+        const where: any = {};
+        if (req.user?.role?.name?.toLowerCase() !== "systemadmin") {
+            where.orgId = req.user?.orgId;
+        }
+
         const payrolls = await Payroll.findAll({
+            where,
             include: [Project, User],
             order: [["createdAt", "DESC"]],
         });
@@ -36,7 +47,7 @@ const getAllPayrolls = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Get payroll by ID
 // @route   GET /api/v1/payrolls/:id
-const getPayrollById = async (req: Request, res: Response, next: NextFunction) => {
+const getPayrollById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const payroll = await Payroll.findByPk(req.params.id, {
             include: [Project, User],
@@ -51,7 +62,7 @@ const getPayrollById = async (req: Request, res: Response, next: NextFunction) =
 
 // @desc    Update payroll
 // @route   PUT /api/v1/payrolls/:id
-const updatePayroll = async (req: Request, res: Response, next: NextFunction) => {
+const updatePayroll = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const payroll = await Payroll.findByPk(req.params.id);
         if (!payroll) return next(new ErrorResponse("Payroll not found", 404));
@@ -68,7 +79,7 @@ const updatePayroll = async (req: Request, res: Response, next: NextFunction) =>
 
 // @desc    Delete payroll
 // @route   DELETE /api/v1/payrolls/:id
-const deletePayroll = async (req: Request, res: Response, next: NextFunction) => {
+const deletePayroll = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const payroll = await Payroll.findByPk(req.params.id);
         if (!payroll) return next(new ErrorResponse("Payroll not found", 404));

@@ -21,6 +21,13 @@ export interface IPayroll {
     amount: number;
     pay_period: string;
     status: "pending" | "paid";
+    basic_salary: number;
+    allowances: number;
+    gross_salary: number;
+    income_tax: number;
+    pension_employee: number;
+    pension_employer: number;
+    net_pay: number;
     orgId?: string;
 }
 
@@ -54,6 +61,28 @@ class Payroll extends Model<IPayroll> implements IPayroll {
     @Default("pending")
     @Column(DataType.STRING)
     status!: "pending" | "paid";
+
+    @Column(DataType.DECIMAL(12, 2))
+    basic_salary!: number;
+
+    @Default(0)
+    @Column(DataType.DECIMAL(12, 2))
+    allowances!: number;
+
+    @Column(DataType.DECIMAL(12, 2))
+    gross_salary!: number;
+
+    @Column(DataType.DECIMAL(12, 2))
+    income_tax!: number;
+
+    @Column(DataType.DECIMAL(12, 2))
+    pension_employee!: number;
+
+    @Column(DataType.DECIMAL(12, 2))
+    pension_employer!: number;
+
+    @Column(DataType.DECIMAL(12, 2))
+    net_pay!: number;
 
     @ForeignKey(() => Organization)
     @Column(DataType.UUID)
