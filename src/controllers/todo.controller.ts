@@ -7,6 +7,7 @@ import ErrorResponse from "../utils/error-response.utils";
 import Department from "../models/Department.model";
 import fs from "fs";
 import cloudinary from "../config/cloudinary";
+import notificationService from "../services/notificationService";
 
 // @desc    Create a new Todo
 // @route   POST /api/v1/todos
@@ -64,6 +65,24 @@ export const createTodo = async (req: ReqWithUser, res: Response, next: NextFunc
                 { model: TodoProgress, as: "progressUpdates" },
             ],
         });
+
+        // Send notifications to assigned users
+        if (createdTodo && assignedUsers) {
+            const assignedBy = req.user?.first_name + ' ' + req.user?.last_name || 'Someone';
+            let usersIds = assignedUsers;
+            if (!Array.isArray(usersIds)) {
+                usersIds = [usersIds];
+            }
+
+            for (const userId of usersIds) {
+                notificationService.notifyTodoAssigned(
+                    userId,
+                    createdTodo.id,
+                    createdTodo.task || 'Untitled Todo',
+                    assignedBy
+                ).catch(err => console.error('Notification error:', err));
+            }
+        }
 
         res.status(201).json({ success: true, data: createdTodo });
     } catch (error) {
@@ -178,6 +197,24 @@ export const updateTodo = async (req: ReqWithUser, res: Response, next: NextFunc
                 { model: Department, as: "department" }
             ],
         });
+
+        // Send notifications to assigned users if todo was updated
+        if (updatedTodo && assignedUsers) {
+            const updatedBy = req.user?.first_name + ' ' + req.user?.last_name || 'Someone';
+            let usersIds = assignedUsers;
+            if (!Array.isArray(usersIds)) {
+                usersIds = [usersIds];
+            }
+
+            for (const userId of usersIds) {
+                notificationService.notifyTodoUpdated(
+                    userId,
+                    updatedTodo.id,
+                    updatedTodo.task || 'Untitled Todo',
+                    updatedBy
+                ).catch(err => console.error('Notification error:', err));
+            }
+        }
 
         res.status(200).json({ success: true, data: updatedTodo });
     } catch (error) {

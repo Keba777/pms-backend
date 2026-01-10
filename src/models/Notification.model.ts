@@ -8,11 +8,17 @@ export type NotificationData = Record<string, unknown>;
 export interface INotification {
     id?: string;
     type: string;          // e.g. 'task.assigned', 'profile.updated', etc.
+    title?: string;        // Display title
+    message?: string;      // Detailed message
     data?: NotificationData;
     read?: boolean;
     user_id: string;
     user?: User;
     orgId?: string;
+    actionUrl?: string;    // URL to navigate when clicked
+    actionLabel?: string;  // Label for action button
+    icon?: string;         // Icon identifier
+    priority?: string;     // Priority level: low, medium, high
 }
 
 @Table({ tableName: "notifications", timestamps: true })
@@ -32,6 +38,18 @@ class Notification extends Model<INotification> implements INotification {
     type!: string;
 
     @Column({
+        type: DataType.STRING,
+        allowNull: true,
+    })
+    title?: string;
+
+    @Column({
+        type: DataType.TEXT,
+        allowNull: true,
+    })
+    message?: string;
+
+    @Column({
         type: DataType.JSONB,
         allowNull: true,
     })
@@ -43,6 +61,30 @@ class Notification extends Model<INotification> implements INotification {
         allowNull: false,
     })
     read!: boolean;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+    })
+    actionUrl?: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+    })
+    actionLabel?: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+    })
+    icon?: string;
+
+    @Column({
+        type: DataType.STRING,
+        allowNull: true,
+    })
+    priority?: string;
 
     @ForeignKey(() => User)
     @Column({

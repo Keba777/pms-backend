@@ -6,6 +6,7 @@ import User from "../models/User.model";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
 import { ReqWithUser } from "../types/req-with-user";
+import notificationService from "../services/notificationService";
 
 // @desc    Create a new activity
 // @route   POST /api/v1/activities
@@ -78,6 +79,20 @@ const createActivity = async (req: ReqWithUser, res: Response, next: NextFunctio
                 },
             ],
         });
+
+        // Send notifications to assigned users
+        if (userIds.length > 0 && createdActivity) {
+            const assignedBy = req.user?.first_name + ' ' + req.user?.last_name || 'Someone';
+            for (const userId of userIds) {
+                notificationService.notifyActivityAssigned(
+                    userId,
+                    createdActivity.id,
+                    createdActivity.activity_name || 'Untitled Activity',
+                    assignedBy
+                ).catch(err => console.error('Notification error:', err));
+            }
+        }
+
         res.status(201).json({ success: true, data: createdActivity });
     } catch (error) {
         console.error(error);

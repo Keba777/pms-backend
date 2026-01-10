@@ -77,10 +77,10 @@ export class Discussion extends Model<any, any> {
 }
 
 /**
- * Notification model
+ * CollaborationNotification model (renamed to avoid collision with main Notification model)
  */
 @Table({ tableName: "collab_notifications", timestamps: true })
-export class Notification extends Model<any, any> {
+export class CollaborationNotification extends Model<any, any> {
   @Column({ type: DataType.INTEGER, autoIncrement: true, primaryKey: true })
   id!: number;
 
@@ -193,4 +193,4 @@ export class ActivityLog extends Model<any, any> {
   updatedAt!: Date;
 }
 
-export default { Discussion, Notification, ActivityLog };
+export default { Discussion, CollaborationNotification, ActivityLog };

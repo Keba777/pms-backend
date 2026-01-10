@@ -9,6 +9,7 @@ import Site from "../models/Site.model";
 import Client from "../models/Client.model";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
+import notificationService from "../services/notificationService";
 
 // @desc    Create a new project
 // @route   POST /api/v1/projects
@@ -81,6 +82,19 @@ const createProject = async (req: ReqWithUser, res: Response, next: NextFunction
                 }
             ]
         });
+
+        // Send notifications to project members
+        if (membersList.length > 0 && createdProject) {
+            const addedBy = req.user?.first_name + ' ' + req.user?.last_name || 'Someone';
+            for (const userId of membersList) {
+                notificationService.notifyProjectAssigned(
+                    userId,
+                    createdProject.id,
+                    createdProject.title || 'Untitled Project',
+                    addedBy
+                ).catch(err => console.error('Notification error:', err));
+            }
+        }
 
         res.status(201).json({ success: true, data: createdProject });
     } catch (err: any) {

@@ -6,6 +6,7 @@ import ErrorResponse from "../utils/error-response.utils";
 import cloudinary from "../config/cloudinary";
 import fs from "fs";
 import { ReqWithUser } from "../types/req-with-user";
+import notificationService from "../services/notificationService";
 
 // @desc    Create a new task
 // @route   POST /api/v1/tasks
@@ -70,6 +71,20 @@ const createTask = async (req: ReqWithUser, res: Response, next: NextFunction) =
                 },
             ],
         });
+
+        // Send notifications to assigned users
+        if (userIds.length > 0 && createdTask) {
+            const assignedBy = req.user?.first_name + ' ' + req.user?.last_name || 'Someone';
+            for (const userId of userIds) {
+                notificationService.notifyTaskAssigned(
+                    userId,
+                    createdTask.id,
+                    createdTask.task_name || 'Untitled Task',
+                    assignedBy
+                ).catch(err => console.error('Notification error:', err));
+            }
+        }
+
         res.status(201).json({ success: true, data: createdTask });
     } catch (error) {
         console.error(error);
@@ -221,6 +236,22 @@ const updateTask = async (req: ReqWithUser, res: Response, next: NextFunction) =
                 },
             ],
         });
+
+        // Send notifications to assigned users if task was updated
+        if (updatedTask && Array.isArray(assignedUsers) && assignedUsers.length > 0) {
+            const updatedBy = req.user?.first_name + ' ' + req.user?.last_name || 'Someone';
+            for (const userId of assignedUsers) {
+                notificationService.notifyTaskUpdated(
+                    userId,
+                    updatedTask.id,
+                    updatedTask.task_name || 'Untitled Task',
+                    updatedBy
+                ).catch(err => console.error('Notification error:', err));
+            }
+        }
+
+        // Check if task was completed and notify creator (if we had created_by field)
+        // For now, we'll skip this notification or you can add the field later
 
         res.status(200).json({ success: true, data: updatedTask });
     } catch (error) {

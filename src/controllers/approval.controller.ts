@@ -5,7 +5,9 @@ import ErrorResponse from "../utils/error-response.utils";
 import Department from "../models/Department.model";
 import User from "../models/User.model";
 import RequestModel from "../models/Request.model";
-import Activity from "../models/Activity.model"; 
+import Activity from "../models/Activity.model";
+import notificationService from "../services/notificationService";
+import { ReqWithUser } from "../types/req-with-user";
 
 // @desc    Create a new approval
 // @route   POST /api/v1/approvals
@@ -140,6 +142,35 @@ const updateApproval = async (req: Request, res: Response, next: NextFunction) =
     }
 
     await approval.update(req.body);
+
+    // Send notifications based on approval status changes
+    const updatedApproval = await ApprovalModel.findByPk(approval.id, {
+      include: [{ model: RequestModel, as: "request" }]
+    });
+
+    if (updatedApproval && req.body.status) {
+      const approvedBy = (req as ReqWithUser).user?.first_name + ' ' + (req as ReqWithUser).user?.last_name || 'Someone';
+      const itemName = `Approval #${updatedApproval.id}`;
+
+      // Notify requester based on status
+      if (req.body.status === 'Approved' && updatedApproval.request?.userId) {
+        notificationService.notifyApprovalApproved(
+          updatedApproval.request.userId,
+          updatedApproval.id,
+          itemName,
+          approvedBy
+        ).catch(err => console.error('Notification error:', err));
+      } else if (req.body.status === 'Rejected' && updatedApproval.request?.userId) {
+        notificationService.notifyApprovalRejected(
+          updatedApproval.request.userId,
+          updatedApproval.id,
+          itemName,
+          approvedBy,
+          req.body.remark
+        ).catch(err => console.error('Notification error:', err));
+      }
+    }
+
     res.status(200).json({ success: true, data: approval });
   } catch (error) {
     console.error(error);
@@ -150,19 +181,19 @@ const updateApproval = async (req: Request, res: Response, next: NextFunction) =
 // @desc    Delete an approval by ID
 // @route   DELETE /api/v1/approvals/:id
 const deleteApproval = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const approval = await ApprovalModel.findByPk(req.params.id);
+  try {
+    const approval = await ApprovalModel.findByPk(req.params.id);
 
-        if (!approval) {
-            return next(new ErrorResponse("Approval not found", 404));
-        }
-
-        await approval.destroy();
-        res.status(204).json({ success: true, data: null });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error deleting approval", 500));
+    if (!approval) {
+      return next(new ErrorResponse("Approval not found", 404));
     }
+
+    await approval.destroy();
+    res.status(204).json({ success: true, data: null });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error deleting approval", 500));
+  }
 }
 
 // @desc    Get all approvals by request ID

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Discussion, Notification, ActivityLog } from "../models/Collaboration.model";
+import { Discussion, CollaborationNotification, ActivityLog } from "../models/Collaboration.model";
 import User from "../models/User.model";
 import ErrorResponse from "../utils/error-response.utils";
 import { ReqWithUser } from "../types/req-with-user";
@@ -124,7 +124,7 @@ export const createNotification = async (req: ReqWithUser, res: Response, next: 
       return next(new ErrorResponse("message, recipient, type and referenceId are required", 400));
     }
 
-    const notification = await Notification.create({
+    const notification = await CollaborationNotification.create({
       title,
       message,
       recipient,
@@ -136,7 +136,7 @@ export const createNotification = async (req: ReqWithUser, res: Response, next: 
       read: false,
     } as any);
 
-    const populated = await Notification.findByPk(notification.id, {
+    const populated = await CollaborationNotification.findByPk(notification.id, {
       include: [
         { model: User, as: "recipientUser", attributes: { exclude: ["password"] } },
         { model: User, as: "senderUser", attributes: { exclude: ["password"] } },
@@ -154,7 +154,7 @@ export const createNotification = async (req: ReqWithUser, res: Response, next: 
 // @route GET /api/v1/notifications
 export const getAllNotifications = async (_req: Request, res: Response, next: NextFunction) => {
   try {
-    const notifications = await Notification.findAll({
+    const notifications = await CollaborationNotification.findAll({
       include: [
         { model: User, as: "recipientUser", attributes: { exclude: ["password"] } },
         { model: User, as: "senderUser", attributes: { exclude: ["password"] } },
@@ -172,7 +172,7 @@ export const getAllNotifications = async (_req: Request, res: Response, next: Ne
 // @route GET /api/v1/notifications/:id
 export const getNotificationById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const notification = await Notification.findByPk(req.params.id, {
+    const notification = await CollaborationNotification.findByPk(req.params.id, {
       include: [
         { model: User, as: "recipientUser", attributes: { exclude: ["password"] } },
         { model: User, as: "senderUser", attributes: { exclude: ["password"] } },
@@ -190,7 +190,7 @@ export const getNotificationById = async (req: Request, res: Response, next: Nex
 // @route PUT /api/v1/notifications/:id
 export const updateNotification = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const notification = await Notification.findByPk(req.params.id);
+    const notification = await CollaborationNotification.findByPk(req.params.id);
     if (!notification) return next(new ErrorResponse("Notification not found", 404));
     const { title, message, read, meta } = req.body;
     await notification.update({
@@ -200,7 +200,7 @@ export const updateNotification = async (req: ReqWithUser, res: Response, next: 
       meta: meta ?? notification.meta,
     } as any);
 
-    const updated = await Notification.findByPk(notification.id, {
+    const updated = await CollaborationNotification.findByPk(notification.id, {
       include: [
         { model: User, as: "recipientUser", attributes: { exclude: ["password"] } },
         { model: User, as: "senderUser", attributes: { exclude: ["password"] } },
@@ -218,7 +218,7 @@ export const updateNotification = async (req: ReqWithUser, res: Response, next: 
 // @route DELETE /api/v1/notifications/:id
 export const deleteNotification = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const notification = await Notification.findByPk(req.params.id);
+    const notification = await CollaborationNotification.findByPk(req.params.id);
     if (!notification) return next(new ErrorResponse("Notification not found", 404));
     await notification.destroy();
     res.status(200).json({ success: true, message: "Notification deleted successfully" });

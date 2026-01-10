@@ -16,7 +16,14 @@ async function start() {
         // Auto‑sync models (optional)
         if (process.env.NODE_ENV !== 'production') {
             console.log("Auto-migrating database schema...");
-            await sequelize.sync({ alter: true });
+
+            // Log each model being synced for better visibility
+            const models = sequelize.models;
+            for (const modelName in models) {
+                console.log(`[Sequelize Sync] Checking model: ${modelName}`);
+            }
+
+            await sequelize.sync({ alter: true, logging: (msg) => console.log(`[Sequelize Sync] ${msg}`) });
             console.log("Database schema synced.");
         }
     } catch (err) {
