@@ -7,10 +7,17 @@ module.exports = {
       progress: { type: Sequelize.INTEGER, allowNull: false },
       remark: { type: Sequelize.TEXT },
       attachment: { type: Sequelize.ARRAY(Sequelize.STRING) },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,

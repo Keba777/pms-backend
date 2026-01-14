@@ -18,17 +18,24 @@ module.exports = {
       laborCount: { type: Sequelize.INTEGER },
       equipmentCount: { type: Sequelize.INTEGER },
       status: {
-        type: Sequelize.ENUM("Pending", "In Progress", "Completed", "Rejected"),
+        type: Sequelize.STRING,
         defaultValue: "Pending",
       },
-      priority: { type: Sequelize.ENUM("Urgent", "Medium", "Low") },
+      priority: { type: Sequelize.STRING },
       laborIds: { type: Sequelize.ARRAY(Sequelize.UUID) },
       materialIds: { type: Sequelize.ARRAY(Sequelize.UUID) },
       equipmentIds: { type: Sequelize.ARRAY(Sequelize.UUID) },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,

@@ -49,7 +49,15 @@ module.exports = {
 
       attachment: { type: Sequelize.ARRAY(Sequelize.STRING), allowNull: true },
 
-      createdAt: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+
+      createdAt: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.fn("NOW") },
       updatedAt: { type: Sequelize.DATE, allowNull: false, defaultValue: Sequelize.NOW },
     });
 
@@ -92,9 +100,9 @@ module.exports = {
     await queryInterface.removeIndex("todos", ["status"]);
     await queryInterface.removeIndex("todos", ["departmentId"]);
 
-    await queryInterface.removeConstraint("todos", "fk_todos_kpiId_kpis_id").catch(() => {});
-    await queryInterface.removeConstraint("todos", "fk_todos_departmentId_departments_id").catch(() => {});
-    await queryInterface.removeConstraint("todos", "fk_todos_assignedById_users_id").catch(() => {});
+    await queryInterface.removeConstraint("todos", "fk_todos_kpiId_kpis_id").catch(() => { });
+    await queryInterface.removeConstraint("todos", "fk_todos_departmentId_departments_id").catch(() => { });
+    await queryInterface.removeConstraint("todos", "fk_todos_assignedById_users_id").catch(() => { });
 
     await queryInterface.dropTable("todos");
 

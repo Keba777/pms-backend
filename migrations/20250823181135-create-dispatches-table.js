@@ -18,16 +18,23 @@ module.exports = {
       driverName: { type: Sequelize.STRING },
       vehicleNumber: { type: Sequelize.STRING },
       vehicleType: { type: Sequelize.STRING },
-      dispatchedBy: { type: Sequelize.ENUM("Plane", "Truck") },
+      dispatchedBy: { type: Sequelize.STRING },
       status: {
-        type: Sequelize.ENUM("Pending", "In Transit", "Delivered", "Cancelled"),
+        type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "Pending",
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,

@@ -19,28 +19,45 @@ module.exports = {
       startsAt: { type: Sequelize.DATE, allowNull: false },
       endsAt: { type: Sequelize.DATE, allowNull: false },
       status: {
-        type: Sequelize.ENUM("Allocated", "Unallocated"),
+        type: Sequelize.STRING,
         allowNull: false,
+        defaultValue: "Unallocated",
       },
-      // New field
       profile_picture: { type: Sequelize.STRING, allowNull: true },
-
+      phone: { type: Sequelize.STRING, allowNull: true },
       position: { type: Sequelize.STRING, allowNull: true },
       sex: {
-        type: Sequelize.ENUM("Male", "Female"),
+        type: Sequelize.STRING,
         allowNull: true,
       },
       terms: {
-        type: Sequelize.ENUM("Part Time", "Contract", "Temporary", "Permanent"),
+        type: Sequelize.STRING,
         allowNull: true,
       },
       estSalary: { type: Sequelize.FLOAT, allowNull: true },
       educationLevel: { type: Sequelize.STRING, allowNull: true },
 
+      estimatedHours: { type: Sequelize.DECIMAL(8, 2), allowNull: true },
+      rate: { type: Sequelize.DECIMAL(10, 2), allowNull: true },
+      overtimeRate: { type: Sequelize.DECIMAL(10, 2), allowNull: true },
+      totalAmount: { type: Sequelize.DECIMAL(12, 2), allowNull: true },
+      skill_level: { type: Sequelize.STRING, allowNull: true },
+      utilization_factor: { type: Sequelize.DECIMAL(8, 2), allowNull: true },
+      total_time: { type: Sequelize.DECIMAL(8, 2), allowNull: true },
+      shifting_date: { type: Sequelize.DATE, allowNull: true },
+
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,

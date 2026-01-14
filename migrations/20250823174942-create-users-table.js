@@ -12,7 +12,7 @@ module.exports = {
       },
       first_name: { type: Sequelize.STRING(50), allowNull: false },
       last_name: { type: Sequelize.STRING(50), allowNull: false },
-      phone: { type: Sequelize.STRING(20), allowNull: false },
+      phone: { type: Sequelize.STRING(20), allowNull: true },
       role_id: {
         type: Sequelize.UUID,
         allowNull: false,
@@ -32,14 +32,26 @@ module.exports = {
       },
       siteId: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: { model: "sites", key: "id" },
         onUpdate: "CASCADE",
         onDelete: "RESTRICT",
       },
-      responsiblities: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+      },
+      isStricted: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
+        defaultValue: false,
+      },
+      responsibilities: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: true,
       },
       status: {
         type: Sequelize.ENUM("Active", "InActive"),
@@ -51,20 +63,20 @@ module.exports = {
       },
       username: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
       gender: {
-        type: Sequelize.ENUM('Male', 'Female'),
-        allowNull: false,
-        defaultValue: 'Male',
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: "Male",
       },
       position: {
         type: Sequelize.STRING,
         allowNull: true,
       },
       terms: {
-        type: Sequelize.ENUM('Part Time', 'Contract', 'Temporary', 'Permanent'),
+        type: Sequelize.STRING,
         allowNull: true,
       },
       joiningDate: {

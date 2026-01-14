@@ -28,18 +28,25 @@ module.exports = {
       rate: { type: Sequelize.FLOAT, allowNull: false },
       totalPay: { type: Sequelize.FLOAT, allowNull: false },
       status: {
-        type: Sequelize.ENUM("Pending", "Approved", "Rejected"),
+        type: Sequelize.STRING,
         defaultValue: "Pending",
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
     });
 
@@ -69,18 +76,25 @@ module.exports = {
       rate: { type: Sequelize.FLOAT, allowNull: false },
       totalPay: { type: Sequelize.FLOAT, allowNull: false },
       status: {
-        type: Sequelize.ENUM("Pending", "Approved", "Rejected"),
+        type: Sequelize.STRING,
         defaultValue: "Pending",
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
     });
 
@@ -104,15 +118,22 @@ module.exports = {
       assignedTo: { type: Sequelize.STRING, allowNull: false },
       remark: { type: Sequelize.STRING, allowNull: true },
       status: { type: Sequelize.STRING, allowNull: false },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
     });
   },

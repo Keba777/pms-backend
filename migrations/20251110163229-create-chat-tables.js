@@ -26,6 +26,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -89,7 +96,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       type: {
-        type: Sequelize.ENUM("text", "voice", "file"),
+        type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "text",
       },
@@ -108,6 +115,13 @@ module.exports = {
       mime_type: {
         type: Sequelize.STRING(50),
         allowNull: true,
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         type: Sequelize.DATE,

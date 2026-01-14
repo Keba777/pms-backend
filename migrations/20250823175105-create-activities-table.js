@@ -20,7 +20,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       priority: {
-        type: Sequelize.ENUM("Critical", "High", "Medium", "Low"),
+        type: Sequelize.STRING,
         defaultValue: "Medium",
         allowNull: false,
       },
@@ -34,21 +34,21 @@ module.exports = {
       end_date: { type: Sequelize.DATE, allowNull: false },
       progress: { type: Sequelize.INTEGER, defaultValue: 0, allowNull: false },
       status: {
-        type: Sequelize.ENUM(
-          "Not Started",
-          "Started",
-          "InProgress",
-          "Canceled",
-          "Onhold",
-          "Completed"
-        ),
+        type: Sequelize.STRING,
         defaultValue: "Not Started",
         allowNull: false,
       },
       approvalStatus: {
-        type: Sequelize.ENUM("Approved", "Not Approved", "Pending"),
+        type: Sequelize.STRING,
         defaultValue: "Pending",
         allowNull: false,
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       image: { type: Sequelize.STRING(255), allowNull: true },
       labor_index_factor: { type: Sequelize.FLOAT, allowNull: true },
@@ -69,8 +69,11 @@ module.exports = {
       checked_by_name: { type: Sequelize.STRING(100), allowNull: true },
       checked_by_date: { type: Sequelize.DATE, allowNull: true },
       actuals: { type: Sequelize.JSONB, allowNull: true },
-
-      // ✅ NEW FIELD added to match model
+      attachments: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: true,
+        defaultValue: [],
+      },
       progressUpdates: { type: Sequelize.JSONB, allowNull: true },
 
       createdAt: {

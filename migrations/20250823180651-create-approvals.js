@@ -11,7 +11,7 @@ module.exports = {
       departmentId: { type: Sequelize.UUID, allowNull: false },
       stepOrder: { type: Sequelize.INTEGER, allowNull: false },
       status: {
-        type: Sequelize.ENUM("Pending", "Approved", "Rejected"),
+        type: Sequelize.STRING,
         defaultValue: "Pending",
       },
       approvedBy: { type: Sequelize.UUID },
@@ -21,10 +21,17 @@ module.exports = {
       prevDepartmentId: { type: Sequelize.UUID },
       nextDepartmentId: { type: Sequelize.UUID },
       finalDepartment: { type: Sequelize.BOOLEAN },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.NOW,
+        defaultValue: Sequelize.fn("NOW"),
       },
       updatedAt: {
         type: Sequelize.DATE,

@@ -21,15 +21,22 @@ module.exports = {
       participants: { allowNull: true, type: Sequelize.JSONB },
       lastMessageAt: { allowNull: true, type: Sequelize.DATE },
       pinned: { allowNull: false, type: Sequelize.BOOLEAN, defaultValue: false },
-      createdAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
-      updatedAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+      createdAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
+      updatedAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
     });
 
     // notifications
     await queryInterface.createTable("collab_notifications", {
       id: { allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER },
-      date: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
-      type: { allowNull: false, type: Sequelize.ENUM("project", "task", "activity", "todo") },
+      date: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
+      type: { allowNull: false, type: Sequelize.STRING },
       referenceId: { allowNull: false, type: Sequelize.UUID },
       title: { allowNull: true, type: Sequelize.STRING },
       message: { allowNull: false, type: Sequelize.TEXT },
@@ -49,15 +56,22 @@ module.exports = {
       },
       read: { allowNull: false, type: Sequelize.BOOLEAN, defaultValue: false },
       meta: { allowNull: true, type: Sequelize.JSONB },
-      createdAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
-      updatedAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+      createdAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
+      updatedAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
     });
 
     // activity_logs
     await queryInterface.createTable("collab_activity_logs", {
       id: { allowNull: false, autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER },
-      date: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
-      type: { allowNull: false, type: Sequelize.ENUM("project", "task", "activity", "todo") },
+      date: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
+      type: { allowNull: false, type: Sequelize.STRING },
       referenceId: { allowNull: false, type: Sequelize.UUID },
       action: { allowNull: false, type: Sequelize.STRING },
       actor: {
@@ -75,8 +89,15 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
-      createdAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
-      updatedAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.literal("NOW()") },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
+      createdAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
+      updatedAt: { allowNull: false, type: Sequelize.DATE, defaultValue: Sequelize.fn("NOW") },
     });
 
     // Add simple indices for faster lookups

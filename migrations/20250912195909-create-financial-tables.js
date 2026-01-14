@@ -37,6 +37,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -74,6 +81,13 @@ module.exports = {
       method: {
         type: Sequelize.ENUM("Cash", "Bank Transfer", "Check", "Other"),
         defaultValue: "Cash",
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -121,6 +135,13 @@ module.exports = {
         allowNull: false,
         defaultValue: "pending",
       },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -160,6 +181,13 @@ module.exports = {
         type: Sequelize.DECIMAL(12, 2),
         allowNull: false,
         defaultValue: 0,
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
       createdAt: {
         type: Sequelize.DATE,

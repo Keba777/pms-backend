@@ -35,7 +35,7 @@ module.exports = {
       },
 
       priority: {
-        type: Sequelize.ENUM("Urgent", "Medium", "Low"),
+        type: Sequelize.STRING,
         allowNull: true,
         defaultValue: "Medium",
       },
@@ -70,7 +70,7 @@ module.exports = {
       },
 
       status: {
-        type: Sequelize.ENUM("Open", "In Progress", "Resolved", "Closed"),
+        type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "Open",
       },
@@ -97,6 +97,14 @@ module.exports = {
         references: { model: "tasks", key: "id" },
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
+      },
+
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
       },
 
       createdAt: {

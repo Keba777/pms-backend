@@ -13,32 +13,46 @@ module.exports = {
       title: { type: Sequelize.STRING(100), allowNull: false },
       description: { type: Sequelize.TEXT, allowNull: true },
       priority: {
-        type: Sequelize.ENUM("Critical", "High", "Medium", "Low"),
+        type: Sequelize.STRING,
         allowNull: false,
       },
       start_date: { type: Sequelize.DATE, allowNull: false },
       end_date: { type: Sequelize.DATE, allowNull: false },
-      budget: { type: Sequelize.DECIMAL(12, 2), allowNull: false },
-      client: { type: Sequelize.STRING(100), allowNull: false },
-      site: { type: Sequelize.STRING(100), allowNull: false },
-      site_id: { type: Sequelize.UUID, allowNull: true },
+      budget: { type: Sequelize.DECIMAL(20, 2), allowNull: false },
+      site_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: { model: "sites", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "RESTRICT",
+      },
+      client_id: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "clients", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
+      },
+      orgId: {
+        type: Sequelize.UUID,
+        allowNull: true,
+        references: { model: "organizations", key: "id" },
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL"
+      },
       progress: { type: Sequelize.INTEGER, defaultValue: 0 },
       isFavourite: { type: Sequelize.BOOLEAN, defaultValue: false },
       status: {
-        type: Sequelize.ENUM(
-          "Not Started",
-          "Started",
-          "InProgress",
-          "Canceled",
-          "Onhold",
-          "Completed"
-        ),
+        type: Sequelize.STRING,
         allowNull: false,
       },
       tagIds: { type: Sequelize.ARRAY(Sequelize.UUID), allowNull: true },
+      attachments: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        allowNull: true,
+        defaultValue: [],
+      },
       actuals: { type: Sequelize.JSONB, defaultValue: {}, allowNull: false },
-
-      // NEW FIELD: progressUpdates
       progressUpdates: { type: Sequelize.JSONB, allowNull: true },
 
       createdAt: {
