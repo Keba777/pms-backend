@@ -29,7 +29,8 @@ module.exports = {
 
       dueDate: { type: Sequelize.DATE, allowNull: false },
 
-      target: { type: Sequelize.DATE, allowNull: false },
+      target_date: { type: Sequelize.DATE, allowNull: true },
+      target: { type: Sequelize.ARRAY(Sequelize.STRING), allowNull: true },
 
       kpiId: { type: Sequelize.UUID, allowNull: true },
 
