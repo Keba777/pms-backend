@@ -39,7 +39,7 @@ export const getAllWarehouses = async (req: Request, res: Response, next: NextFu
 // @route   GET /api/v1/warehouses/:id
 export const getWarehouseById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const warehouse = await Warehouse.findByPk(req.params.id, {
+        const warehouse = await Warehouse.findByPk(req.params.id as string, {
             include: [
                 {
                     model: Site,
@@ -62,7 +62,7 @@ export const getWarehouseById = async (req: Request, res: Response, next: NextFu
 // @route   PUT /api/v1/warehouses/:id
 export const updateWarehouse = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const warehouse = await Warehouse.findByPk(req.params.id);
+        const warehouse = await Warehouse.findByPk(req.params.id as string);
         if (!warehouse) {
             return next(new ErrorResponse("Warehouse not found", 404));
         }
@@ -78,7 +78,7 @@ export const updateWarehouse = async (req: Request, res: Response, next: NextFun
 // @route   DELETE /api/v1/warehouses/:id
 export const deleteWarehouse = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const warehouse = await Warehouse.findByPk(req.params.id);
+        const warehouse = await Warehouse.findByPk(req.params.id as string);
         if (!warehouse) {
             return next(new ErrorResponse("Warehouse not found", 404));
         }

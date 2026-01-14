@@ -30,7 +30,7 @@ const getAllTags = async (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /api/v1/tags/:id
 const getTagById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tag = await Tag.findByPk(req.params.id);
+        const tag = await Tag.findByPk(req.params.id as string);
         if (!tag) {
             return next(new ErrorResponse("Tag not found", 404));
         }
@@ -45,7 +45,7 @@ const getTagById = async (req: Request, res: Response, next: NextFunction) => {
 // @route   PUT /api/v1/tags/:id
 const updateTag = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tag = await Tag.findByPk(req.params.id);
+        const tag = await Tag.findByPk(req.params.id as string);
         if (!tag) {
             return next(new ErrorResponse("Tag not found", 404));
         }
@@ -62,7 +62,7 @@ const updateTag = async (req: Request, res: Response, next: NextFunction) => {
 // @route   DELETE /api/v1/tags/:id
 const deleteTag = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const tag = await Tag.findByPk(req.params.id);
+        const tag = await Tag.findByPk(req.params.id as string);
         if (!tag) {
             return next(new ErrorResponse("Tag not found", 404));
         }

@@ -40,7 +40,7 @@ const getAllKPIs = async (req: Request, res: Response, next: NextFunction) => {
 // @route   GET /api/v1/kpis/:id
 const getKPIById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const kpi = await KPI.findByPk(req.params.id, {
+        const kpi = await KPI.findByPk(req.params.id as string, {
             include: [
                 { model: User, as: "userLabor" },
                 { model: LaborInformation, as: "laborInformation" },
@@ -62,7 +62,7 @@ const getKPIById = async (req: Request, res: Response, next: NextFunction) => {
 const getKPIsByUserLaborId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const kpis = await KPI.findAll({
-            where: { userLaborId: req.params.userId },
+            where: { userLaborId: req.params.userId as string },
             include: [{ model: User, as: "userLabor" }]
         });
         res.status(200).json({ success: true, data: kpis });
@@ -77,7 +77,7 @@ const getKPIsByUserLaborId = async (req: Request, res: Response, next: NextFunct
 const getKPIsByLaborInfoId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const kpis = await KPI.findAll({
-            where: { laborInfoId: req.params.laborInfoId },
+            where: { laborInfoId: req.params.laborInfoId as string },
             include: [{ model: LaborInformation, as: "laborInformation" }]
         });
         res.status(200).json({ success: true, data: kpis });
@@ -92,7 +92,7 @@ const getKPIsByLaborInfoId = async (req: Request, res: Response, next: NextFunct
 const getKPIsByEquipmentId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const kpis = await KPI.findAll({
-            where: { equipmentId: req.params.equipmentId },
+            where: { equipmentId: req.params.equipmentId as string },
             include: [{ model: Equipment, as: "equipment" }]
         });
         res.status(200).json({ success: true, data: kpis });
@@ -106,7 +106,7 @@ const getKPIsByEquipmentId = async (req: Request, res: Response, next: NextFunct
 // @route   PUT /api/v1/kpis/:id
 const updateKPI = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const kpi = await KPI.findByPk(req.params.id);
+        const kpi = await KPI.findByPk(req.params.id as string);
         if (!kpi) {
             return next(new ErrorResponse("KPI not found", 404));
         }
@@ -123,7 +123,7 @@ const updateKPI = async (req: Request, res: Response, next: NextFunction) => {
 // @route   DELETE /api/v1/kpis/:id
 const deleteKPI = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const kpi = await KPI.findByPk(req.params.id);
+        const kpi = await KPI.findByPk(req.params.id as string);
         if (!kpi) {
             return next(new ErrorResponse("KPI not found", 404));
         }

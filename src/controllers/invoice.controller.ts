@@ -79,7 +79,7 @@ const getAllInvoices = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   GET /api/v1/invoices/:id
 const getInvoiceById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const invoice = await Invoice.findByPk(req.params.id, {
+        const invoice = await Invoice.findByPk(req.params.id as string, {
             include: [Project, User, Payment],
         });
         if (!invoice) return next(new ErrorResponse("Invoice not found", 404));
@@ -94,7 +94,7 @@ const getInvoiceById = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   PUT /api/v1/invoices/:id
 const updateInvoice = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const invoice = await Invoice.findByPk(req.params.id);
+        const invoice = await Invoice.findByPk(req.params.id as string);
         if (!invoice) return next(new ErrorResponse("Invoice not found", 404));
         await invoice.update(req.body);
         const updatedInvoice = await Invoice.findByPk(invoice.id, {
@@ -111,7 +111,7 @@ const updateInvoice = async (req: ReqWithUser, res: Response, next: NextFunction
 // @route   DELETE /api/v1/invoices/:id
 const deleteInvoice = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const invoice = await Invoice.findByPk(req.params.id);
+        const invoice = await Invoice.findByPk(req.params.id as string);
         if (!invoice) return next(new ErrorResponse("Invoice not found", 404));
         await invoice.destroy();
         res.status(200).json({ success: true, message: "Invoice deleted successfully" });

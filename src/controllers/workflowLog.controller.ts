@@ -55,7 +55,7 @@ const createWorkflowLog = async (req: ReqWithUser, res: Response, next: NextFunc
 // @route   GET /api/v1/workflow-logs/:entityType/:entityId
 const getWorkflowLogsByEntity = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { entityType, entityId } = req.params;
+        const { entityType, entityId } = req.params as { entityType: string; entityId: string };
 
         // Validate entityType
         if (!["Project", "Task", "Activity", "Approval"].includes(entityType)) {

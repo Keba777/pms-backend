@@ -64,7 +64,7 @@ const getMyNotifications = async (req: Request, res: Response, next: NextFunctio
 // @route   GET /api/v1/notifications/:id
 const getNotificationById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const notification = await Notification.findByPk(req.params.id, {
+        const notification = await Notification.findByPk(req.params.id as string, {
             include: [
                 {
                     model: User,
@@ -89,7 +89,7 @@ const getNotificationById = async (req: Request, res: Response, next: NextFuncti
 // @route   PUT /api/v1/notifications/:id
 const updateNotification = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const notification = await Notification.findByPk(req.params.id);
+        const notification = await Notification.findByPk(req.params.id as string);
         if (!notification) {
             return next(new ErrorResponse("Notification not found", 404));
         }
@@ -108,7 +108,7 @@ const updateNotification = async (req: Request, res: Response, next: NextFunctio
 // @route   DELETE /api/v1/notifications/:id
 const deleteNotification = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const notification = await Notification.findByPk(req.params.id);
+        const notification = await Notification.findByPk(req.params.id as string);
         if (!notification) {
             return next(new ErrorResponse("Notification not found", 404));
         }
@@ -125,7 +125,7 @@ const deleteNotification = async (req: Request, res: Response, next: NextFunctio
 // @route   PATCH /api/v1/notifications/:id/read
 const markAsRead = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const notification = await Notification.findByPk(req.params.id);
+        const notification = await Notification.findByPk(req.params.id as string);
         if (!notification) {
             return next(new ErrorResponse("Notification not found", 404));
         }

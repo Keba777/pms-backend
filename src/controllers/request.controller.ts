@@ -42,7 +42,7 @@ const getAllRequests = async (req: Request, res: Response, next: NextFunction) =
 // @route   GET /api/v1/requests/:id
 const getRequestById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const request = await RequestModel.findByPk(req.params.id, {
+    const request = await RequestModel.findByPk(req.params.id as string, {
       include: [
         { model: Site, as: "site" },
         { model: User, as: "user", },
@@ -66,7 +66,7 @@ const getRequestById = async (req: Request, res: Response, next: NextFunction) =
 // @route   PUT /api/v1/requests/:id
 const updateRequest = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const request = await RequestModel.findByPk(req.params.id);
+    const request = await RequestModel.findByPk(req.params.id as string);
     if (!request) {
       return next(new ErrorResponse("Request not found", 404));
     }
@@ -94,7 +94,7 @@ const updateRequest = async (req: Request, res: Response, next: NextFunction) =>
 // @route   DELETE /api/v1/requests/:id
 const deleteRequest = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const request = await RequestModel.findByPk(req.params.id);
+    const request = await RequestModel.findByPk(req.params.id as string);
     if (!request) {
       return next(new ErrorResponse("Request not found", 404));
     }

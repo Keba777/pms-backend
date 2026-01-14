@@ -139,7 +139,7 @@ const getAllActivities = async (req: ReqWithUser, res: Response, next: NextFunct
 // @route   GET /api/v1/activities/:id
 const getActivityById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const activity = await Activity.findByPk(req.params.id, {
+        const activity = await Activity.findByPk(req.params.id as string, {
             include: [
                 {
                     model: RequestModel,
@@ -177,7 +177,7 @@ const updateActivity = async (req: ReqWithUser, res: Response, next: NextFunctio
     try {
         const { assignedUsers, existingAttachments, ...activityData } = req.body;
 
-        const activity = await Activity.findByPk(req.params.id);
+        const activity = await Activity.findByPk(req.params.id as string);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
@@ -267,7 +267,7 @@ const updateActivity = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   DELETE /api/v1/activities/:id
 const deleteActivity = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const activity = await Activity.findByPk(req.params.id);
+        const activity = await Activity.findByPk(req.params.id as string);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
@@ -289,7 +289,7 @@ const deleteActivity = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   PATCH /api/v1/activities/:id/actuals
 const updateActivityActuals = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const activity = await Activity.findByPk(req.params.id);
+        const activity = await Activity.findByPk(req.params.id as string);
         if (!activity) {
             return next(new ErrorResponse("Activity not found", 404));
         }
@@ -342,7 +342,7 @@ const updateActivityActuals = async (req: ReqWithUser, res: Response, next: Next
 const updateActivityProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     const t = await Activity.sequelize?.transaction();
     try {
-        const activity = await Activity.findByPk(req.params.id, { transaction: t });
+        const activity = await Activity.findByPk(req.params.id as string, { transaction: t });
         if (!activity) {
             if (t) await t.rollback();
             return next(new ErrorResponse("Activity not found", 404));

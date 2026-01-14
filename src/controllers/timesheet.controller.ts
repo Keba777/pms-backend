@@ -33,7 +33,7 @@ export const getAllLaborEntries = async (req: Request, res: Response, next: Next
 
 export const getLaborEntryById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await LaborTimesheet.findByPk(req.params.id);
+        const entry = await LaborTimesheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Labor entry not found", 404));
         res.status(200).json({ success: true, data: entry });
     } catch (error) {
@@ -44,7 +44,7 @@ export const getLaborEntryById = async (req: Request, res: Response, next: NextF
 
 export const updateLaborEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await LaborTimesheet.findByPk(req.params.id);
+        const entry = await LaborTimesheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Labor entry not found", 404));
         await entry.update(req.body);
         res.status(200).json({ success: true, data: entry });
@@ -56,7 +56,7 @@ export const updateLaborEntry = async (req: Request, res: Response, next: NextFu
 
 export const deleteLaborEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await LaborTimesheet.findByPk(req.params.id);
+        const entry = await LaborTimesheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Labor entry not found", 404));
         await entry.destroy();
         res.status(200).json({ success: true, message: "Labor entry deleted" });
@@ -89,7 +89,7 @@ export const getAllEquipmentEntries = async (req: Request, res: Response, next: 
 
 export const getEquipmentEntryById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await EquipmentTimesheet.findByPk(req.params.id);
+        const entry = await EquipmentTimesheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Equipment entry not found", 404));
         res.status(200).json({ success: true, data: entry });
     } catch (error) {
@@ -100,7 +100,7 @@ export const getEquipmentEntryById = async (req: Request, res: Response, next: N
 
 export const updateEquipmentEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await EquipmentTimesheet.findByPk(req.params.id);
+        const entry = await EquipmentTimesheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Equipment entry not found", 404));
         await entry.update(req.body);
         res.status(200).json({ success: true, data: entry });
@@ -112,7 +112,7 @@ export const updateEquipmentEntry = async (req: Request, res: Response, next: Ne
 
 export const deleteEquipmentEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await EquipmentTimesheet.findByPk(req.params.id);
+        const entry = await EquipmentTimesheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Equipment entry not found", 404));
         await entry.destroy();
         res.status(200).json({ success: true, message: "Equipment entry deleted" });
@@ -145,7 +145,7 @@ export const getAllMaterialEntries = async (req: Request, res: Response, next: N
 
 export const getMaterialEntryById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await MaterialBalanceSheet.findByPk(req.params.id);
+        const entry = await MaterialBalanceSheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Material entry not found", 404));
         res.status(200).json({ success: true, data: entry });
     } catch (error) {
@@ -156,7 +156,7 @@ export const getMaterialEntryById = async (req: Request, res: Response, next: Ne
 
 export const updateMaterialEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await MaterialBalanceSheet.findByPk(req.params.id);
+        const entry = await MaterialBalanceSheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Material entry not found", 404));
         await entry.update(req.body);
         res.status(200).json({ success: true, data: entry });
@@ -168,7 +168,7 @@ export const updateMaterialEntry = async (req: Request, res: Response, next: Nex
 
 export const deleteMaterialEntry = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entry = await MaterialBalanceSheet.findByPk(req.params.id);
+        const entry = await MaterialBalanceSheet.findByPk(req.params.id as string);
         if (!entry) return next(new ErrorResponse("Material entry not found", 404));
         await entry.destroy();
         res.status(200).json({ success: true, message: "Material entry deleted" });

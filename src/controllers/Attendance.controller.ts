@@ -50,7 +50,7 @@ export const checkIn = async (req: Request, res: Response, next: NextFunction) =
             } else {
                 data.laborInformationId = resourceId;
                 // Fetch labor info -> labor -> rate
-                const laborInfo = await LaborInformation.findByPk(resourceId);
+                const laborInfo = await LaborInformation.findByPk(resourceId as string);
                 // Logic to get rate from Labor... (omitted for brevity, can be refined)
             }
 

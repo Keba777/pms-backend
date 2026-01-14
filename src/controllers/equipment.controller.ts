@@ -30,7 +30,7 @@ export const getAllEquipments = async (req: Request, res: Response, next: NextFu
 // @route   GET /api/v1/equipments/:id
 export const getEquipmentById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const equipment = await Equipment.findByPk(req.params.id);
+        const equipment = await Equipment.findByPk(req.params.id as string);
         if (!equipment) {
             return next(new ErrorResponse("Equipment not found", 404));
         }
@@ -45,7 +45,7 @@ export const getEquipmentById = async (req: Request, res: Response, next: NextFu
 // @route   PUT /api/v1/equipments/:id
 export const updateEquipment = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const equipment = await Equipment.findByPk(req.params.id);
+        const equipment = await Equipment.findByPk(req.params.id as string);
         if (!equipment) {
             return next(new ErrorResponse("Equipment not found", 404));
         }
@@ -61,7 +61,7 @@ export const updateEquipment = async (req: Request, res: Response, next: NextFun
 // @route   DELETE /api/v1/equipments/:id
 export const deleteEquipment = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const equipment = await Equipment.findByPk(req.params.id);
+        const equipment = await Equipment.findByPk(req.params.id as string);
         if (!equipment) {
             return next(new ErrorResponse("Equipment not found", 404));
         }

@@ -87,7 +87,7 @@ export const getAllFiles = async (_req: Request, res: Response, next: NextFuncti
 // @route   GET /api/v1/files/:id
 export const getFileById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const file = await File.findByPk(req.params.id, {
+        const file = await File.findByPk(req.params.id as string, {
             include: [
                 { model: User, as: "uploadedByUser", attributes: { exclude: ["password"] } },
                 { model: User, as: "sendToUser", attributes: { exclude: ["password"] } },
@@ -107,7 +107,7 @@ export const getFileById = async (req: Request, res: Response, next: NextFunctio
 // @route   PUT /api/v1/files/:id
 export const updateFile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const file = await File.findByPk(req.params.id);
+        const file = await File.findByPk(req.params.id as string);
         if (!file) return next(new ErrorResponse("File not found", 404));
 
         const { title, sendTo } = req.body;
@@ -132,7 +132,7 @@ export const updateFile = async (req: Request, res: Response, next: NextFunction
 // @route   DELETE /api/v1/files/:id
 export const deleteFile = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const file = await File.findByPk(req.params.id);
+        const file = await File.findByPk(req.params.id as string);
         if (!file) return next(new ErrorResponse("File not found", 404));
 
         // Delete from Cloudinary using public_id extracted from fileUrl

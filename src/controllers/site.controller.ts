@@ -73,7 +73,7 @@ const getAllSites = async (req: ReqWithUser, res: Response, next: NextFunction) 
 // @route   GET /api/v1/sites/:id
 const getSiteById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const site = await Site.findByPk(req.params.id, {
+        const site = await Site.findByPk(req.params.id as string, {
             include: [
                 {
                     model: User,
@@ -119,7 +119,7 @@ const getSiteById = async (req: ReqWithUser, res: Response, next: NextFunction) 
 const updateSite = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { name } = req.body;
-        const site = await Site.findByPk(req.params.id);
+        const site = await Site.findByPk(req.params.id as string);
         if (!site) {
             return next(new ErrorResponse("Site not found", 404));
         }
@@ -167,7 +167,7 @@ const updateSite = async (req: ReqWithUser, res: Response, next: NextFunction) =
 // @route   DELETE /api/v1/sites/:id
 const deleteSite = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const site = await Site.findByPk(req.params.id);
+        const site = await Site.findByPk(req.params.id as string);
         if (!site) {
             return next(new ErrorResponse("Site not found", 404));
         }

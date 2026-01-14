@@ -13,7 +13,7 @@ export const addTodoProgress = async (req: ReqWithUser, res: Response, next: Nex
         const { progress, remark } = req.body;
         const { todoId } = req.params;
 
-        const todo = await Todo.findByPk(todoId);
+        const todo = await Todo.findByPk(todoId as string);
         if (!todo) return next(new ErrorResponse("Todo not found", 404));
 
         let uploadedFiles: string[] = [];

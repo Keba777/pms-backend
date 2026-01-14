@@ -211,7 +211,7 @@ export const getChatRoomById = async (req: ReqWithUser, res: Response, next: Nex
             return next(new ErrorResponse("User not authenticated", 401));
         }
 
-        const room = await ChatRoom.findByPk(req.params.id, {
+        const room = await ChatRoom.findByPk(req.params.id as string, {
             include: [
                 {
                     model: User,
@@ -265,7 +265,7 @@ export const updateGroupChatRoom = async (req: ReqWithUser, res: Response, next:
             return next(new ErrorResponse("User not authenticated", 401));
         }
 
-        const room = await ChatRoom.findByPk(req.params.id);
+        const room = await ChatRoom.findByPk(req.params.id as string);
         if (!room) {
             return next(new ErrorResponse("Chat room not found", 404));
         }
@@ -312,7 +312,7 @@ export const deleteGroupChatRoom = async (req: ReqWithUser, res: Response, next:
             return next(new ErrorResponse("User not authenticated", 401));
         }
 
-        const room = await ChatRoom.findByPk(req.params.id);
+        const room = await ChatRoom.findByPk(req.params.id as string);
         if (!room) {
             return next(new ErrorResponse("Chat room not found", 404));
         }
@@ -345,7 +345,7 @@ export const addMembersToGroup = async (req: ReqWithUser, res: Response, next: N
             return next(new ErrorResponse("User not authenticated", 401));
         }
 
-        const room = await ChatRoom.findByPk(req.params.id);
+        const room = await ChatRoom.findByPk(req.params.id as string);
         if (!room) {
             return next(new ErrorResponse("Chat room not found", 404));
         }
@@ -407,7 +407,7 @@ export const removeMemberFromGroup = async (req: ReqWithUser, res: Response, nex
             return next(new ErrorResponse("User not authenticated", 401));
         }
 
-        const room = await ChatRoom.findByPk(req.params.id);
+        const room = await ChatRoom.findByPk(req.params.id as string);
         if (!room) {
             return next(new ErrorResponse("Chat room not found", 404));
         }
@@ -416,7 +416,7 @@ export const removeMemberFromGroup = async (req: ReqWithUser, res: Response, nex
             return next(new ErrorResponse("Not authorized to remove members", 403));
         }
 
-        const { userId } = req.params;
+        const userId = req.params.userId as string;
         if (userId === req.user.id) {
             return next(new ErrorResponse("Cannot remove yourself as owner", 400));
         }
@@ -587,7 +587,7 @@ export const deleteChatMessage = async (req: ReqWithUser, res: Response, next: N
             return next(new ErrorResponse("User not authenticated", 401));
         }
 
-        const message = await ChatMessage.findByPk(req.params.id);
+        const message = await ChatMessage.findByPk(req.params.id as string);
         if (!message) {
             return next(new ErrorResponse("Message not found", 404));
         }

@@ -157,7 +157,7 @@ const getAllProjects = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   GET /api/v1/projects/:id
 const getProjectById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const project = await Project.findByPk(req.params.id, {
+        const project = await Project.findByPk(req.params.id as string, {
             include: [
                 {
                     model: Task,
@@ -207,7 +207,7 @@ const getProjectById = async (req: ReqWithUser, res: Response, next: NextFunctio
 const updateProject = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { members, existingAttachments, ...projectData } = req.body;
-        const project = await Project.findByPk(req.params.id);
+        const project = await Project.findByPk(req.params.id as string);
 
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
@@ -304,7 +304,7 @@ const updateProject = async (req: ReqWithUser, res: Response, next: NextFunction
 // @route   DELETE /api/v1/projects/:id
 const deleteProject = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const project = await Project.findByPk(req.params.id);
+        const project = await Project.findByPk(req.params.id as string);
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
         }
@@ -327,7 +327,7 @@ const deleteProject = async (req: ReqWithUser, res: Response, next: NextFunction
 // Expected body: { actuals: { start_date, end_date, progress, status, budget } }
 const updateProjectActuals = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const project = await Project.findByPk(req.params.id);
+        const project = await Project.findByPk(req.params.id as string);
         if (!project) {
             return next(new ErrorResponse("Project not found", 404));
         }
@@ -398,7 +398,7 @@ const updateProjectActuals = async (req: ReqWithUser, res: Response, next: NextF
 const updateProjectProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     const t = await Project.sequelize?.transaction();
     try {
-        const project = await Project.findByPk(req.params.id, { transaction: t });
+        const project = await Project.findByPk(req.params.id as string, { transaction: t });
         if (!project) {
             if (t) await t.rollback();
             return next(new ErrorResponse("Project not found", 404));

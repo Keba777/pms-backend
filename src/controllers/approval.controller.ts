@@ -79,7 +79,7 @@ const getAllApprovals = async (req: Request, res: Response, next: NextFunction) 
 // @route   GET /api/v1/approvals/:id
 const getApprovalById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const approval = await ApprovalModel.findByPk(req.params.id, {
+    const approval = await ApprovalModel.findByPk(req.params.id as string, {
       include: [
         {
           model: RequestModel,
@@ -135,7 +135,7 @@ const getApprovalById = async (req: Request, res: Response, next: NextFunction) 
 // @route   PUT /api/v1/approvals/:id
 const updateApproval = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const approval = await ApprovalModel.findByPk(req.params.id);
+    const approval = await ApprovalModel.findByPk(req.params.id as string);
 
     if (!approval) {
       return next(new ErrorResponse("Approval not found", 404));
@@ -182,7 +182,7 @@ const updateApproval = async (req: Request, res: Response, next: NextFunction) =
 // @route   DELETE /api/v1/approvals/:id
 const deleteApproval = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const approval = await ApprovalModel.findByPk(req.params.id);
+    const approval = await ApprovalModel.findByPk(req.params.id as string);
 
     if (!approval) {
       return next(new ErrorResponse("Approval not found", 404));

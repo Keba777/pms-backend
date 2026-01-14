@@ -38,7 +38,7 @@ export const getAllRequestDeliveries = async (req: Request, res: Response, next:
 // @route   GET /api/v1/request-deliveries/:id
 export const getRequestDeliveryById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const requestDelivery = await RequestDelivery.findByPk(req.params.id, {
+        const requestDelivery = await RequestDelivery.findByPk(req.params.id as string, {
             include: [
                 { model: Approval, as: "approval" },
                 { model: Site, as: "site" },
@@ -60,7 +60,7 @@ export const getRequestDeliveryById = async (req: Request, res: Response, next: 
 // @route   PUT /api/v1/request-deliveries/:id
 export const updateRequestDelivery = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const requestDelivery = await RequestDelivery.findByPk(req.params.id);
+        const requestDelivery = await RequestDelivery.findByPk(req.params.id as string);
         if (!requestDelivery) {
             return next(new ErrorResponse("Request delivery not found", 404));
         }
@@ -77,7 +77,7 @@ export const updateRequestDelivery = async (req: Request, res: Response, next: N
 // @route   DELETE /api/v1/request-deliveries/:id
 export const deleteRequestDelivery = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const requestDelivery = await RequestDelivery.findByPk(req.params.id);
+        const requestDelivery = await RequestDelivery.findByPk(req.params.id as string);
         if (!requestDelivery) {
             return next(new ErrorResponse("Request delivery not found", 404));
         }

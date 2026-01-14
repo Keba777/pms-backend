@@ -82,7 +82,7 @@ const getAllPayments = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   GET /api/v1/payments/:id
 const getPaymentById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payment = await Payment.findByPk(req.params.id, {
+        const payment = await Payment.findByPk(req.params.id as string, {
             include: [Invoice, User],
         });
         if (!payment) return next(new ErrorResponse("Payment not found", 404));
@@ -97,7 +97,7 @@ const getPaymentById = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   PUT /api/v1/payments/:id
 const updatePayment = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payment = await Payment.findByPk(req.params.id);
+        const payment = await Payment.findByPk(req.params.id as string);
         if (!payment) return next(new ErrorResponse("Payment not found", 404));
         await payment.update(req.body);
         const updatedPayment = await Payment.findByPk(payment.id, {
@@ -114,7 +114,7 @@ const updatePayment = async (req: ReqWithUser, res: Response, next: NextFunction
 // @route   DELETE /api/v1/payments/:id
 const deletePayment = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payment = await Payment.findByPk(req.params.id);
+        const payment = await Payment.findByPk(req.params.id as string);
         if (!payment) return next(new ErrorResponse("Payment not found", 404));
         await payment.destroy();
         res.status(200).json({ success: true, message: "Payment deleted successfully" });

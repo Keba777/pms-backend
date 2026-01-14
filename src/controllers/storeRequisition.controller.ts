@@ -46,7 +46,7 @@ export const getStoreRequisitionById = async (
     next: NextFunction
 ) => {
     try {
-        const sr = await StoreRequisition.findByPk(req.params.id, {
+        const sr = await StoreRequisition.findByPk(req.params.id as string, {
             include: [{ model: Approval, as: "approval" }],
         });
         if (!sr) {
@@ -67,7 +67,7 @@ export const updateStoreRequisition = async (
     next: NextFunction
 ) => {
     try {
-        const sr = await StoreRequisition.findByPk(req.params.id);
+        const sr = await StoreRequisition.findByPk(req.params.id as string);
         if (!sr) {
             return next(new ErrorResponse("Store requisition not found", 404));
         }
@@ -93,7 +93,7 @@ export const deleteStoreRequisition = async (
     next: NextFunction
 ) => {
     try {
-        const sr = await StoreRequisition.findByPk(req.params.id);
+        const sr = await StoreRequisition.findByPk(req.params.id as string);
         if (!sr) {
             return next(new ErrorResponse("Store requisition not found", 404));
         }

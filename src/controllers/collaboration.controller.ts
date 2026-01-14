@@ -59,7 +59,7 @@ export const getAllDiscussions = async (_req: Request, res: Response, next: Next
 // @route GET /api/v1/discussions/:id
 export const getDiscussionById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const discussion = await Discussion.findByPk(req.params.id, {
+    const discussion = await Discussion.findByPk(req.params.id as string, {
       include: [{ model: User, as: "createdByUser", attributes: { exclude: ["password"] } }],
     });
     if (!discussion) return next(new ErrorResponse("Discussion not found", 404));
@@ -74,7 +74,7 @@ export const getDiscussionById = async (req: Request, res: Response, next: NextF
 // @route PUT /api/v1/discussions/:id
 export const updateDiscussion = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const discussion = await Discussion.findByPk(req.params.id);
+    const discussion = await Discussion.findByPk(req.params.id as string);
     if (!discussion) return next(new ErrorResponse("Discussion not found", 404));
     const { subject, body, isPrivate, participants, lastMessageAt, pinned } = req.body;
     await discussion.update({
@@ -101,7 +101,7 @@ export const updateDiscussion = async (req: ReqWithUser, res: Response, next: Ne
 // @route DELETE /api/v1/discussions/:id
 export const deleteDiscussion = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const discussion = await Discussion.findByPk(req.params.id);
+    const discussion = await Discussion.findByPk(req.params.id as string);
     if (!discussion) return next(new ErrorResponse("Discussion not found", 404));
     await discussion.destroy();
     res.status(200).json({ success: true, message: "Discussion deleted successfully" });
@@ -172,7 +172,7 @@ export const getAllNotifications = async (_req: Request, res: Response, next: Ne
 // @route GET /api/v1/notifications/:id
 export const getNotificationById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const notification = await CollaborationNotification.findByPk(req.params.id, {
+    const notification = await CollaborationNotification.findByPk(req.params.id as string, {
       include: [
         { model: User, as: "recipientUser", attributes: { exclude: ["password"] } },
         { model: User, as: "senderUser", attributes: { exclude: ["password"] } },
@@ -190,7 +190,7 @@ export const getNotificationById = async (req: Request, res: Response, next: Nex
 // @route PUT /api/v1/notifications/:id
 export const updateNotification = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const notification = await CollaborationNotification.findByPk(req.params.id);
+    const notification = await CollaborationNotification.findByPk(req.params.id as string);
     if (!notification) return next(new ErrorResponse("Notification not found", 404));
     const { title, message, read, meta } = req.body;
     await notification.update({
@@ -218,7 +218,7 @@ export const updateNotification = async (req: ReqWithUser, res: Response, next: 
 // @route DELETE /api/v1/notifications/:id
 export const deleteNotification = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const notification = await CollaborationNotification.findByPk(req.params.id);
+    const notification = await CollaborationNotification.findByPk(req.params.id as string);
     if (!notification) return next(new ErrorResponse("Notification not found", 404));
     await notification.destroy();
     res.status(200).json({ success: true, message: "Notification deleted successfully" });
@@ -287,7 +287,7 @@ export const getAllActivities = async (_req: Request, res: Response, next: NextF
 // @route GET /api/v1/activities/:id
 export const getActivityById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const activity = await ActivityLog.findByPk(req.params.id, {
+    const activity = await ActivityLog.findByPk(req.params.id as string, {
       include: [{ model: User, as: "actorUser", attributes: { exclude: ["password"] } }],
     });
     if (!activity) return next(new ErrorResponse("Activity not found", 404));
@@ -302,7 +302,7 @@ export const getActivityById = async (req: Request, res: Response, next: NextFun
 // @route PUT /api/v1/activities/:id
 export const updateActivity = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const activity = await ActivityLog.findByPk(req.params.id);
+    const activity = await ActivityLog.findByPk(req.params.id as string);
     if (!activity) return next(new ErrorResponse("Activity not found", 404));
     let { action, details, parentActivityId } = req.body;
 
@@ -332,7 +332,7 @@ export const updateActivity = async (req: ReqWithUser, res: Response, next: Next
 // @route DELETE /api/v1/activities/:id
 export const deleteActivity = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const activity = await ActivityLog.findByPk(req.params.id);
+    const activity = await ActivityLog.findByPk(req.params.id as string);
     if (!activity) return next(new ErrorResponse("Activity not found", 404));
     await activity.destroy();
     res.status(200).json({ success: true, message: "Activity deleted successfully" });

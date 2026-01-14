@@ -33,7 +33,7 @@ export const getAllMaterials = async (req: Request, res: Response, next: NextFun
 // @route   GET /api/v1/materials/:id
 export const getMaterialById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const material = await Material.findByPk(req.params.id);
+        const material = await Material.findByPk(req.params.id as string);
         if (!material) {
             return next(new ErrorResponse("Material not found", 404));
         }
@@ -48,7 +48,7 @@ export const getMaterialById = async (req: Request, res: Response, next: NextFun
 // @route   PUT /api/v1/materials/:id
 export const updateMaterial = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const material = await Material.findByPk(req.params.id);
+        const material = await Material.findByPk(req.params.id as string);
         if (!material) {
             return next(new ErrorResponse("Material not found", 404));
         }
@@ -64,7 +64,7 @@ export const updateMaterial = async (req: Request, res: Response, next: NextFunc
 // @route   DELETE /api/v1/materials/:id
 export const deleteMaterial = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const material = await Material.findByPk(req.params.id);
+        const material = await Material.findByPk(req.params.id as string);
         if (!material) {
             return next(new ErrorResponse("Material not found", 404));
         }

@@ -107,7 +107,7 @@ export const getRoleById = async (
     next: NextFunction
 ) => {
     try {
-        const role = await Role.findByPk(req.params.id);
+        const role = await Role.findByPk(req.params.id as string);
         if (!role) {
             return next(new ErrorResponse("Role not found", 404));
         }
@@ -140,7 +140,7 @@ export const updateRole = async (
     next: NextFunction
 ) => {
     try {
-        const role = await Role.findByPk(req.params.id);
+        const role = await Role.findByPk(req.params.id as string);
         if (!role) {
             return next(new ErrorResponse("Role not found", 404));
         }
@@ -180,7 +180,7 @@ export const deleteRole = async (
     next: NextFunction
 ) => {
     try {
-        const role = await Role.findByPk(req.params.id);
+        const role = await Role.findByPk(req.params.id as string);
         if (!role) {
             return next(new ErrorResponse("Role not found", 404));
         }

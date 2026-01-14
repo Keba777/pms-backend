@@ -116,7 +116,7 @@ export const getAllTodos = async (_req: Request, res: Response, next: NextFuncti
 // @route   GET /api/v1/todos/:id
 export const getTodoById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const todo = await Todo.findByPk(req.params.id, {
+        const todo = await Todo.findByPk(req.params.id as string, {
             include: [
                 { model: User, as: "assignedUsers", through: { attributes: [] }, attributes: { exclude: ["password"] } },
                 { model: TodoProgress, as: "progressUpdates" },
@@ -139,7 +139,7 @@ export const getTodoById = async (req: Request, res: Response, next: NextFunctio
 export const updateTodo = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const { assignedUsers, existingAttachments, ...todoData } = req.body;
-        const todo = await Todo.findByPk(req.params.id);
+        const todo = await Todo.findByPk(req.params.id as string);
         if (!todo) return next(new ErrorResponse("Todo not found", 404));
 
         // Handle file uploads
@@ -227,7 +227,7 @@ export const updateTodo = async (req: ReqWithUser, res: Response, next: NextFunc
 // @route   DELETE /api/v1/todos/:id
 export const deleteTodo = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const todo = await Todo.findByPk(req.params.id);
+        const todo = await Todo.findByPk(req.params.id as string);
         if (!todo) return next(new ErrorResponse("Todo not found", 404));
 
         await todo.destroy();

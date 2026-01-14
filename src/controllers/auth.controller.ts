@@ -293,14 +293,14 @@ const resetPassword = async (
   next: NextFunction
 ) => {
   try {
-    const resetToken = req.params.resetToken;
+    const resetToken = req.params.resetToken as string;
 
     let payload;
     try {
       payload = jwt.verify(
         resetToken,
         process.env.JWT_SECRET || "this is the secret"
-      ) as { id: string };
+      ) as unknown as { id: string };
     } catch (err) {
       return next(new ErrorResponse("Invalid or expired token", 400));
     }

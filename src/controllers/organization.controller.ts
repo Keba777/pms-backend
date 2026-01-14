@@ -59,7 +59,7 @@ const getOrganizationById = async (req: ReqWithUser, res: Response, next: NextFu
             return next(new ErrorResponse("Not authorized to access this organization", 403));
         }
 
-        const organization = await Organization.findByPk(id);
+        const organization = await Organization.findByPk(id as string);
         if (!organization) {
             return next(new ErrorResponse("Organization not found", 404));
         }
@@ -103,7 +103,7 @@ const updateOrganization = async (req: ReqWithUser, res: Response, next: NextFun
             return next(new ErrorResponse("Not authorized to update this organization", 403));
         }
 
-        const organization = await Organization.findByPk(id);
+        const organization = await Organization.findByPk(id as string);
         if (!organization) {
             return next(new ErrorResponse("Organization not found", 404));
         }
@@ -151,7 +151,7 @@ const deleteOrganization = async (req: ReqWithUser, res: Response, next: NextFun
             return next(new ErrorResponse("Only SystemAdmin can delete organizations", 403));
         }
 
-        const organization = await Organization.findByPk(req.params.id);
+        const organization = await Organization.findByPk(req.params.id as string);
         if (!organization) {
             return next(new ErrorResponse("Organization not found", 404));
         }
@@ -176,7 +176,7 @@ const createSuperAdmin = async (req: ReqWithUser, res: Response, next: NextFunct
             return next(new ErrorResponse("Only SystemAdmin can create Super Admins", 403));
         }
 
-        const organization = await Organization.findByPk(orgId);
+        const organization = await Organization.findByPk(orgId as string);
         if (!organization) {
             return next(new ErrorResponse("Organization not found", 404));
         }

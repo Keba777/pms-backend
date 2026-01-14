@@ -30,7 +30,7 @@ const getAllMasterSchedules = async (req: Request, res: Response, next: NextFunc
 // @route   GET /api/v1/master-schedule/:id
 const getMasterScheduleById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const masterSchedule = await MasterSchedule.findByPk(req.params.id);
+        const masterSchedule = await MasterSchedule.findByPk(req.params.id as string);
         if (!masterSchedule) {
             return next(new ErrorResponse("Master schedule entry not found", 404));
         }
@@ -46,7 +46,7 @@ const getMasterScheduleById = async (req: Request, res: Response, next: NextFunc
 // @route   PUT /api/v1/master-schedule/:id
 const updateMasterSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const masterSchedule = await MasterSchedule.findByPk(req.params.id);
+        const masterSchedule = await MasterSchedule.findByPk(req.params.id as string);
         if (!masterSchedule) {
             return next(new ErrorResponse("Master schedule entry not found", 404));
         }
@@ -63,7 +63,7 @@ const updateMasterSchedule = async (req: Request, res: Response, next: NextFunct
 // @route   DELETE /api/v1/master-schedule/:id
 const deleteMasterSchedule = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const masterSchedule = await MasterSchedule.findByPk(req.params.id);
+        const masterSchedule = await MasterSchedule.findByPk(req.params.id as string);
         if (!masterSchedule) {
             return next(new ErrorResponse("Master schedule entry not found", 404));
         }

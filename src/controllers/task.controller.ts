@@ -131,7 +131,7 @@ const getAllTasks = async (req: ReqWithUser, res: Response, next: NextFunction) 
 // @route   GET /api/v1/tasks/:id
 const getTaskById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const task = await Task.findByPk(req.params.id, {
+        const task = await Task.findByPk(req.params.id as string, {
             include: [
                 {
                     model: Activity,
@@ -168,7 +168,7 @@ const updateTask = async (req: ReqWithUser, res: Response, next: NextFunction) =
     try {
         const { assignedUsers, existingAttachments, ...taskData } = req.body;
 
-        const task = await Task.findByPk(req.params.id);
+        const task = await Task.findByPk(req.params.id as string);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
         }
@@ -265,7 +265,7 @@ const updateTask = async (req: ReqWithUser, res: Response, next: NextFunction) =
 // @route   DELETE /api/v1/tasks/:id
 const deleteTask = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const task = await Task.findByPk(req.params.id);
+        const task = await Task.findByPk(req.params.id as string);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
         }
@@ -288,7 +288,7 @@ const deleteTask = async (req: ReqWithUser, res: Response, next: NextFunction) =
 // Expected body: { actuals: { start_date, end_date, progress, status, budget } }
 const updateTaskActuals = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const task = await Task.findByPk(req.params.id);
+        const task = await Task.findByPk(req.params.id as string);
         if (!task) {
             return next(new ErrorResponse("Task not found", 404));
         }
@@ -346,7 +346,7 @@ const updateTaskActuals = async (req: ReqWithUser, res: Response, next: NextFunc
 const updateTaskProgress = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     const t = await Task.sequelize?.transaction();
     try {
-        const task = await Task.findByPk(req.params.id, { transaction: t });
+        const task = await Task.findByPk(req.params.id as string, { transaction: t });
         if (!task) {
             if (t) await t.rollback();
             return next(new ErrorResponse("Task not found", 404));

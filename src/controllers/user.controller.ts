@@ -81,7 +81,7 @@ const getAllUsers = async (req: ReqWithUser, res: Response, next: NextFunction) 
 // @route   GET /api/v1/users/:id
 const getUserById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findByPk(req.params.id, {
+    const user = await User.findByPk(req.params.id as string, {
       attributes: { exclude: ["password"] },
       include: [
         {
@@ -408,7 +408,7 @@ const importUsers = async (req: ReqWithUser, res: Response, next: NextFunction) 
 // @route   PUT /api/v1/users/:id
 const updateUser = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.id as string);
     if (!user) {
       return next(new ErrorResponse("User not found", 404));
     }
@@ -457,7 +457,7 @@ const updateUser = async (req: ReqWithUser, res: Response, next: NextFunction) =
     }
 
     await user.update(updates);
-    const updatedUser = await User.findByPk(req.params.id, {
+    const updatedUser = await User.findByPk(req.params.id as string, {
       attributes: { exclude: ["password"] },
       include: [
         { model: Role, attributes: ["id", "name", "permissions"] },
@@ -481,7 +481,7 @@ const updateUser = async (req: ReqWithUser, res: Response, next: NextFunction) =
 // @route   DELETE /api/v1/users/:id
 const deleteUser = async (req: ReqWithUser, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.id as string);
     if (!user) {
       return next(new ErrorResponse("User not found", 404));
     }

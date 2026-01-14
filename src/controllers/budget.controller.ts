@@ -46,7 +46,7 @@ const getAllBudgets = async (req: ReqWithUser, res: Response, next: NextFunction
 // @route   GET /api/v1/budgets/:id
 const getBudgetById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const budget = await Budget.findByPk(req.params.id, { include: [Project] });
+        const budget = await Budget.findByPk(req.params.id as string, { include: [Project] });
         if (!budget) return next(new ErrorResponse("Budget not found", 404));
         res.status(200).json({ success: true, data: budget });
     } catch (error) {
@@ -59,7 +59,7 @@ const getBudgetById = async (req: ReqWithUser, res: Response, next: NextFunction
 // @route   PUT /api/v1/budgets/:id
 const updateBudget = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const budget = await Budget.findByPk(req.params.id);
+        const budget = await Budget.findByPk(req.params.id as string);
         if (!budget) return next(new ErrorResponse("Budget not found", 404));
         await budget.update(req.body);
         const updatedBudget = await Budget.findByPk(budget.id, { include: [Project] });
@@ -74,7 +74,7 @@ const updateBudget = async (req: ReqWithUser, res: Response, next: NextFunction)
 // @route   DELETE /api/v1/budgets/:id
 const deleteBudget = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const budget = await Budget.findByPk(req.params.id);
+        const budget = await Budget.findByPk(req.params.id as string);
         if (!budget) return next(new ErrorResponse("Budget not found", 404));
         await budget.destroy();
         res.status(200).json({ success: true, message: "Budget deleted successfully" });

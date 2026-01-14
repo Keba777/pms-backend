@@ -41,7 +41,7 @@ export const getAllLabors = async (req: Request, res: Response, next: NextFuncti
 // @route   GET /api/v1/labors/:id
 export const getLaborById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const labor = await Labor.findByPk(req.params.id, {
+    const labor = await Labor.findByPk(req.params.id as string, {
       include: [
         { model: LaborInformation, as: "laborInformations" }
       ],
@@ -61,7 +61,7 @@ export const getLaborById = async (req: Request, res: Response, next: NextFuncti
 // @route   PUT /api/v1/labors/:id
 export const updateLabor = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const labor = await Labor.findByPk(req.params.id);
+    const labor = await Labor.findByPk(req.params.id as string);
     if (!labor) {
       return next(new ErrorResponse("Labor not found", 404));
     }
@@ -77,7 +77,7 @@ export const updateLabor = async (req: Request, res: Response, next: NextFunctio
 // @route   DELETE /api/v1/labors/:id
 export const deleteLabor = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const labor = await Labor.findByPk(req.params.id);
+    const labor = await Labor.findByPk(req.params.id as string);
     if (!labor) {
       return next(new ErrorResponse("Labor not found", 404));
     }

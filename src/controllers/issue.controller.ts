@@ -60,7 +60,7 @@ const getAllIssues = async (req: ReqWithUser, res: Response, next: NextFunction)
 // @route   GET /api/v1/issues/:id
 const getIssueById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const issue = await Issue.findByPk(req.params.id, {
+        const issue = await Issue.findByPk(req.params.id as string, {
             include: [
                 { model: Site, as: "site" },
                 { model: Department, as: "department" },
@@ -92,7 +92,7 @@ const getIssueById = async (req: ReqWithUser, res: Response, next: NextFunction)
 // @route   PUT /api/v1/issues/:id
 const updateIssue = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const issue = await Issue.findByPk(req.params.id);
+        const issue = await Issue.findByPk(req.params.id as string);
         if (!issue) {
             return next(new ErrorResponse("Issue not found", 404));
         }
@@ -128,7 +128,7 @@ const updateIssue = async (req: ReqWithUser, res: Response, next: NextFunction) 
 // @route   DELETE /api/v1/issues/:id
 const deleteIssue = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const issue = await Issue.findByPk(req.params.id);
+        const issue = await Issue.findByPk(req.params.id as string);
         if (!issue) {
             return next(new ErrorResponse("Issue not found", 404));
         }
@@ -151,7 +151,7 @@ const deleteIssue = async (req: ReqWithUser, res: Response, next: NextFunction) 
 const getIssuesByRaisedById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const user = req.user;
-        const targetUser = await User.findByPk(req.params.userId);
+        const targetUser = await User.findByPk(req.params.userId as string);
 
         if (!targetUser) {
             return next(new ErrorResponse("User not found", 404));
@@ -162,7 +162,7 @@ const getIssuesByRaisedById = async (req: ReqWithUser, res: Response, next: Next
         }
 
         const issues = await Issue.findAll({
-            where: { raisedById: req.params.userId, orgId: targetUser.orgId as any },
+            where: { raisedById: req.params.userId as string, orgId: targetUser.orgId as any },
             include: [
                 { model: Site, as: "site" },
                 { model: Department, as: "department" },

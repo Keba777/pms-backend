@@ -39,7 +39,7 @@ export const getAllDispatches = async (req: Request, res: Response, next: NextFu
 // @route   GET /api/v1/dispatches/:id
 export const getDispatchById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const dispatch = await Dispatch.findByPk(req.params.id, {
+        const dispatch = await Dispatch.findByPk(req.params.id as string, {
             include: [
                 { model: Approval, as: "approval" },
                 { model: Site, as: "depatureSite" },
@@ -62,7 +62,7 @@ export const getDispatchById = async (req: Request, res: Response, next: NextFun
 // @route   PUT /api/v1/dispatches/:id
 export const updateDispatch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const dispatch = await Dispatch.findByPk(req.params.id);
+        const dispatch = await Dispatch.findByPk(req.params.id as string);
         if (!dispatch) {
             return next(new ErrorResponse("Dispatch not found", 404));
         }
@@ -79,7 +79,7 @@ export const updateDispatch = async (req: Request, res: Response, next: NextFunc
 // @route   DELETE /api/v1/dispatches/:id
 export const deleteDispatch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const dispatch = await Dispatch.findByPk(req.params.id);
+        const dispatch = await Dispatch.findByPk(req.params.id as string);
         if (!dispatch) {
             return next(new ErrorResponse("Dispatch not found", 404));
         }

@@ -42,7 +42,7 @@ export const getAllDepartments = async (req: ReqWithUser, res: Response, next: N
 // @route   GET /api/v1/departments/:id
 export const getDepartmentById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const department = await Department.findByPk(req.params.id);
+        const department = await Department.findByPk(req.params.id as string);
         if (!department) {
             return next(new ErrorResponse("Department not found", 404));
         }
@@ -63,7 +63,7 @@ export const getDepartmentById = async (req: ReqWithUser, res: Response, next: N
 // @route   PUT /api/v1/departments/:id
 export const updateDepartment = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const department = await Department.findByPk(req.params.id);
+        const department = await Department.findByPk(req.params.id as string);
         if (!department) {
             return next(new ErrorResponse("Department not found", 404));
         }
@@ -85,7 +85,7 @@ export const updateDepartment = async (req: ReqWithUser, res: Response, next: Ne
 // @route   DELETE /api/v1/departments/:id
 export const deleteDepartment = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const department = await Department.findByPk(req.params.id);
+        const department = await Department.findByPk(req.params.id as string);
         if (!department) {
             return next(new ErrorResponse("Department not found", 404));
         }

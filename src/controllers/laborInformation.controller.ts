@@ -31,7 +31,7 @@ export const getAllLaborInformations = async (req: Request, res: Response, next:
 // @route   GET /api/v1/labor-informations/:id
 export const getLaborInformationById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const laborInformation = await LaborInformation.findByPk(req.params.id);
+        const laborInformation = await LaborInformation.findByPk(req.params.id as string);
         if (!laborInformation) {
             return next(new ErrorResponse("Labor information not found", 404));
         }
@@ -46,7 +46,7 @@ export const getLaborInformationById = async (req: Request, res: Response, next:
 // @route   PUT /api/v1/labor-informations/:id
 export const updateLaborInformation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let laborInformation = await LaborInformation.findByPk(req.params.id);
+        let laborInformation = await LaborInformation.findByPk(req.params.id as string);
         if (!laborInformation) {
             return next(new ErrorResponse("Labor information not found", 404));
         }
@@ -67,7 +67,7 @@ export const updateLaborInformation = async (req: Request, res: Response, next: 
         await laborInformation.update(req.body);
 
         // Refetch to get updated data
-        laborInformation = await LaborInformation.findByPk(req.params.id);
+        laborInformation = await LaborInformation.findByPk(req.params.id as string);
 
         res.status(200).json({ success: true, data: laborInformation });
     } catch (error) {
@@ -80,7 +80,7 @@ export const updateLaborInformation = async (req: Request, res: Response, next: 
 // @route   DELETE /api/v1/labor-informations/:id
 export const deleteLaborInformation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const laborInformation = await LaborInformation.findByPk(req.params.id);
+        const laborInformation = await LaborInformation.findByPk(req.params.id as string);
         if (!laborInformation) {
             return next(new ErrorResponse("Labor information not found", 404));
         }
