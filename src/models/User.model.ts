@@ -158,7 +158,7 @@ class User extends Model<IUser> implements IUser {
     @Column({
         type: DataType.STRING,
         allowNull: true,
-        defaultValue: "Average",
+        defaultValue: "Average Access",
     })
     access?: "Low Access" | "Full Access" | "Average Access";
 
