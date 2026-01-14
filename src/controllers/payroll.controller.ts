@@ -49,7 +49,7 @@ const getAllPayrolls = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   GET /api/v1/payrolls/:id
 const getPayrollById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payroll = await Payroll.findByPk(req.params.id, {
+        const payroll = await Payroll.findByPk(req.params.id as string, {
             include: [Project, User],
         });
         if (!payroll) return next(new ErrorResponse("Payroll not found", 404));
@@ -64,7 +64,7 @@ const getPayrollById = async (req: ReqWithUser, res: Response, next: NextFunctio
 // @route   PUT /api/v1/payrolls/:id
 const updatePayroll = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payroll = await Payroll.findByPk(req.params.id);
+        const payroll = await Payroll.findByPk(req.params.id as string);
         if (!payroll) return next(new ErrorResponse("Payroll not found", 404));
         await payroll.update(req.body);
         const updatedPayroll = await Payroll.findByPk(payroll.id, {
@@ -81,7 +81,7 @@ const updatePayroll = async (req: ReqWithUser, res: Response, next: NextFunction
 // @route   DELETE /api/v1/payrolls/:id
 const deletePayroll = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const payroll = await Payroll.findByPk(req.params.id);
+        const payroll = await Payroll.findByPk(req.params.id as string);
         if (!payroll) return next(new ErrorResponse("Payroll not found", 404));
         await payroll.destroy();
         res.status(200).json({ success: true, message: "Payroll deleted successfully" });

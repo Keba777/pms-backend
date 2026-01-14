@@ -208,7 +208,7 @@ const createSuperAdmin = async (req: ReqWithUser, res: Response, next: NextFunct
             phone,
             password: password || "123456", // Default password
             role_id: superAdminRole.id,
-            orgId: orgId,
+            orgId: orgId as string,
             status: "Active",
             gender: "Male", // Default
         });

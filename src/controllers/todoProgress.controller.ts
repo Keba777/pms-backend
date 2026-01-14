@@ -30,7 +30,7 @@ export const addTodoProgress = async (req: ReqWithUser, res: Response, next: Nex
         }
 
         const progressUpdate = await TodoProgress.create({
-            todoId,
+            todoId: todoId as string,
             userId: req.user!.id,
             progress,
             remark,
