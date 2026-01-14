@@ -12,6 +12,7 @@ import User from "./User.model";
 import Equipment from "./Equipment.model";
 import Material from "./Material.model";
 import Organization from "./Organization.model";
+import LaborInformation from "./LaborInformation.model";
 
 // Interface for Labor Timesheet entries
 enum TimeSheetStatus {
@@ -22,7 +23,8 @@ enum TimeSheetStatus {
 
 export interface ILaborTimesheet {
     id: string;
-    userId: string;
+    userId?: string;
+    laborInformationId?: string;
     date: Date;
     morningIn: string;
     morningOut: string;
@@ -47,11 +49,18 @@ export class LaborTimesheet extends Model<ILaborTimesheet> implements ILaborTime
     id!: string;
 
     @ForeignKey(() => User)
-    @Column({ type: DataType.UUID, allowNull: false })
-    userId!: string;
+    @Column({ type: DataType.UUID, allowNull: true })
+    userId?: string;
 
     @BelongsTo(() => User)
-    user!: User;
+    user?: User;
+
+    @ForeignKey(() => LaborInformation)
+    @Column({ type: DataType.UUID, allowNull: true })
+    laborInformationId?: string;
+
+    @BelongsTo(() => LaborInformation)
+    laborInformation?: LaborInformation;
 
     @Column({ type: DataType.DATEONLY, allowNull: false })
     date!: Date;

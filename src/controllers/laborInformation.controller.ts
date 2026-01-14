@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import LaborInformation from "../models/LaborInformation.model";
 import ErrorResponse from "../utils/error-response.utils";
+import cloudinary from "../config/cloudinary";
 
 // @desc    Create a new labor information
 // @route   POST /api/v1/labor-informations
@@ -45,11 +46,29 @@ export const getLaborInformationById = async (req: Request, res: Response, next:
 // @route   PUT /api/v1/labor-informations/:id
 export const updateLaborInformation = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const laborInformation = await LaborInformation.findByPk(req.params.id);
+        let laborInformation = await LaborInformation.findByPk(req.params.id);
         if (!laborInformation) {
             return next(new ErrorResponse("Labor information not found", 404));
         }
+
+        // Handle profile picture update if file is uploaded
+        if (req.file) {
+            try {
+                const result = await cloudinary.uploader.upload(req.file.path, {
+                    folder: "/pms/images",
+                    use_filename: true,
+                });
+                req.body.profile_picture = result.secure_url;
+            } catch (err) {
+                console.error("Cloudinary upload failed", err);
+            }
+        }
+
         await laborInformation.update(req.body);
+
+        // Refetch to get updated data
+        laborInformation = await LaborInformation.findByPk(req.params.id);
+
         res.status(200).json({ success: true, data: laborInformation });
     } catch (error) {
         console.error(error);

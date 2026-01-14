@@ -39,6 +39,7 @@ import collaborationRouter from "./routes/collaboration.route";
 import clientRouter from "./routes/client.routes";
 import organizationRouter from "./routes/organization.route";
 import adminRouter from "./routes/admin.route";
+import attendanceRouter from "./routes/attendance.route";
 import protectRoute from "./middlewares/auth";
 import { multiTenancy } from "./middlewares/multi-tenancy.middleware";
 
@@ -125,6 +126,7 @@ app.use("/api/v1/collaborations", protectRoute, multiTenancy, collaborationRoute
 app.use("/api/v1/clients", protectRoute, multiTenancy, clientRouter);
 app.use("/api/v1/organizations", protectRoute, multiTenancy, organizationRouter);
 app.use("/api/v1/admin", protectRoute, multiTenancy, adminRouter);
+app.use("/api/v1/attendance", protectRoute, multiTenancy, attendanceRouter);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({ message: "Hello World!" });

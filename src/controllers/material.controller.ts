@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Material from "../models/Material.model";
 import ErrorResponse from "../utils/error-response.utils";
+import Warehouse from "../models/Warehouse.model";
 
 // @desc    Create a new material
 // @route   POST /api/v1/materials
@@ -18,7 +19,9 @@ export const createMaterial = async (req: Request, res: Response, next: NextFunc
 // @route   GET /api/v1/materials
 export const getAllMaterials = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const materials = await Material.findAll();
+        const materials = await Material.findAll({
+            include: [{ model: Warehouse, as: 'warehouse' }]
+        });
         res.status(200).json({ success: true, data: materials });
     } catch (error) {
         console.error(error);

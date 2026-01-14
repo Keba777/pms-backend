@@ -11,82 +11,82 @@ import { Op } from "sequelize";
 // @desc    Create a new labor
 // @route   POST /api/v1/labors
 export const createLabor = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const labor = await Labor.create(req.body);
-        res.status(201).json({ success: true, data: labor });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error creating labor", 500));
-    }
+  try {
+    const labor = await Labor.create(req.body);
+    res.status(201).json({ success: true, data: labor });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error creating labor", 500));
+  }
 };
 
 // @desc    Get all labors
 // @route   GET /api/v1/labors
 export const getAllLabors = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const labors = await Labor.findAll({
-            include: [
-                { model: LaborInformation, as: "laborInformations" }
-            ],
-            order: [["createdAt", "ASC"]],
-        });
-        res.status(200).json({ success: true, data: labors });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error retrieving labors", 500));
-    }
+  try {
+    const labors = await Labor.findAll({
+      include: [
+        { model: LaborInformation, as: "laborInformations" }
+      ],
+      order: [["createdAt", "ASC"]],
+    });
+    res.status(200).json({ success: true, data: labors });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error retrieving labors", 500));
+  }
 };
 
 // @desc    Get a labor by ID
 // @route   GET /api/v1/labors/:id
 export const getLaborById = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const labor = await Labor.findByPk(req.params.id, {
-            include: [
-                { model: LaborInformation, as: "laborInformations" }
-            ],
-            order: [["createdAt", "ASC"]],
-        });
-        if (!labor) {
-            return next(new ErrorResponse("Labor not found", 404));
-        }
-        res.status(200).json({ success: true, data: labor });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error retrieving labor", 500));
+  try {
+    const labor = await Labor.findByPk(req.params.id, {
+      include: [
+        { model: LaborInformation, as: "laborInformations" }
+      ],
+      order: [["createdAt", "ASC"]],
+    });
+    if (!labor) {
+      return next(new ErrorResponse("Labor not found", 404));
     }
+    res.status(200).json({ success: true, data: labor });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error retrieving labor", 500));
+  }
 };
 
 // @desc    Update a labor
 // @route   PUT /api/v1/labors/:id
 export const updateLabor = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const labor = await Labor.findByPk(req.params.id);
-        if (!labor) {
-            return next(new ErrorResponse("Labor not found", 404));
-        }
-        await labor.update(req.body);
-        res.status(200).json({ success: true, data: labor });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error updating labor", 500));
+  try {
+    const labor = await Labor.findByPk(req.params.id);
+    if (!labor) {
+      return next(new ErrorResponse("Labor not found", 404));
     }
+    await labor.update(req.body);
+    res.status(200).json({ success: true, data: labor });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error updating labor", 500));
+  }
 };
 
 // @desc    Delete a labor
 // @route   DELETE /api/v1/labors/:id
 export const deleteLabor = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const labor = await Labor.findByPk(req.params.id);
-        if (!labor) {
-            return next(new ErrorResponse("Labor not found", 404));
-        }
-        await labor.destroy();
-        res.status(200).json({ success: true, message: "Labor deleted successfully" });
-    } catch (error) {
-        console.error(error);
-        next(new ErrorResponse("Error deleting labor", 500));
+  try {
+    const labor = await Labor.findByPk(req.params.id);
+    if (!labor) {
+      return next(new ErrorResponse("Labor not found", 404));
     }
+    await labor.destroy();
+    res.status(200).json({ success: true, message: "Labor deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse("Error deleting labor", 500));
+  }
 };
 
 /**
@@ -166,6 +166,7 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
         unit = laborEntry.unit ?? "unit",
         quantity,
         minQuantity,
+        // Fields moved to LaborInformation (extracted here but not used for Labor)
         estimatedHours,
         rate,
         overtimeRate,
@@ -173,42 +174,36 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
         skill_level,
         responsiblePerson,
         allocationStatus,
-        status,
         utilization_factor,
         totalTime,
         startingDate,
         dueDate,
         shiftingDate,
+        status,
       } = laborEntry;
 
       // Check existing labor by role + siteId
       let labor = await Labor.findOne({ where: { role, siteId } });
 
-      // If not exists, create the labor (use provided fields when available)
+      // If not exists, create the labor (only core planning fields)
       if (!labor) {
-        const newLabor = await Labor.create({
+        labor = await Labor.create({
           role,
           siteId,
           unit,
           quantity,
           minQuantity,
-          estimatedHours,
-          rate,
-          overtimeRate,
-          totalAmount,
-          skill_level,
-          responsiblePerson,
-          allocationStatus,
           status,
-          utilization_factor,
-          totalTime,
-          startingDate,
-          dueDate,
-          shiftingDate,
+          responsiblePerson,
         } as any);
-        labor = newLabor;
       } else {
-        // Optionally we could update labor's fields from import; for safety, we don't overwrite existing values here.
+        // Update existing labor (quantity, minQuantity, status, responsiblePerson)
+        await labor.update({
+          quantity: quantity ?? labor.quantity,
+          minQuantity: minQuantity ?? labor.minQuantity,
+          status: status ?? labor.status,
+          responsiblePerson: responsiblePerson ?? labor.responsiblePerson,
+        });
       }
 
       // Create labor informations for this labor
@@ -224,14 +219,14 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
 
         // Required for laborInformation: firstName, lastName, startsAt, endsAt
         if (!info.firstName || !info.lastName || !info.startsAt || !info.endsAt) {
-          // Skip invalid info entries (or you can choose to error)
+          // Skip invalid info entries
           console.warn("Skipping labor information due to missing required fields:", info);
           continue;
         }
 
-        // Handle profile picture for labor information.
-        // Possible forms: info.profile_picture (http URL), base64 data URI, or an uploaded file (match by fileName or take next file)
+        // Handle profile picture logic (omitted for brevity, assume same helper usage)
         let profilePictureUrl: string | undefined = undefined;
+        // ... (existing helper logic would go here, effectively re-using previous blocks or keeping as is if not replacing huge block)
         const picture = info.profile_picture;
 
         // 1) If profile_picture is a URL -> re-upload to Cloudinary
@@ -243,10 +238,10 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
             console.warn("Failed to upload profile picture from URL:", e);
           }
         }
-
         // 2) If it's a base64 data URI
         else if (typeof picture === "string" && picture.startsWith("data:image")) {
           try {
+            // ... base64 logic ...
             const base64Data = picture.replace(/^data:image\/\w+;base64,/, "");
             const buffer = Buffer.from(base64Data, "base64");
             const tempPath = path.join(__dirname, `../../temp/laborinfo_${Date.now()}_${i}_${j}.png`);
@@ -262,31 +257,22 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
             console.warn("Failed to handle base64 profile picture:", e);
           }
         }
-
-        // 3) If an uploaded file exists and info.fileName provided, try to match by originalname
+        // 3) If an uploaded file exists and info.fileName provided
         else if (uploadedFiles && uploadedFiles.length > 0) {
           let matchedFile: Express.Multer.File | undefined;
-
           if (info.fileName) {
             matchedFile = uploadedFiles.find((f) => f.originalname === info.fileName || f.filename === info.fileName);
           }
-
-          // If not matched by name, attempt to take next available file by pointer
           if (!matchedFile) {
             if (globalFilePointer < uploadedFiles.length) {
               matchedFile = uploadedFiles[globalFilePointer];
               globalFilePointer += 1;
             }
           }
-
           if (matchedFile) {
             try {
               const url = await uploadToCloudinary(matchedFile.path);
-              try {
-                fs.unlinkSync(matchedFile.path);
-              } catch (e) {
-                // ignore unlink errors
-              }
+              try { fs.unlinkSync(matchedFile.path); } catch (e) { }
               if (url) profilePictureUrl = url;
             } catch (e) {
               console.warn("Failed to upload matched file for profile picture:", e);
@@ -294,19 +280,14 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
           }
         }
 
-        // Prepare optional fields (validate enums / coerce numbers)
+        // Prepare optional fields
         let sexValue: "Male" | "Female" | undefined = undefined;
         if (info.sex && typeof info.sex === "string") {
+          // ... validation ...
           const trimmed = info.sex.trim();
           if (allowedSex.includes(trimmed)) sexValue = trimmed as "Male" | "Female";
         }
-
-        let termsValue:
-          | "Part Time"
-          | "Contract"
-          | "Temporary"
-          | "Permanent"
-          | undefined = undefined;
+        let termsValue: any = undefined;
         if (info.terms && typeof info.terms === "string") {
           const trimmed = info.terms.trim();
           if (allowedTerms.includes(trimmed)) termsValue = trimmed as any;
@@ -321,6 +302,22 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
         const positionValue = typeof info.position === "string" && info.position.trim() !== "" ? info.position.trim() : undefined;
         const educationLevelValue = typeof info.educationLevel === "string" && info.educationLevel.trim() !== "" ? info.educationLevel.trim() : undefined;
 
+        // Use values from info OR fallback to laborEntry top-level fields (legacy support)
+        // If the user provided these at the top level, we apply them to the individual
+        // Note: info properties take precedence if both exist.
+        const mergedEstimatedHours = info.estimatedHours ?? estimatedHours;
+        const mergedRate = info.rate ?? rate;
+        const mergedOvertimeRate = info.overtimeRate ?? overtimeRate;
+        const mergedTotalAmount = info.totalAmount ?? totalAmount;
+        const mergedSkillLevel = info.skill_level ?? skill_level;
+        const mergedResponsiblePerson = info.responsiblePerson ?? responsiblePerson;
+        const mergedUtilizationFactor = info.utilization_factor ?? utilization_factor;
+        const mergedTotalTime = info.totalTime ?? totalTime;
+        const mergedStartingDate = info.startingDate ?? startingDate;
+        const mergedDueDate = info.dueDate ?? dueDate;
+        const mergedShiftingDate = info.shiftingDate ?? shiftingDate;
+        const mergedStatus = info.status ?? allocationStatus ?? "Unallocated";
+
         // Create the LaborInformation row
         try {
           await LaborInformation.create({
@@ -329,18 +326,26 @@ export const importLabors = async (req: Request, res: Response, next: NextFuncti
             laborId: labor.id,
             startsAt: new Date(info.startsAt),
             endsAt: new Date(info.endsAt),
-            status: info.status ?? "Unallocated",
+            status: mergedStatus,
             profile_picture: profilePictureUrl,
-            // New optional fields
+            phone: info.phone,
             position: positionValue,
             sex: sexValue,
             terms: termsValue,
             estSalary: estSalaryValue,
             educationLevel: educationLevelValue,
+            // New fields mapped to LaborInformation
+            estimatedHours: mergedEstimatedHours,
+            rate: mergedRate,
+            overtimeRate: mergedOvertimeRate,
+            totalAmount: mergedTotalAmount,
+            skill_level: mergedSkillLevel,
+            utilization_factor: mergedUtilizationFactor,
+            totalTime: mergedTotalTime,
+            shiftingDate: mergedShiftingDate ? new Date(mergedShiftingDate) : undefined,
           } as any);
         } catch (err) {
           console.error("Failed to create LaborInformation for", info, err);
-          // continue creating other items rather than aborting whole import
         }
       } // end infoCandidates loop
 

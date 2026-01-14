@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import ErrorResponse from "../utils/error-response.utils";
 import { EquipmentTimesheet, LaborTimesheet, MaterialBalanceSheet } from "../models/Timesheet.model";
+import User from "../models/User.model";
+import LaborInformation from "../models/LaborInformation.model";
 
 
 // ===== Labor Timesheet Controllers =====
@@ -16,7 +18,12 @@ export const createLaborEntry = async (req: Request, res: Response, next: NextFu
 
 export const getAllLaborEntries = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const entries = await LaborTimesheet.findAll();
+        const entries = await LaborTimesheet.findAll({
+            include: [
+                { model: User, as: 'user' },
+                { model: LaborInformation, as: 'laborInformation' }
+            ]
+        });
         res.status(200).json({ success: true, data: entries });
     } catch (error) {
         console.error(error);
