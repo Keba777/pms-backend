@@ -36,6 +36,7 @@ export const createTodo = async (req: ReqWithUser, res: Response, next: NextFunc
         // Default givenDate to now
         todoData.givenDate = new Date();
         todoData.assignedById = req.user!.id;
+        todoData.orgId = req.user?.orgId; // Set orgId from user token for multi-tenancy
 
         const todo = await Todo.create(todoData);
 

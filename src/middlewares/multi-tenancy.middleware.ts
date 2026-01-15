@@ -19,9 +19,10 @@ export const multiTenancy = (req: ReqWithUser, res: Response, next: NextFunction
     }
 
     // SuperAdmin and regular users MUST have an orgId
-    if (!user.orgId) {
-        return next(new ErrorResponse("User is not associated with any organization", 403));
-    }
+    // TEMPORARILY DISABLED - uncomment after assigning orgId to all users
+    // if (!user.orgId) {
+    //     return next(new ErrorResponse("User is not associated with any organization", 403));
+    // }
 
     // For now, we just ensure it exists. 
     // Controllers will use req.user.orgId to filter queries.
