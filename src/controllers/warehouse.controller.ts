@@ -2,12 +2,23 @@ import { NextFunction, Request, Response } from "express";
 import Warehouse from "../models/Warehouse.model";
 import ErrorResponse from "../utils/error-response.utils";
 import Site from "../models/Site.model";
+import { ReqWithUser } from "../types/req-with-user";
 
 // @desc    Create a new warehouse
 // @route   POST /api/v1/warehouses
-export const createWarehouse = async (req: Request, res: Response, next: NextFunction) => {
+export const createWarehouse = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
-        const warehouse = await Warehouse.create(req.body);
+        const payload = {
+            ...req.body,
+            orgId: req.user?.orgId,
+            siteId: req.body.siteId || req.user?.siteId
+        };
+
+        if (!payload.siteId) {
+            return next(new ErrorResponse("Site ID is required", 400));
+        }
+
+        const warehouse = await Warehouse.create(payload);
         res.status(201).json({ success: true, data: warehouse });
     } catch (error) {
         console.error(error);
@@ -17,9 +28,17 @@ export const createWarehouse = async (req: Request, res: Response, next: NextFun
 
 // @desc    Get all warehouses
 // @route   GET /api/v1/warehouses
-export const getAllWarehouses = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllWarehouses = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
+        const user = req.user;
+        const where: any = {};
+
+        if (user?.role?.name?.toLowerCase() !== "systemadmin") {
+            where.orgId = user?.orgId;
+        }
+
         const warehouses = await Warehouse.findAll({
+            where,
             include: [
                 {
                     model: Site,
@@ -37,7 +56,7 @@ export const getAllWarehouses = async (req: Request, res: Response, next: NextFu
 
 // @desc    Get a warehouse by ID
 // @route   GET /api/v1/warehouses/:id
-export const getWarehouseById = async (req: Request, res: Response, next: NextFunction) => {
+export const getWarehouseById = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const warehouse = await Warehouse.findByPk(req.params.id as string, {
             include: [
@@ -48,9 +67,16 @@ export const getWarehouseById = async (req: Request, res: Response, next: NextFu
                 },
             ]
         });
+
         if (!warehouse) {
             return next(new ErrorResponse("Warehouse not found", 404));
         }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && warehouse.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to access this warehouse", 403));
+        }
+
         res.status(200).json({ success: true, data: warehouse });
     } catch (error) {
         console.error(error);
@@ -60,12 +86,18 @@ export const getWarehouseById = async (req: Request, res: Response, next: NextFu
 
 // @desc    Update a warehouse
 // @route   PUT /api/v1/warehouses/:id
-export const updateWarehouse = async (req: Request, res: Response, next: NextFunction) => {
+export const updateWarehouse = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const warehouse = await Warehouse.findByPk(req.params.id as string);
         if (!warehouse) {
             return next(new ErrorResponse("Warehouse not found", 404));
         }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && warehouse.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to update this warehouse", 403));
+        }
+
         await warehouse.update(req.body);
         res.status(200).json({ success: true, data: warehouse });
     } catch (error) {
@@ -76,12 +108,18 @@ export const updateWarehouse = async (req: Request, res: Response, next: NextFun
 
 // @desc    Delete a warehouse
 // @route   DELETE /api/v1/warehouses/:id
-export const deleteWarehouse = async (req: Request, res: Response, next: NextFunction) => {
+export const deleteWarehouse = async (req: ReqWithUser, res: Response, next: NextFunction) => {
     try {
         const warehouse = await Warehouse.findByPk(req.params.id as string);
         if (!warehouse) {
             return next(new ErrorResponse("Warehouse not found", 404));
         }
+
+        const user = req.user;
+        if (user?.role?.name?.toLowerCase() !== "systemadmin" && warehouse.orgId !== user?.orgId) {
+            return next(new ErrorResponse("Not authorized to delete this warehouse", 403));
+        }
+
         await warehouse.destroy();
         res.status(200).json({ success: true, message: "Warehouse deleted successfully" });
     } catch (error) {

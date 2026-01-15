@@ -336,7 +336,7 @@ const sendingTokenResponse = (user: any, statusCode: number, res: Response) => {
   } = {
     expires: new Date(
       Date.now() +
-      parseInt(process.env.JWT_COOKIE_EXPIRE || "10") * 24 * 60 * 60 * 1000
+      parseInt(process.env.JWT_COOKIE_EXPIRE || "7") * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
   };

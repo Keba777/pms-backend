@@ -230,7 +230,7 @@ class User extends Model<IUser> implements IUser {
             {
                 expiresIn: process.env.JWT_EXPIRE
                     ? parseInt(process.env.JWT_EXPIRE)
-                    : "1d",
+                    : "7d",
             }
         );
     }
