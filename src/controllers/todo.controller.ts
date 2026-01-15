@@ -38,6 +38,11 @@ export const createTodo = async (req: ReqWithUser, res: Response, next: NextFunc
         todoData.assignedById = req.user!.id;
         todoData.orgId = req.user?.orgId; // Set orgId from user token for multi-tenancy
 
+        // Normalize progress to a number
+        if (todoData.progress !== undefined) {
+            todoData.progress = Number(todoData.progress);
+        }
+
         const todo = await Todo.create(todoData);
 
         if (assignedUsers) {
@@ -172,6 +177,11 @@ export const updateTodo = async (req: ReqWithUser, res: Response, next: NextFunc
         // Handle target array normalization
         if (todoData.target && !Array.isArray(todoData.target)) {
             todoData.target = [todoData.target];
+        }
+
+        // Normalize progress to a number
+        if (todoData.progress !== undefined) {
+            todoData.progress = Number(todoData.progress);
         }
 
         await todo.update(todoData);

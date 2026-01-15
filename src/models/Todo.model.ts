@@ -5,6 +5,7 @@ import {
     DataType,
     BelongsTo,
     BelongsToMany,
+    PrimaryKey,
     ForeignKey,
     HasMany,
     Default,
@@ -41,6 +42,11 @@ interface ITodo {
 
 @Table({ tableName: "todos", timestamps: true })
 class Todo extends Model<ITodo> implements ITodo {
+    @PrimaryKey
+    @Default(DataType.UUIDV4)
+    @Column(DataType.UUID)
+    id!: string;
+
     @Column({ type: DataType.STRING, allowNull: false })
     task!: string;
 
