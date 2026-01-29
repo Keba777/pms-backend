@@ -183,12 +183,7 @@ const createUser = async (req: ReqWithUser, res: Response, next: NextFunction) =
     const isSystemAdmin = currentUser?.role?.name?.toLowerCase() === "systemadmin";
     const isSuperAdmin = currentUser?.role?.name?.toLowerCase() === "superadmin";
 
-    // 1) Authorization check: who can create what?
-    if (!isSystemAdmin && !isSuperAdmin) {
-      return next(new ErrorResponse("Not authorized to create users", 403));
-    }
-
-    // 2) Role validation
+    // Role validation
     const targetRole = await Role.findByPk(finalRoleId);
     if (!targetRole) {
       return next(new ErrorResponse("Target role not found", 404));
@@ -212,6 +207,22 @@ const createUser = async (req: ReqWithUser, res: Response, next: NextFunction) =
       finalOrgId = currentUser?.orgId;
     }
 
+    // Ensure responsibilities is an array
+    let responsibilities = req.body.responsibilities;
+    if (responsibilities) {
+      if (typeof responsibilities === 'string') {
+        // If it's a string, split by comma or convert to single-item array
+        responsibilities = responsibilities.includes(',')
+          ? responsibilities.split(',').map((s: string) => s.trim())
+          : [responsibilities];
+      } else if (!Array.isArray(responsibilities)) {
+        // If it's not a string or array, wrap it in an array
+        responsibilities = [responsibilities];
+      }
+    } else {
+      responsibilities = [];
+    }
+
     const userData = {
       first_name,
       last_name,
@@ -224,7 +235,7 @@ const createUser = async (req: ReqWithUser, res: Response, next: NextFunction) =
       department_id: req.body.department_id,
       status: req.body.status,
       access: req.body.access,
-      responsibilities: req.body.responsibilities,
+      responsibilities,
       username: username ? username.toLowerCase() : undefined,
       gender: gender || 'Male',
       position,
@@ -252,8 +263,20 @@ const createUser = async (req: ReqWithUser, res: Response, next: NextFunction) =
     });
 
     res.status(201).json({ success: true, data: newUser });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+
+    // Handle unique constraint violations
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      const field = error.errors?.[0]?.path;
+      if (field === 'email') {
+        return next(new ErrorResponse("Email address is already in use", 409));
+      } else if (field === 'username') {
+        return next(new ErrorResponse("Username is already taken", 409));
+      }
+      return next(new ErrorResponse("A user with this information already exists", 409));
+    }
+
     next(new ErrorResponse("Error creating user", 500));
   }
 };
